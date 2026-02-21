@@ -3,5 +3,51 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "tailwindCSS.lint.cssConflict": "warning",
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list",
+    "tw-class",
+    "ui",
+    "active-class",
+    "inactive-class",
+  ],
+  "colorize.languages": [
+    "css",
+    "sass",
+    "scss",
+    "less",
+    "postcss",
+    "sss",
+    "stylus",
+    "xml",
+    "svg",
+    "javascript",
+    "typescript",
+    "vue"
+  ],
+  "i18n-ally.localesPaths": "./app/i18n/locales",
+  "i18n-ally.displayLanguage": "en",
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.enabledFrameworks": [
+    "vue"
+  ],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.theme.annotation": "rgba(52, 137, 235, .8)",
+  "i18n-ally.theme.annotationBorder": "rgba(52, 137, 235, .8)",
+  "i18n-ally.theme.annotationMissing": "#d37070",
+  "i18n-ally.theme.annotationMissingBorder": "#d37070",
+  "i18n-ally.sortKeys": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.nuxt.test.ts",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.js",
+    "*.tsx": "${capture}.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb"
+  }
 }
