@@ -1,5 +1,5 @@
 type CharacterArchetype = 'king' | 'queen' | 'jack';
-type CharacterSuit = 'hearts' | 'clubs' | 'spades'; // diamonds exluded. In "The house doesn't always win", diamonds are the bad guys, so they are not a valid suit for the characters.
+export type CharacterSuit = 'hearts' | 'clubs' | 'spades'; // diamonds exluded. In "The house doesn't always win", diamonds are the bad guys, so they are not a valid suit for the characters.
 type StatModifier = -2 | -1 | 0 | 1 | 2;
 
 interface CharacterItem {
