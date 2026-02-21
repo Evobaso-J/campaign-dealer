@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2026-02-21',
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/i18n'],
+  compatibilityDate: "2026-02-21",
+  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n"],
   devtools: { enabled: true },
   typescript: {
     /**
@@ -14,9 +14,10 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
   i18n: {
-    locales: [
-      { code: 'en', language: 'en-US' },
-    ],
-    defaultLocale: 'en',
+    locales: [{ code: "en", language: "en-US" }],
+    defaultLocale: "en",
   },
-})
+  eslint: {
+    /* Your ESLint options here */
+  },
+});

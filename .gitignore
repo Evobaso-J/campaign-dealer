@@ -29,3 +29,5 @@ logs
 # Local Netlify folder
 .netlify
 
+# GDR files
+gdr
