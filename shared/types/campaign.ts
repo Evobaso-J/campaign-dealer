@@ -1,18 +1,18 @@
 import type { CharacterSuit } from "./character";
 
-type TargetArchetype = 'king' | 'queen' | 'jack';
-type TargetFate = 'captured' | 'converted' | 'eliminated';
+type TargetArchetype = "king" | "queen" | "jack";
+type TargetFate = "captured" | "converted" | "eliminated";
 
 interface TargetEnemy {
-    name: string
-    fate: TargetFate
-    notes?: string
+  name: string;
+  fate: TargetFate;
+  notes?: string;
 }
 
 interface WeakPoint {
-    value: number
-    switchedWith?: CharacterSuit
-    notes?: string
+  value: number;
+  switchedWith?: CharacterSuit;
+  notes?: string;
 }
 
 export const GenreGroups = {
@@ -55,12 +55,27 @@ export const GenreGroups = {
 export type GenreGroup = keyof typeof GenreGroups;
 type Genre = (typeof GenreGroups)[GenreGroup][number];
 
+type GameMasterScript = {
+  hook: string;
+  /**
+   * A list of 10 weak points for the antagonist Targets, with a brief description of each.
+   * The game master can use these to create tension and drama in the story, as the players discover and exploit the targets' weaknesses.
+   */
+  weakPoints: {
+    name: string;
+    role: string;
+    motive: string;
+  }[];
+  scenes: string[];
+  centralTension: string;
+};
+
 export interface Campaign {
-    name: string
-    setting: Genre[]
-    compromised: boolean
-    targets: { [key in TargetArchetype]: TargetEnemy }
-    weakPoints: WeakPoint[]
-    notes?: string
-    gameMasterScript: string
+  name: string;
+  setting: Genre[];
+  compromised: boolean;
+  targets: { [key in TargetArchetype]: TargetEnemy };
+  weakPoints: WeakPoint[];
+  notes?: string;
+  gameMasterScript: GameMasterScript;
 }
