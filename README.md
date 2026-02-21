@@ -1,75 +1,24 @@
-# Nuxt Minimal Starter
+# 🎲 Campaign Dealer
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**Campaign Dealer** is an AI-powered web app that generates complete tabletop RPG campaigns in seconds.  
+Provide the number of players and a setting idea, and it instantly creates:
 
-## Setup
+- 🎭 Character sheets for each player  
+- 📜 Story hooks for the Game Master  
+- 🎲 Randomized elements for replayability  
 
-Make sure to install dependencies:
+Built for speed, scalability, and extensibility using a modern full-stack architecture.
 
-```bash
-# npm
-npm install
+---
 
-# pnpm
-pnpm install
+## ✨ Features
 
-# yarn
-yarn install
+- ⚡ Instant campaign generation
+- 🤖 AI-assisted storytelling
+- 🧩 Modular architecture for adding rule systems
+- 🎯 Custom player count input
+- 🌍 Flexible setting prompts
+- 🔌 Provider-agnostic AI layer
+- 📦 Designed for scaling into a full campaign platform
 
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+---
