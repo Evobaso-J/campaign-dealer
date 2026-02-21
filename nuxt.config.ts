@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-21",
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n"],
+  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n", "@pinia/nuxt"],
   devtools: { enabled: true },
   typescript: {
     /**
