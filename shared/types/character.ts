@@ -22,13 +22,12 @@ interface CharacterSkill {
         maxUses: number
     }
 }
-
 export interface CharacterSheet {
     archetype: CharacterArchetype
     suit: CharacterSuit
     damage: { [suit in CharacterSuit]: boolean }
     modifiers: { [stat in keyof CharacterSheet]: StatModifier }
-    skill: string // TODO: create enum based on the suit-archetype combinations
+    suitSkill: CharacterSkill // TODO: create enum based on the suit-archetype combinations
     characterIdentity: CharacterIdentity
     skills: CharacterSkill[] // TODO: create enum based on the archetype skills
 }
