@@ -1,3 +1,157 @@
 {
+    "skills": {
+        "jack": {
+            "suit": {
+                "hearts": {
+                    "name": "Lovable",
+                    "description": "You can never take Damage or Face Destiny in a Hearts (♥) Challenge."
+                },
+                "clubs": {
+                    "name": "Imposing",
+                    "description": "Once per mission, you can intimidate an NPC who is not a Target without performing a Challenge."
+                },
+                "spades": {
+                    "name": "Change of Strategy",
+                    "description": "At the beginning of each session, take an Ace of your choice from the deck and Steal it, then reshuffle the deck."
+                }
+            },
+            "archetype": {
+                "skill1": {
+                    "name": "Jack of All Trades",
+                    "description": "When performing a Challenge, you fail by drawing the 5th card that doesn't match the Suit, instead of the 4th."
+                },
+                "skill2": {
+                    "name": "Collect a Debt",
+                    "description": "Once per mission, another player can discard their hand to prevent you from taking Damage. At least one card must be discarded for this to happen."
+                },
+                "skill3": {
+                    "name": "By a Hair",
+                    "description": "Once per campaign, turn a Failure obtained in one of your Challenges into a Success. You still lose all cards drawn during the Challenge, as in a Failure."
+                },
+                "skill4": {
+                    "name": "Teamwork",
+                    "description": "Three times per mission, successfully Helping another player reduces the Difficulty Level by 2 instead of 1."
+                },
+                "skill5": {
+                    "name": "Pay the Price",
+                    "description": "Permanently increase one of your Personal Modifiers by 1, then immediately gain 2 new Skills that don't reduce your Personal Modifiers."
+                },
+                "skill6": {
+                    "name": "Crazy Enough to Work",
+                    "description": "Once per mission, you can place the first card of the deck in the Lost Opportunities Pile to obtain a Triumph in a Challenge. Characters can still take Damage. This Skill cannot be used against Targets."
+                },
+                "skill7": {
+                    "name": "Just in Case",
+                    "description": "When you draw the first card of a Challenge, draw two, keep one and Discard the other. The discarded card has no effect on the Challenge."
+                }
+            }
+        },
+        "queen": {
+            "suit": {
+                "hearts": {
+                    "name": "Commanding Aura",
+                    "description": "Twice per mission, you can command an NPC to do something for you without performing a Challenge. You cannot use this Skill against a Target."
+                },
+                "clubs": {
+                    "name": "In Your Place",
+                    "description": "At any moment, you can choose to take Damage in place of another Character."
+                },
+                "spades": {
+                    "name": "Shortcut",
+                    "description": "At the beginning of each mission, after everyone else has triggered their start-of-mission Skills, search the deck for your Face Card, shuffle the deck, and place your Face Card on top."
+                }
+            },
+            "archetype": {
+                "skill1": {
+                    "name": "Sacrifice",
+                    "description": "When you get a Failure in a Challenge, you can discard a Face Card used in the Challenge and place the other cards in the Lost Opportunities Pile, or vice versa."
+                },
+                "skill2": {
+                    "name": "Not Today",
+                    "description": "When you Retreat from a Challenge, treat all cards you roll for as if their value were 2 higher."
+                },
+                "skill3": {
+                    "name": "Reliable",
+                    "description": "Three times per mission, you can Help another player without performing a Challenge."
+                },
+                "skill4": {
+                    "name": "Shield",
+                    "description": "Once per mission, you can take the first three Number Cards from the Discard Pile and place them in the Lost Opportunities Pile to avoid taking Damage."
+                },
+                "skill5": {
+                    "name": "I Can Handle Myself",
+                    "description": "Three times per mission, if no one offers you their Help, you can reduce the Difficulty Level of a Challenge by 1."
+                },
+                "skill6": {
+                    "name": "In Reserve",
+                    "description": "Three times per mission, you can Steal a Number Card that would be lost during a Challenge in which a player has Retreated. You can only play these cards during other players' Challenges."
+                },
+                "skill7": {
+                    "name": "Clairvoyant",
+                    "description": "Three times per mission, you can look at the first card of the deck during another player's Challenge and reveal what card it is."
+                }
+            }
+        },
+        "king": {
+            "suit": {
+                "hearts": {
+                    "name": "Infiltrators",
+                    "description": "At the beginning of each mission, create an NPC together with the GM. You can encounter them during the mission and they owe you a favor."
+                },
+                "clubs": {
+                    "name": "All In",
+                    "description": "You can play 5 cards from your hand to obtain a Critical Success in your current Challenge. You cannot use this Skill against a Target."
+                },
+                "spades": {
+                    "name": "High Stakes",
+                    "description": "After performing a Challenge, regardless of the result, roll for any cards you played from your hand (as if you had Retreated). Instead of discarding them, take them back into your hand."
+                }
+            },
+            "archetype": {
+                "skill1": {
+                    "name": "A Little Extra",
+                    "description": "When you get a Critical Success in a Challenge, you can Steal up to two Number Cards used in the Challenge."
+                },
+                "skill2": {
+                    "name": "Consolation Prize",
+                    "description": "When you get a Failure in a Challenge, you can Steal a Number Card used in the Challenge."
+                },
+                "skill3": {
+                    "name": "Well-Laid Plans",
+                    "description": "At the beginning of each mission, draw from the deck until you find two Number Cards and Steal them, then reshuffle the deck."
+                },
+                "skill4": {
+                    "name": "The Right Touch",
+                    "description": "When you use your Instrument, your worst Personal Modifier becomes 0. If it's already 0, it becomes -1."
+                },
+                "skill5": {
+                    "name": "Hidden Compartment",
+                    "description": "You can conceal weapons or instruments that would normally be too large to be Concealed (if it makes sense)."
+                },
+                "skill6": {
+                    "name": "Always Prepared",
+                    "description": "At the beginning of each mission, you can choose an additional weapon or instrument of any size that has been hidden in the area where the Target is located."
+                },
+                "skill7": {
+                    "name": "You're in My Way",
+                    "description": "For the rest of the campaign, you cannot Help or be Helped by any other player. Permanently reduce one of your Personal Modifiers by 1, down to a maximum of -2."
+                }
+            }
+        },
+        "modifiers": {
+            "clubs": {
+                "name": "A Bit More Muscle",
+                "description": "Permanently reduce your Clubs personal modifier by 1, up to a maximum of -2."
+            },
+            "hearts": {
+                "name": "A Bit More Brain",
+                "description": "Permanently reduce your Hearts personal modifier by 1, up to a maximum of -2."
+            },
+            "spades": {
+                "name": "A Bit More Balance",
+                "description": "Permanently reduce your Spades personal modifier by 1, up to a maximum of -2."
+            }
+        }
+    },
     "welcome": "Welcome to Nuxt Starter"
 }

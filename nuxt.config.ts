@@ -14,7 +14,10 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
   i18n: {
-    locales: [{ code: "en", language: "en-US" }],
+    locales: [
+      { code: "en", language: "en-US" },
+      { code: "it", language: "it-IT" },
+    ],
     defaultLocale: "en",
   },
   eslint: {
