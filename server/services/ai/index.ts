@@ -44,12 +44,16 @@ export interface AIProvider {
  * Provider identifier used in runtimeConfig to select the active AI backend.
  * Extend this union as new providers are added.
  */
-export type AIProviderName = "anthropic";
+export const AIProviderName = {
+  anthropic: "anthropic",
+} as const;
+export type AIProviderName =
+  (typeof AIProviderName)[keyof typeof AIProviderName];
 
 /**
  * Shape of the AI-related runtime configuration.
- * Documents what `nuxt.config.ts` should declare under `runtimeConfig.ai`
- * (to be set up in CAM-16).
+ * Defaults are declared in `nuxt.config.ts` under `runtimeConfig.ai`;
+ * actual values will be set via environment variables (CAM-16).
  */
 export interface AIRuntimeConfig {
   provider: AIProviderName;
@@ -78,6 +82,34 @@ export function registerProvider(
   providerRegistry.set(name, factory);
 }
 
+function assertAiConfigValidity(config: {
+  provider?: string;
+  apiKey?: string;
+  model?: string;
+}): asserts config is AIRuntimeConfig {
+  if (!config.provider) {
+    throw new Error(
+      "AI provider is not configured. Set runtimeConfig.ai.provider in nuxt.config.ts.",
+    );
+  }
+  if (
+    !Object.values(AIProviderName).includes(config.provider as AIProviderName)
+  ) {
+    const valid = Object.values(AIProviderName).join(", ");
+    throw new Error(
+      `Invalid AI provider "${config.provider}". Valid options are: ${valid}. ` +
+        "Set runtimeConfig.ai.provider in nuxt.config.ts.",
+    );
+  }
+
+  if (!config.apiKey) {
+    throw new Error(
+      `AI provider "${config.provider}" is configured but no API key was provided. ` +
+        "Set runtimeConfig.ai.apiKey via NUXT_AI_API_KEY environment variable.",
+    );
+  }
+}
+
 /**
  * Returns the configured AIProvider instance.
  *
@@ -86,32 +118,18 @@ export function registerProvider(
  */
 export function getAIProvider(): AIProvider {
   const config = useRuntimeConfig();
-  const aiConfig = (config as Record<string, unknown>).ai as
-    | AIRuntimeConfig
-    | undefined;
 
-  if (!aiConfig?.provider) {
-    throw new Error(
-      "AI provider is not configured. Set runtimeConfig.ai.provider in nuxt.config.ts.",
-    );
-  }
+  assertAiConfigValidity(config.ai);
 
-  if (!aiConfig.apiKey) {
-    throw new Error(
-      `AI provider "${aiConfig.provider}" is configured but no API key was provided. ` +
-        "Set runtimeConfig.ai.apiKey via NUXT_AI_API_KEY environment variable.",
-    );
-  }
-
-  const factory = providerRegistry.get(aiConfig.provider);
+  const factory = providerRegistry.get(config.ai.provider);
   if (!factory) {
     const available = [...providerRegistry.keys()].join(", ") || "(none)";
     throw new Error(
-      `AI provider "${aiConfig.provider}" is not registered. ` +
+      `AI provider "${config.ai.provider}" is not registered. ` +
         `Available providers: ${available}. ` +
         `Ensure the provider module is imported.`,
     );
   }
 
-  return factory(aiConfig);
+  return factory(config.ai);
 }

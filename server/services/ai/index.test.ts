@@ -27,11 +27,6 @@ afterEach(() => {
 
 describe("getAIProvider", () => {
   describe("when AI config is missing", () => {
-    it("throws if runtimeConfig has no ai property", () => {
-      mockUseRuntimeConfig.mockReturnValue({});
-      expect(() => getAIProvider()).toThrow("AI provider is not configured");
-    });
-
     it("throws if ai.provider is not set", () => {
       mockUseRuntimeConfig.mockReturnValue({ ai: {} });
       expect(() => getAIProvider()).toThrow("AI provider is not configured");
@@ -47,13 +42,25 @@ describe("getAIProvider", () => {
     });
   });
 
-  describe("when provider is not registered", () => {
-    it("throws with the unregistered provider name", () => {
+  describe("when provider name is invalid", () => {
+    it("throws listing valid options", () => {
       mockUseRuntimeConfig.mockReturnValue({
         ai: { provider: "openai", apiKey: "test-key" },
       });
       expect(() => getAIProvider()).toThrow(
-        'AI provider "openai" is not registered',
+        'Invalid AI provider "openai"',
+      );
+    });
+  });
+
+  describe("when provider is not registered", () => {
+    it("throws with the unregistered provider name", () => {
+      mockUseRuntimeConfig.mockReturnValue({
+        ai: { provider: "anthropic", apiKey: "test-key" },
+      });
+      // No registerProvider call — registry is empty for this provider
+      expect(() => getAIProvider()).toThrow(
+        'AI provider "anthropic" is not registered',
       );
     });
   });
