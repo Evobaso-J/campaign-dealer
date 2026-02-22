@@ -1,12 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { generateCharacter } from "~~/server/services/rpg/characterRandomizer";
+import {
+  generateCharacter,
+  generateRandomDistinctCharacters,
+} from "~~/server/services/rpg/characterRandomizer";
 import {
   archetypeCharacterizations,
   archetypeSkills,
   suitCharacterizations,
   suitSkills,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
-import { CharacterArchetype } from "~~/shared/types/character";
+import { CharacterArchetype, CharacterSuit } from "~~/shared/types/character";
 
 const ALL_ARCHETYPES = Object.values(CharacterArchetype);
 
@@ -120,5 +123,65 @@ describe("generateCharacter", () => {
         );
       },
     );
+  });
+});
+
+describe("generateRandomDistinctCharacters", () => {
+  const ALL_SUITS = Object.values(CharacterSuit);
+  const MAX_DISTINCT = ALL_ARCHETYPES.length * ALL_SUITS.length; // 3 × 3 = 9
+
+  describe("count", () => {
+    it.for([1, 3, 5, MAX_DISTINCT])(
+      "returns exactly %i character(s)",
+      (count) => {
+        expect(generateRandomDistinctCharacters(count)).toHaveLength(count);
+      },
+    );
+  });
+
+  describe("validation", () => {
+    it.for([MAX_DISTINCT + 1, MAX_DISTINCT + 10])(
+      "throws when count (%i) exceeds the number of unique archetype-suit combinations",
+      (count) => {
+        expect(() => generateRandomDistinctCharacters(count)).toThrow(
+          `Cannot generate ${count} distinct characters: only ${MAX_DISTINCT} unique archetype-suit combinations exist.`,
+        );
+      },
+    );
+  });
+
+  describe("distinctness", () => {
+    it.for([1, 3, MAX_DISTINCT])(
+      "all archetype-suit combinations are unique (count=%i)",
+      (count) => {
+        const chars = generateRandomDistinctCharacters(count);
+        const keys = chars.map((c) => `${c.archetype}-${c.suit}`);
+        expect(new Set(keys).size).toBe(count);
+      },
+    );
+
+    it("skips duplicate archetype-suit combinations and retries", () => {
+      // Force the sequence: king-hearts, king-hearts (duplicate), king-clubs
+      // generateCharacter call order per invocation: suit, archetype, skill
+      vi.spyOn(Math, "random")
+        // Call 1 → king-hearts
+        .mockReturnValueOnce(randomFor(0, ALL_SUITS.length)) // hearts
+        .mockReturnValueOnce(randomFor(0, ALL_ARCHETYPES.length)) // king
+        .mockReturnValueOnce(0) // first archetype skill
+        // Call 2 → king-hearts again (duplicate, must be skipped)
+        .mockReturnValueOnce(randomFor(0, ALL_SUITS.length)) // hearts
+        .mockReturnValueOnce(randomFor(0, ALL_ARCHETYPES.length)) // king
+        .mockReturnValueOnce(0)
+        // Call 3 → king-clubs (accepted as second distinct character)
+        .mockReturnValueOnce(randomFor(1, ALL_SUITS.length)) // clubs
+        .mockReturnValueOnce(randomFor(0, ALL_ARCHETYPES.length)) // king
+        .mockReturnValueOnce(0);
+
+      const chars = generateRandomDistinctCharacters(2);
+
+      expect(chars).toHaveLength(2);
+      expect(chars[0]).toMatchObject({ suit: "hearts", archetype: "king" });
+      expect(chars[1]).toMatchObject({ suit: "clubs", archetype: "king" });
+    });
   });
 });

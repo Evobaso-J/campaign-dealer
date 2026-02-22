@@ -80,3 +80,29 @@ export const generateCharacter = (): CharacterTemplate => {
     archetypeCharacterization,
   };
 };
+
+export const generateRandomDistinctCharacters = (
+  count: number,
+): CharacterTemplate[] => {
+  const suits = Object.values(CharacterSuit);
+  const archetypes = Object.values(CharacterArchetype);
+  const maxDistinct = suits.length * archetypes.length;
+  if (count > maxDistinct) {
+    throw new Error(
+      `Cannot generate ${count} distinct characters: only ${maxDistinct} unique archetype-suit combinations exist.`,
+    );
+  }
+
+  const generatedCharacters = new Map<
+    `${CharacterArchetype}-${CharacterSuit}`,
+    CharacterTemplate
+  >();
+  while (generatedCharacters.size < count) {
+    const newCharacter = generateCharacter();
+    const key = `${newCharacter.archetype}-${newCharacter.suit}` as const;
+    if (!generatedCharacters.has(key)) {
+      generatedCharacters.set(key, newCharacter);
+    }
+  }
+  return Array.from(generatedCharacters.values());
+};
