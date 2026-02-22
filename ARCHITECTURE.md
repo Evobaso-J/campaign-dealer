@@ -52,8 +52,7 @@ campaign-dealer/
 │   │   └── validate.ts               # Zod schemas for API input validation
 │   └── data/
 │       └── house-doesnt-win/         # Game system data (server-private, never sent raw to client)
-│           ├── character-templates.ts    # Archetype skill pools and modifier skills
-│           └── random-tables.ts          # Names, concepts, weapons, instruments
+│           └── character-templates.ts    # Archetype skill pools and modifier skills
 │
 └── shared/
     └── types/                        # Types used by both client and server
@@ -80,7 +79,7 @@ The server owns all sensitive operations.
 
 - **API routes** (`server/api/`) are the only entry points from the client. They validate input with Zod, call services, and return typed responses.
 - **AI service** (`server/services/ai/`) is abstracted behind an `AIProvider` interface. The factory function reads `runtimeConfig` to select the active provider. Adding a new provider (e.g. OpenAI, Ollama) means creating a new file that implements the interface — no other code changes.
-- **RPG randomizer** (`server/services/rpg/`) is pure logic with no AI dependency. It reads the data JSON files and produces randomized character skeletons. This separation means character randomization is instant and deterministic; AI only handles the narrative enrichment on top.
+- **RPG randomizer** (`server/services/rpg/`) is pure logic with no AI dependency. It reads the character templates and produces a `CharacterSkeleton` — archetype, suit, and starting skills — with no identity fields. Character identity (name, concept, weapon, instrument) is fully AI-generated based on the campaign setting and archetype/suit combination, so it is always contextually appropriate rather than randomly assembled from a fixed list.
 - **Prompts** (`server/services/ai/prompts/`) are isolated from the provider implementations. Each prompt builder takes typed inputs and returns `{ system, user }` strings, making them easy to iterate on independently.
 
 ### Shared (`shared/`)
@@ -89,11 +88,13 @@ TypeScript types that are imported by both `app/` and `server/`. Nuxt 4 auto-imp
 
 ### Server data (`server/data/`)
 
-Static JSON files that define the game system data. They live inside `server/` because they are server-private — the client never receives them raw, only the processed `CharacterSheet` objects that the randomizer produces from them.
+TypeScript `const` files that define the fixed game system data — skill pools and mechanical rules. They live inside `server/` because they are server-private: the client never receives them raw, only the processed `CharacterSheet` objects that the randomizer and AI produce from them.
 
-- Data is typed with `satisfies` — shape errors are caught at compile time, not at runtime
+- Data is typed directly via imported interfaces — shape errors are caught at compile time
 - Adding a new RPG system means adding a new subdirectory and a config flag in the randomizer
 - Migrating to a database means replacing the `const` imports with DB queries inside `server/services/rpg/` — no other layer changes
+
+**Copyright**: `character-templates.ts` contains text derived from a commercial rulebook and must be git-ignored on public repositories. Commit a `character-templates.example.ts` with the full structure but placeholder values so new contributors know what to create. The same applies to i18n locale files containing skill text.
 
 ---
 
@@ -108,9 +109,10 @@ useCampaign.ts
       ├─► POST /api/campaign/characters
       │         │
       │         ├─ validate input (Zod)
-      │         ├─ randomizer.generateCharacter() × N   ← reads server/data JSON
-      │         └─ aiProvider.complete(characterPrompt)  × N
-      │                   └─► returns CharacterSheet[]
+      │         ├─ randomizer.generateSkeleton() × N    ← picks archetype, suit, skills
+      │         └─ aiProvider.complete(characterPrompt(skeleton, setting)) × N
+      │                   └─► generates identity (name, concept, weapon, instrument)
+      │                             └─► merge → CharacterSheet[]
       │
       └─► POST /api/campaign/script
                 │
@@ -129,9 +131,12 @@ Both API calls write their results into the Pinia store. Components reactively d
 | --- | --- | --- |
 | AI calls location | Server-only | API keys never exposed to the client |
 | AI provider coupling | Interface + factory | Swap providers without touching feature code |
-| Character randomization | Pre-AI, pure logic | Fast, deterministic, testable without API calls |
+| Character mechanics | Pre-AI, pure logic | Archetype/suit/skills are instant and testable without API calls |
+| Character identity | AI-generated | Name, concept, weapon, instrument adapt to campaign setting and suit personality |
 | Shared types | `shared/types/` | Single source of truth for client–server contract |
-| Game data | JSON in `server/data/` | Server-private; raw tables never sent to client |
+| Game data | TS consts in `server/data/` | Server-private; typed at compile time; raw data never sent to client |
+| Copyright | `.gitignore` + example files | Rulebook text stays out of public repos; example files document the expected shape |
+| Skill display | i18n keys | `CharacterSkill.name`/`.description` are `I18nKey` strings resolved on the frontend |
 | State management | Pinia | Persists wizard state; straightforward to add persistence/server sync later |
 
 ---

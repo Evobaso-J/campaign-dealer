@@ -18,13 +18,14 @@ Everything else imports from here. No code is wasted if these are right.
 
 ## Phase 2 — RPG Data & Randomizer
 
-Fully offline, no AI, no API key required. Lets you validate data shapes against the types before any network call.
+Fully offline, no AI, no API key required. Lets you validate mechanical data shapes before any network call.
 
-- (CAM-7) Create `content/house-doesnt-win/random-tables.json`
-- (CAM-8) Create `content/house-doesnt-win/character-templates.json`
+- (CAM-8) Create `server/data/house-doesnt-win/character-templates.ts` + example file + gitignore entry
 - (CAM-9) Implement `server/services/rpg/randomizer.ts`
 
-**Exit criteria**: calling `randomizer.generateCharacter()` returns a valid `CharacterSheet` that satisfies the shared types.
+> CAM-7 (random tables) has been removed. Character identity — name, concept, weapon, instrument — is AI-generated based on the campaign setting and archetype/suit combination. Fixed tables would produce setting-agnostic results regardless of whether the campaign is cyberpunk or gothic horror.
+
+**Exit criteria**: calling `randomizer.generateSkeleton()` returns a valid `CharacterSkeleton` (archetype, suit, skills, no identity) that satisfies the shared types.
 
 ---
 
@@ -37,7 +38,7 @@ Build on top of the validated data shapes. The interface is defined first so pro
 - (CAM-12) Write character generation prompt builder
 - (CAM-13) Write GM script prompt builder
 
-**Exit criteria**: calling `getAIProvider().complete(characterPrompt)` against a randomizer-generated skeleton returns a JSON-parseable enriched `CharacterSheet`.
+**Exit criteria**: calling `getAIProvider().complete(characterPrompt)` against a randomizer-generated skeleton returns a JSON-parseable `CharacterSheet` with a fully populated `characterIdentity` appropriate to the campaign setting and archetype/suit combination.
 
 ---
 
@@ -105,16 +106,13 @@ CAM-5 (types)
   │
   ├── CAM-16 (config)
   │
-  ├── CAM-7 (random tables)
-  │     └── CAM-9 (randomizer)
+  ├── CAM-8 (character templates)   ← no random tables; identity is AI-generated
+  │     └── CAM-9 (randomizer)      ← returns CharacterSkeleton, not CharacterSheet
   │           └── CAM-14 (characters endpoint)
-  │
-  ├── CAM-8 (character templates)
-  │     └── CAM-9 (randomizer)
   │
   ├── CAM-10 (AI interface)
   │     ├── CAM-11 (Anthropic provider)
-  │     ├── CAM-12 (character prompt)  ──► CAM-14
+  │     ├── CAM-12 (character prompt)  ──► CAM-14  ← generates identity from skeleton + setting
   │     └── CAM-13 (script prompt)    ──► CAM-15
   │
   ├── CAM-26 (Zod schemas) ──► CAM-14, CAM-15
