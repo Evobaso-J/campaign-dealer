@@ -1,7 +1,26 @@
 import type { GeneratedText, I18nKey } from "./utils";
 
-export type CharacterArchetype = "king" | "queen" | "jack";
-export type CharacterSuit = "hearts" | "clubs" | "spades"; // diamonds excluded. In "The house doesn't always win", diamonds are the bad guys, so they are not a valid suit for the characters.
+export const CharacterArchetype = {
+  king: "king",
+  queen: "queen",
+  jack: "jack",
+} as const;
+
+export type CharacterArchetype =
+  (typeof CharacterArchetype)[keyof typeof CharacterArchetype];
+
+/**
+ * Diamonds excluded.
+ * In "The house doesn't always win", diamonds are the bad guys,
+ * so they are not a valid suit for the characters.
+ */
+export const CharacterSuit = {
+  hearts: "hearts",
+  clubs: "clubs",
+  spades: "spades",
+} as const;
+
+export type CharacterSuit = (typeof CharacterSuit)[keyof typeof CharacterSuit];
 type StatModifier = -2 | -1 | 0 | 1 | 2;
 
 interface CharacterItem {
@@ -29,7 +48,7 @@ export interface CharacterSheet {
   suit: CharacterSuit;
   damage: { [suit in CharacterSuit]: boolean };
   modifiers: { [stat in CharacterSuit]: StatModifier };
-  suitSkill: CharacterSkill; // TODO: create enum based on the suit-archetype combinations
+  suitSkill: CharacterSkill; // A complete list of character skills is included in ~/server/data/houseDoesntWin/characterTemplates.ts
   characterIdentity: CharacterIdentity;
-  skills: CharacterSkill[]; // TODO: create enum based on the archetype skills
+  archetypeSkills: CharacterSkill[]; // A complete list of archetype skills is included in ~/server/data/houseDoesntWin/characterTemplates.ts
 }

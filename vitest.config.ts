@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig } from "vitest/config";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
@@ -18,6 +19,19 @@ export default defineConfig({
           environment: "nuxt",
         },
       }),
+      {
+        resolve: {
+          alias: {
+            "~~": path.resolve(__dirname, "."),
+            "~": path.resolve(__dirname, "app"),
+          },
+        },
+        test: {
+          name: "server",
+          include: ["server/**/*.{test,spec}.ts"],
+          environment: "node",
+        },
+      },
     ],
   },
 });
