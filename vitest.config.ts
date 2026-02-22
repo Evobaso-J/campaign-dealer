@@ -1,5 +1,9 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 import { defineVitestProject } from "@nuxt/test-utils/config";
+
+const dirname = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   test: {
@@ -18,6 +22,19 @@ export default defineConfig({
           environment: "nuxt",
         },
       }),
+      {
+        resolve: {
+          alias: {
+            "~~": path.resolve(dirname, "."),
+            "~": path.resolve(dirname, "app"),
+          },
+        },
+        test: {
+          name: "server",
+          include: ["server/**/*.{test,spec}.ts"],
+          environment: "node",
+        },
+      },
     ],
   },
 });
