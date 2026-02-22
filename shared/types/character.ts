@@ -16,7 +16,7 @@ interface CharacterIdentity {
   instrument?: CharacterItem;
 }
 
-interface CharacterSkill {
+export interface CharacterSkill {
   name: I18nKey;
   description: I18nKey;
   uses?: {
