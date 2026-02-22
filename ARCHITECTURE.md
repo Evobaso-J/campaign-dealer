@@ -48,18 +48,17 @@ campaign-dealer/
 │   │   │       └── script.ts         # Prompt builder for GM script
 │   │   └── rpg/
 │   │       └── randomizer.ts         # Dice rolls and random table lookups
-│   └── utils/
-│       └── validate.ts               # Zod schemas for API input validation
+│   ├── utils/
+│   │   └── validate.ts               # Zod schemas for API input validation
+│   └── data/
+│       └── house-doesnt-win/         # Game system data (server-private, never sent raw to client)
+│           ├── character-templates.ts    # Archetype skill pools and modifier skills
+│           └── random-tables.ts          # Names, concepts, weapons, instruments
 │
-├── shared/
-│   └── types/                        # Types used by both client and server
-│       ├── campaign.ts
-│       └── character.ts
-│
-└── content/
-    └── house-doesnt-win/             # Game system data (swap for other systems)
-        ├── character-templates.json  # Archetype blueprints and base stat blocks
-        └── random-tables.json        # Traits, debts, goals, items, backgrounds
+└── shared/
+    └── types/                        # Types used by both client and server
+        ├── campaign.ts
+        └── character.ts
 ```
 
 ---
@@ -81,20 +80,20 @@ The server owns all sensitive operations.
 
 - **API routes** (`server/api/`) are the only entry points from the client. They validate input with Zod, call services, and return typed responses.
 - **AI service** (`server/services/ai/`) is abstracted behind an `AIProvider` interface. The factory function reads `runtimeConfig` to select the active provider. Adding a new provider (e.g. OpenAI, Ollama) means creating a new file that implements the interface — no other code changes.
-- **RPG randomizer** (`server/services/rpg/`) is pure logic with no AI dependency. It reads the content JSON files and produces randomized character skeletons. This separation means character randomization is instant and deterministic; AI only handles the narrative enrichment on top.
+- **RPG randomizer** (`server/services/rpg/`) is pure logic with no AI dependency. It reads the data JSON files and produces randomized character skeletons. This separation means character randomization is instant and deterministic; AI only handles the narrative enrichment on top.
 - **Prompts** (`server/services/ai/prompts/`) are isolated from the provider implementations. Each prompt builder takes typed inputs and returns `{ system, user }` strings, making them easy to iterate on independently.
 
 ### Shared (`shared/`)
 
 TypeScript types that are imported by both `app/` and `server/`. Nuxt 4 auto-imports from this directory on both sides, ensuring the client and server always agree on the shape of data crossing the API boundary.
 
-### Content (`content/`)
+### Server data (`server/data/`)
 
-Static JSON files that define the game system data. Keeping this separate from code means:
+Static JSON files that define the game system data. They live inside `server/` because they are server-private — the client never receives them raw, only the processed `CharacterSheet` objects that the randomizer produces from them.
 
-- Designers can edit game content without touching TypeScript
-- Adding a new RPG system is a matter of adding a new subdirectory and a config flag
-- Content can later be migrated to a CMS or database without changing service logic
+- Data is typed with `satisfies` — shape errors are caught at compile time, not at runtime
+- Adding a new RPG system means adding a new subdirectory and a config flag in the randomizer
+- Migrating to a database means replacing the `const` imports with DB queries inside `server/services/rpg/` — no other layer changes
 
 ---
 
@@ -109,7 +108,7 @@ useCampaign.ts
       ├─► POST /api/campaign/characters
       │         │
       │         ├─ validate input (Zod)
-      │         ├─ randomizer.generateCharacter() × N   ← reads content JSON
+      │         ├─ randomizer.generateCharacter() × N   ← reads server/data JSON
       │         └─ aiProvider.complete(characterPrompt)  × N
       │                   └─► returns CharacterSheet[]
       │
@@ -132,7 +131,7 @@ Both API calls write their results into the Pinia store. Components reactively d
 | AI provider coupling | Interface + factory | Swap providers without touching feature code |
 | Character randomization | Pre-AI, pure logic | Fast, deterministic, testable without API calls |
 | Shared types | `shared/types/` | Single source of truth for client–server contract |
-| Game data | JSON in `content/` | Editable without code changes, easy to extend |
+| Game data | JSON in `server/data/` | Server-private; raw tables never sent to client |
 | State management | Pinia | Persists wizard state; straightforward to add persistence/server sync later |
 
 ---
@@ -141,7 +140,7 @@ Both API calls write their results into the Pinia store. Components reactively d
 
 The current architecture supports the following additions without restructuring:
 
-- **New RPG system**: add `content/<system-name>/` + a config flag to select it
+- **New RPG system**: add `server/data/<system-name>/` + a config flag to select it in the randomizer
 - **New AI provider**: implement `AIProvider` interface in `server/services/ai/<provider>.ts`
 - **Streaming output**: `AIProvider` already defines a `stream()` method; wire it to an SSE endpoint
 - **Save campaigns**: add a database (Drizzle + SQLite/Postgres) and an auth layer; the store shape maps directly to a DB schema
