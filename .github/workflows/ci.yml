@@ -9,6 +9,7 @@ on:
 env:
   NODE_VERSION: 23.6.0
 
+# pnpm version is determined by package.json
 jobs:
   lint:
     name: Lint
