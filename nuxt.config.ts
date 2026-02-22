@@ -2,6 +2,13 @@
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-21",
   modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n", "@pinia/nuxt", "@nuxt/test-utils/module"],
+  runtimeConfig: {
+    ai: {
+      provider: "",
+      apiKey: "",
+      model: "",
+    },
+  },
   devtools: { enabled: true },
   typescript: {
     /**
