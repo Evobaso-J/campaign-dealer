@@ -26,7 +26,7 @@ export interface CharacterSheet {
   archetype: CharacterArchetype;
   suit: CharacterSuit;
   damage: { [suit in CharacterSuit]: boolean };
-  modifiers: { [stat in keyof CharacterSheet]: StatModifier };
+  modifiers: { [stat in CharacterSuit]: StatModifier };
   suitSkill: CharacterSkill; // TODO: create enum based on the suit-archetype combinations
   characterIdentity: CharacterIdentity;
   skills: CharacterSkill[]; // TODO: create enum based on the archetype skills
