@@ -1,7 +1,5 @@
-import type { CharacterSkill } from "~~/shared/types/character";
+import type { CharacterSkill, CharacterSuit } from "~~/shared/types/character";
 import type { I18nKey } from "~~/shared/types/utils";
-
-type SuitSkills = { [suit in CharacterSuit]: CharacterSkill };
 
 /**
  * Generates i18n key pairs for a skill from a dot-separated key prefix.
@@ -21,6 +19,7 @@ export function i18nSkill(
 }
 
 // === JACK ===
+type SuitSkills = { [suit in CharacterSuit]: CharacterSkill };
 
 export const jackSuitSkills: SuitSkills = {
   hearts: i18nSkill("skills.jack.suit.hearts"),
@@ -32,25 +31,25 @@ export const jackSuitSkills: SuitSkills = {
 };
 
 export const jackArchetypeSkills: CharacterSkill[] = [
-  i18nSkill("skills.jack.archetype.daiMoltiTalenti"),
+  i18nSkill("skills.jack.archetype.skill1"),
   {
-    ...i18nSkill("skills.jack.archetype.riscuotereUnDebito"),
+    ...i18nSkill("skills.jack.archetype.skill2"),
     uses: { usesLeft: 1, maxUses: 1 },
   },
   {
-    ...i18nSkill("skills.jack.archetype.perUnPelo"),
+    ...i18nSkill("skills.jack.archetype.skill3"),
     uses: { usesLeft: 1, maxUses: 1 },
   },
   {
-    ...i18nSkill("skills.jack.archetype.giocoDiSquadra"),
+    ...i18nSkill("skills.jack.archetype.skill4"),
     uses: { usesLeft: 3, maxUses: 3 },
   },
-  i18nSkill("skills.jack.archetype.pagareIlPrezzo"),
+  i18nSkill("skills.jack.archetype.skill5"),
   {
-    ...i18nSkill("skills.jack.archetype.abbastanzaStupidoDaFunzionare"),
+    ...i18nSkill("skills.jack.archetype.skill6"),
     uses: { usesLeft: 1, maxUses: 1 },
   },
-  i18nSkill("skills.jack.archetype.perPrecauzione"),
+  i18nSkill("skills.jack.archetype.skill7"),
 ];
 
 // === QUEEN ===
@@ -65,26 +64,26 @@ export const queenSuitSkills: SuitSkills = {
 };
 
 export const queenArchetypeSkills: CharacterSkill[] = [
-  i18nSkill("skills.queen.archetype.sacrificio"),
-  i18nSkill("skills.queen.archetype.nonOggi"),
+  i18nSkill("skills.queen.archetype.skill1"),
+  i18nSkill("skills.queen.archetype.skill2"),
   {
-    ...i18nSkill("skills.queen.archetype.affidabile"),
+    ...i18nSkill("skills.queen.archetype.skill3"),
     uses: { usesLeft: 3, maxUses: 3 },
   },
   {
-    ...i18nSkill("skills.queen.archetype.scudo"),
+    ...i18nSkill("skills.queen.archetype.skill4"),
     uses: { usesLeft: 1, maxUses: 1 },
   },
   {
-    ...i18nSkill("skills.queen.archetype.soBadareAMe"),
+    ...i18nSkill("skills.queen.archetype.skill5"),
     uses: { usesLeft: 3, maxUses: 3 },
   },
   {
-    ...i18nSkill("skills.queen.archetype.inSerbo"),
+    ...i18nSkill("skills.queen.archetype.skill6"),
     uses: { usesLeft: 3, maxUses: 3 },
   },
   {
-    ...i18nSkill("skills.queen.archetype.preveggente"),
+    ...i18nSkill("skills.queen.archetype.skill7"),
     uses: { usesLeft: 3, maxUses: 3 },
   },
 ];
@@ -98,17 +97,19 @@ export const kingSuitSkills: SuitSkills = {
 };
 
 export const kingArchetypeSkills: CharacterSkill[] = [
-  i18nSkill("skills.king.archetype.qualcosaInPiu"),
-  i18nSkill("skills.king.archetype.premioDiConsolazione"),
-  i18nSkill("skills.king.archetype.pianiBenRiusciti"),
-  i18nSkill("skills.king.archetype.ilToccoGiusto"),
-  i18nSkill("skills.king.archetype.doppioFondo"),
-  i18nSkill("skills.king.archetype.sempreSulPezzo"),
-  i18nSkill("skills.king.archetype.miSeiDIntralcio"),
+  i18nSkill("skills.king.archetype.skill1"),
+  i18nSkill("skills.king.archetype.skill2"),
+  i18nSkill("skills.king.archetype.skill3"),
+  i18nSkill("skills.king.archetype.skill4"),
+  i18nSkill("skills.king.archetype.skill5"),
+  i18nSkill("skills.king.archetype.skill6"),
+  i18nSkill("skills.king.archetype.skill7"),
 ];
 
-export const modifiersSkills: CharacterSkill[] = [
-  i18nSkill("skills.modifiers.aBitMoreMuscle"),
-  i18nSkill("skills.modifiers.aBitMoreBrain"),
-  i18nSkill("skills.modifiers.aBitMoreBalance"),
-];
+// === MODIFIERS ===
+
+export const modifiersSkills: SuitSkills = {
+  clubs: i18nSkill("skills.modifiers.clubs"),
+  hearts: i18nSkill("skills.modifiers.hearts"),
+  spades: i18nSkill("skills.modifiers.spades"),
+};

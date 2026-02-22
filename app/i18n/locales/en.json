@@ -16,31 +16,31 @@
                 }
             },
             "archetype": {
-                "daiMoltiTalenti": {
+                "skill1": {
                     "name": "Jack of All Trades",
                     "description": "When performing a Challenge, you fail by drawing the 5th card that doesn't match the Suit, instead of the 4th."
                 },
-                "riscuotereUnDebito": {
+                "skill2": {
                     "name": "Collect a Debt",
                     "description": "Once per mission, another player can discard their hand to prevent you from taking Damage. At least one card must be discarded for this to happen."
                 },
-                "perUnPelo": {
+                "skill3": {
                     "name": "By a Hair",
                     "description": "Once per campaign, turn a Failure obtained in one of your Challenges into a Success. You still lose all cards drawn during the Challenge, as in a Failure."
                 },
-                "giocoDiSquadra": {
+                "skill4": {
                     "name": "Teamwork",
                     "description": "Three times per mission, successfully Helping another player reduces the Difficulty Level by 2 instead of 1."
                 },
-                "pagareIlPrezzo": {
+                "skill5": {
                     "name": "Pay the Price",
                     "description": "Permanently increase one of your Personal Modifiers by 1, then immediately gain 2 new Skills that don't reduce your Personal Modifiers."
                 },
-                "abbastanzaStupidoDaFunzionare": {
+                "skill6": {
                     "name": "Crazy Enough to Work",
                     "description": "Once per mission, you can place the first card of the deck in the Lost Opportunities Pile to obtain a Triumph in a Challenge. Characters can still take Damage. This Skill cannot be used against Targets."
                 },
-                "perPrecauzione": {
+                "skill7": {
                     "name": "Just in Case",
                     "description": "When you draw the first card of a Challenge, draw two, keep one and Discard the other. The discarded card has no effect on the Challenge."
                 }
@@ -62,31 +62,31 @@
                 }
             },
             "archetype": {
-                "sacrificio": {
+                "skill1": {
                     "name": "Sacrifice",
                     "description": "When you get a Failure in a Challenge, you can discard a Face Card used in the Challenge and place the other cards in the Lost Opportunities Pile, or vice versa."
                 },
-                "nonOggi": {
+                "skill2": {
                     "name": "Not Today",
                     "description": "When you Retreat from a Challenge, treat all cards you roll for as if their value were 2 higher."
                 },
-                "affidabile": {
+                "skill3": {
                     "name": "Reliable",
                     "description": "Three times per mission, you can Help another player without performing a Challenge."
                 },
-                "scudo": {
+                "skill4": {
                     "name": "Shield",
                     "description": "Once per mission, you can take the first three Number Cards from the Discard Pile and place them in the Lost Opportunities Pile to avoid taking Damage."
                 },
-                "soBadareAMe": {
+                "skill5": {
                     "name": "I Can Handle Myself",
                     "description": "Three times per mission, if no one offers you their Help, you can reduce the Difficulty Level of a Challenge by 1."
                 },
-                "inSerbo": {
+                "skill6": {
                     "name": "In Reserve",
                     "description": "Three times per mission, you can Steal a Number Card that would be lost during a Challenge in which a player has Retreated. You can only play these cards during other players' Challenges."
                 },
-                "preveggente": {
+                "skill7": {
                     "name": "Clairvoyant",
                     "description": "Three times per mission, you can look at the first card of the deck during another player's Challenge and reveal what card it is."
                 }
@@ -108,46 +108,46 @@
                 }
             },
             "archetype": {
-                "qualcosaInPiu": {
+                "skill1": {
                     "name": "A Little Extra",
                     "description": "When you get a Critical Success in a Challenge, you can Steal up to two Number Cards used in the Challenge."
                 },
-                "premioDiConsolazione": {
+                "skill2": {
                     "name": "Consolation Prize",
                     "description": "When you get a Failure in a Challenge, you can Steal a Number Card used in the Challenge."
                 },
-                "pianiBenRiusciti": {
+                "skill3": {
                     "name": "Well-Laid Plans",
                     "description": "At the beginning of each mission, draw from the deck until you find two Number Cards and Steal them, then reshuffle the deck."
                 },
-                "ilToccoGiusto": {
+                "skill4": {
                     "name": "The Right Touch",
                     "description": "When you use your Instrument, your worst Personal Modifier becomes 0. If it's already 0, it becomes -1."
                 },
-                "doppioFondo": {
+                "skill5": {
                     "name": "Hidden Compartment",
                     "description": "You can conceal weapons or instruments that would normally be too large to be Concealed (if it makes sense)."
                 },
-                "sempreSulPezzo": {
+                "skill6": {
                     "name": "Always Prepared",
                     "description": "At the beginning of each mission, you can choose an additional weapon or instrument of any size that has been hidden in the area where the Target is located."
                 },
-                "miSeiDIntralcio": {
+                "skill7": {
                     "name": "You're in My Way",
                     "description": "For the rest of the campaign, you cannot Help or be Helped by any other player. Permanently reduce one of your Personal Modifiers by 1, down to a maximum of -2."
                 }
             }
         },
         "modifiers": {
-            "aBitMoreMuscle": {
+            "clubs": {
                 "name": "A Bit More Muscle",
                 "description": "Permanently reduce your Clubs personal modifier by 1, up to a maximum of -2."
             },
-            "aBitMoreBrain": {
+            "hearts": {
                 "name": "A Bit More Brain",
                 "description": "Permanently reduce your Hearts personal modifier by 1, up to a maximum of -2."
             },
-            "aBitMoreBalance": {
+            "spades": {
                 "name": "A Bit More Balance",
                 "description": "Permanently reduce your Spades personal modifier by 1, up to a maximum of -2."
             }
