@@ -8,7 +8,7 @@ import {
   kingSuitSkills,
   kingArchetypeSkills,
   modifiersSkills,
-} from "~~/server/data/house-doesnt-win/character-templates";
+} from "~~/server/data/houseDoesntWin/characterTemplates";
 import type { CharacterSuit } from "~~/shared/types/character";
 
 const ALL_SUITS: CharacterSuit[] = ["hearts", "clubs", "spades"];
