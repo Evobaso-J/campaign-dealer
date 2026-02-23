@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CharacterSheet } from "~~/shared/types/character";
+import type { Genre } from "~~/shared/types/campaign";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import { buildScriptPrompt } from "./script";
 
@@ -31,7 +32,7 @@ const makeCharacter = (
     ...overrides,
   }) as CharacterSheet;
 
-const SETTING = "1920s Chicago speakeasy run by a supernatural crime boss";
+const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
 
 describe("buildScriptPrompt", () => {
   describe("return shape", () => {
@@ -63,7 +64,7 @@ describe("buildScriptPrompt", () => {
           makeCharacter({ archetype: "queen", suit: "hearts" }),
           makeCharacter({ archetype: "king", suit: "spades" }),
         ],
-        "Fantasy medieval kingdom",
+        ["highFantasy"],
       );
 
       expect(result1.system).toBe(result2.system);
@@ -96,6 +97,22 @@ describe("buildScriptPrompt", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
       expect(system).toContain("exactly 10");
     });
+
+    it("structures the campaign as three sessions", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system).toContain("three sessions");
+      expect(system).toContain("exactly 3");
+    });
+
+    it("maps each session to defeating one target", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system).toContain("scenes[0]");
+      expect(system).toContain("Jack");
+      expect(system).toContain("scenes[1]");
+      expect(system).toContain("Queen");
+      expect(system).toContain("scenes[2]");
+      expect(system).toContain("King");
+    });
   });
 
   describe("user prompt", () => {
@@ -119,9 +136,10 @@ describe("buildScriptPrompt", () => {
       expect(user).toContain("A streetwise enforcer with a heart of gold");
     });
 
-    it("includes the campaign setting", () => {
+    it("includes all genre names from the setting", () => {
       const { user } = buildScriptPrompt([makeCharacter()], SETTING);
-      expect(user).toContain(SETTING);
+      expect(user).toContain("cyberpunk");
+      expect(user).toContain("conspiracyThriller");
     });
 
     it("includes all characters when multiple are provided", () => {
@@ -148,9 +166,10 @@ describe("buildScriptPrompt", () => {
     it("reflects different setting values", () => {
       const { user } = buildScriptPrompt(
         [makeCharacter()],
-        "Cyberpunk dystopia",
+        ["highFantasy", "gothicHorror"],
       );
-      expect(user).toContain("Cyberpunk dystopia");
+      expect(user).toContain("highFantasy");
+      expect(user).toContain("gothicHorror");
     });
 
     it("handles a character with no concept gracefully", () => {
@@ -166,14 +185,13 @@ describe("buildScriptPrompt", () => {
   });
 
   describe("edge cases", () => {
-    it("handles an empty setting string without throwing", () => {
-      expect(() => buildScriptPrompt([makeCharacter()], "")).not.toThrow();
+    it("handles an empty setting array without throwing", () => {
+      expect(() => buildScriptPrompt([makeCharacter()], [])).not.toThrow();
     });
 
-    it("handles a setting string with special characters", () => {
-      const setting = 'A world of "fire & ice" <with> special chars';
-      const { user } = buildScriptPrompt([makeCharacter()], setting);
-      expect(user).toContain(setting);
+    it("handles a single genre setting", () => {
+      const { user } = buildScriptPrompt([makeCharacter()], ["steampunk"]);
+      expect(user).toContain("steampunk");
     });
 
     it("handles a single character array", () => {

@@ -47,7 +47,7 @@ export const GenreGroups = {
 } as const;
 
 export type GenreGroup = keyof typeof GenreGroups;
-type Genre = (typeof GenreGroups)[GenreGroup][number];
+export type Genre = (typeof GenreGroups)[GenreGroup][number];
 
 type GameMasterScript = {
   hook: GeneratedText;

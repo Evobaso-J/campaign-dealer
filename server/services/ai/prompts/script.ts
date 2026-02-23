@@ -1,8 +1,9 @@
 import type { AIPrompt } from "~~/server/services/ai/index";
 import type { CharacterSheet } from "~~/shared/types/character";
+import type { Genre } from "~~/shared/types/campaign";
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
-Your task is to generate a Game Master script for a session-zero campaign introduction.
+Your task is to generate a Game Master script for a three-session campaign.
 
 You MUST respond with ONLY a valid JSON object matching the GameMasterScript schema below.
 Do not include any text, explanation, or markdown formatting outside of the JSON object.
@@ -22,21 +23,22 @@ GameMasterScript schema:
       "motive": string (required) — a secret motive or vulnerability the players can exploit
     }
   ] (required, exactly 10 items) — weak points in the antagonist organization that the players can discover and exploit,
-  "scenes": string[] (required, 3-5 items) — key scenes or encounters for the session, each described in 2-3 sentences,
+  "scenes": string[] (required, exactly 3 items) — one scene per session, each described in 2-3 sentences,
   "centralTension": string (required) — a one-sentence description of the core conflict driving the campaign
 }
 
 Guidelines:
 - The hook should reference the campaign setting and hint at the central tension.
 - Each target must be a distinct, named antagonist fitting the campaign setting and their archetype role.
+- The campaign spans exactly three sessions. Each session culminates in the defeat of one Target.
+- scenes[0] focuses on defeating the Jack target, scenes[1] the Queen target, scenes[2] the King target.
 - Each weak point must be a distinct character with a unique role and exploitable motive.
-- The scenes should form a natural narrative progression from introduction to rising action.
 - The central tension should tie together the player characters, the setting, and the antagonist targets.
 - Tailor all content to the specific player characters and campaign setting provided.`;
 
 export function buildScriptPrompt(
   characters: CharacterSheet[],
-  setting: string,
+  setting: Genre[],
 ): AIPrompt {
   const characterSummaries = characters
     .map((c, i) => {
@@ -49,12 +51,12 @@ export function buildScriptPrompt(
     })
     .join("\n\n");
 
-  const user = `Generate a GameMasterScript for a session-zero campaign with the following party and setting.
+  const user = `Generate a GameMasterScript for a three-session campaign with the following party and setting.
 
 Party:
 ${characterSummaries}
 
-Campaign setting: ${setting}`;
+Campaign setting: ${setting.join(", ")}`;
 
   return {
     system: SYSTEM_PROMPT,
