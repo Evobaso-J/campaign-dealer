@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       provider: "",
       apiKey: "",
       model: "",
+      ollamaHost: "",
     },
   },
   devtools: { enabled: true },

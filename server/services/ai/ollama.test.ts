@@ -15,7 +15,7 @@ vi.mock("ollama", () => ({ Ollama: MockOllama }));
 
 const baseConfig: AIRuntimeConfig = {
   provider: "ollama",
-  apiKey: "http://127.0.0.1:11434",
+  ollamaHost: "http://127.0.0.1:11434",
 };
 
 afterEach(() => {

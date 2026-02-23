@@ -14,7 +14,7 @@ export class OllamaProvider implements AIProvider {
   private model: string;
 
   constructor(config: AIRuntimeConfig) {
-    this.client = new Ollama({ host: config.apiKey });
+    this.client = new Ollama({ host: config.ollamaHost });
     this.model = config.model || DEFAULT_MODEL;
   }
 

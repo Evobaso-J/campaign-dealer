@@ -42,6 +42,28 @@ describe("getAIProvider", () => {
     });
   });
 
+  describe("when ollamaHost is missing for ollama provider", () => {
+    it("throws with a message referencing the host", () => {
+      mockUseRuntimeConfig.mockReturnValue({
+        ai: { provider: "ollama" },
+      });
+      expect(() => getAIProvider()).toThrow("no host was provided");
+    });
+  });
+
+  describe("when ollama provider is properly configured", () => {
+    it("does not require apiKey when ollamaHost is provided", () => {
+      registerProvider("ollama", () => createMockProvider());
+      mockUseRuntimeConfig.mockReturnValue({
+        ai: { provider: "ollama", ollamaHost: "http://127.0.0.1:11434" },
+      });
+
+      const provider = getAIProvider();
+      expect(provider).toBeDefined();
+      expect(provider.complete).toBeDefined();
+    });
+  });
+
   describe("when provider name is invalid", () => {
     it("throws listing valid options", () => {
       mockUseRuntimeConfig.mockReturnValue({

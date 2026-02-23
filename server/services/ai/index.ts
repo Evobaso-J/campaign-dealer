@@ -60,8 +60,9 @@ export type AIProviderName =
  */
 export interface AIRuntimeConfig {
   provider: AIProviderName;
-  apiKey: string;
+  apiKey?: string;
   model?: string;
+  ollamaHost?: string;
 }
 
 /** Registry of provider factory functions, keyed by provider name. */
@@ -84,23 +85,30 @@ function assertAiConfigValidity(config: {
   provider?: string;
   apiKey?: string;
   model?: string;
+  ollamaHost?: string;
 }): asserts config is AIRuntimeConfig {
   if (!config.provider) {
     throw new Error(
       "AI provider is not configured. Set runtimeConfig.ai.provider in nuxt.config.ts.",
     );
   }
-  if (
-    !Object.values(AIProviderName).includes(config.provider as AIProviderName)
-  ) {
-    const valid = Object.values(AIProviderName).join(", ");
+  const aiProviders = Object.values(AIProviderName);
+  if (!aiProviders.includes(config.provider as AIProviderName)) {
+    const valid = aiProviders.join(", ");
     throw new Error(
       `Invalid AI provider "${config.provider}". Valid options are: ${valid}. ` +
         "Set runtimeConfig.ai.provider in nuxt.config.ts.",
     );
   }
 
-  if (!config.apiKey) {
+  if (config.provider === AIProviderName.ollama && !config.ollamaHost) {
+    throw new Error(
+      'AI provider "ollama" is configured but no host was provided. ' +
+        "Set runtimeConfig.ai.ollamaHost via NUXT_AI_OLLAMA_HOST environment variable.",
+    );
+  }
+
+  if (!config.apiKey && config.provider !== AIProviderName.ollama) {
     throw new Error(
       `AI provider "${config.provider}" is configured but no API key was provided. ` +
         "Set runtimeConfig.ai.apiKey via NUXT_AI_API_KEY environment variable.",

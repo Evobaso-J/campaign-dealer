@@ -17,9 +17,10 @@ Copy `.env.example` to `.env`. The key variables (mapped via Nuxt `runtimeConfig
 
 | Env var | `runtimeConfig` path | Purpose |
 | --- | --- | --- |
-| `NUXT_AI_PROVIDER` | `ai.provider` | Must be `"anthropic"` |
-| `NUXT_AI_API_KEY` | `ai.apiKey` | Anthropic API key |
-| `NUXT_AI_MODEL` | `ai.model` | Optional; defaults to `claude-sonnet-4-20250514` |
+| `NUXT_AI_PROVIDER` | `ai.provider` | `"anthropic"` or `"ollama"` |
+| `NUXT_AI_API_KEY` | `ai.apiKey` | Anthropic API key (required for Anthropic) |
+| `NUXT_AI_OLLAMA_HOST` | `ai.ollamaHost` | Ollama host URL (required for Ollama) |
+| `NUXT_AI_MODEL` | `ai.model` | Optional; defaults to `claude-sonnet-4-20250514` / `llama3.1` |
 
 ## Architecture
 
