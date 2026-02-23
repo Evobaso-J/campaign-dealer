@@ -49,7 +49,10 @@ describe("AnthropicProvider", () => {
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         system: "You are a GM.",
-        messages: [{ role: "user", content: "Create a character." }],
+        messages: [
+          { role: "user", content: "Create a character." },
+          { role: "assistant", content: "{" },
+        ],
       });
     });
 
@@ -61,7 +64,7 @@ describe("AnthropicProvider", () => {
       const provider = new AnthropicProvider(baseConfig);
       const result = await provider.complete({ system: "sys", user: "usr" });
 
-      expect(result.text).toBe("Hello world");
+      expect(result.text).toBe("{Hello world");
     });
 
     it("concatenates multiple text blocks", async () => {
@@ -75,7 +78,7 @@ describe("AnthropicProvider", () => {
       const provider = new AnthropicProvider(baseConfig);
       const result = await provider.complete({ system: "sys", user: "usr" });
 
-      expect(result.text).toBe("Part 1 Part 2");
+      expect(result.text).toBe("{Part 1 Part 2");
     });
 
     it("ignores non-text blocks", async () => {
@@ -89,16 +92,16 @@ describe("AnthropicProvider", () => {
       const provider = new AnthropicProvider(baseConfig);
       const result = await provider.complete({ system: "sys", user: "usr" });
 
-      expect(result.text).toBe("Only text");
+      expect(result.text).toBe("{Only text");
     });
 
-    it("returns empty string when no text blocks are present", async () => {
+    it("returns only the prefill when no text blocks are present", async () => {
       mockCreate.mockResolvedValue({ content: [] });
 
       const provider = new AnthropicProvider(baseConfig);
       const result = await provider.complete({ system: "sys", user: "usr" });
 
-      expect(result.text).toBe("");
+      expect(result.text).toBe("{");
     });
 
     it("uses a custom model when configured", async () => {
@@ -156,7 +159,7 @@ describe("AnthropicProvider", () => {
         chunks.push(chunk);
       }
 
-      expect(chunks).toEqual(["Hello", " world"]);
+      expect(chunks).toEqual(["{", "Hello", " world"]);
     });
 
     it("skips non-text-delta events", async () => {
@@ -185,7 +188,7 @@ describe("AnthropicProvider", () => {
         chunks.push(chunk);
       }
 
-      expect(chunks).toEqual(["data"]);
+      expect(chunks).toEqual(["{", "data"]);
     });
 
     it("passes correct parameters to the streaming API", async () => {
@@ -207,7 +210,10 @@ describe("AnthropicProvider", () => {
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         system: "Stream system",
-        messages: [{ role: "user", content: "Stream user" }],
+        messages: [
+          { role: "user", content: "Stream user" },
+          { role: "assistant", content: "{" },
+        ],
       });
     });
   });

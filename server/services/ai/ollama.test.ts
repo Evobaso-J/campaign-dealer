@@ -48,6 +48,7 @@ describe("OllamaProvider", () => {
       expect(mockChat).toHaveBeenCalledWith({
         model: "llama3.1",
         stream: false,
+        format: "json",
         messages: [
           { role: "system", content: "You are a GM." },
           { role: "user", content: "Create a character." },
