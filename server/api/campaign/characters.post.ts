@@ -77,7 +77,7 @@ export default defineEventHandler(async (event) => {
 
     return characterSheets;
   } catch (error) {
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (error instanceof Error && "statusCode" in error) {
       throw error;
     }
 
