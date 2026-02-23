@@ -46,6 +46,7 @@ export interface AIProvider {
  */
 export const AIProviderName = {
   anthropic: "anthropic",
+  ollama: "ollama",
 } as const;
 export type AIProviderName =
   (typeof AIProviderName)[keyof typeof AIProviderName];
