@@ -9,6 +9,7 @@ import type {
 
 const DEFAULT_MODEL = "gpt-4o";
 const MAX_TOKENS = 4096;
+const MODEL_TEMPERATURE = 1.5;
 
 export class OpenAIProvider implements AIProvider {
   private client: OpenAI;
@@ -23,7 +24,7 @@ export class OpenAIProvider implements AIProvider {
     const response = await this.client.chat.completions.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
-      temperature: 1.2,
+      temperature: MODEL_TEMPERATURE,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: prompt.system },
@@ -40,7 +41,7 @@ export class OpenAIProvider implements AIProvider {
     const stream = await this.client.chat.completions.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
-      temperature: 1.2,
+      temperature: MODEL_TEMPERATURE,
       stream: true,
       messages: [
         { role: "system", content: prompt.system },

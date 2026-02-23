@@ -8,6 +8,7 @@ import type {
 } from "./index";
 
 const DEFAULT_MODEL = "llama3.1";
+const MODEL_TEMPERATURE = 1.5;
 
 export class OllamaProvider implements AIProvider {
   private client: Ollama;
@@ -23,7 +24,7 @@ export class OllamaProvider implements AIProvider {
       model: this.model,
       stream: false,
       format: "json",
-      options: { temperature: 1.2 },
+      options: { temperature: MODEL_TEMPERATURE },
       messages: [
         { role: "system", content: prompt.system },
         { role: "user", content: prompt.user },
@@ -39,7 +40,7 @@ export class OllamaProvider implements AIProvider {
     const response = await this.client.chat({
       model: this.model,
       stream: true,
-      options: { temperature: 1.2 },
+      options: { temperature: MODEL_TEMPERATURE },
       messages: [
         { role: "system", content: prompt.system },
         { role: "user", content: prompt.user },
