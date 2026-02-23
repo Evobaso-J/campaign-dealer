@@ -1,11 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { GeneratedText } from "~~/shared/types/utils";
-import {
-  registerProvider,
-  type AICompletionResult,
-  type AIPrompt,
-  type AIProvider,
-  type AIRuntimeConfig,
+import type {
+  AICompletionResult,
+  AIPrompt,
+  AIProvider,
+  AIRuntimeConfig,
 } from "./index";
 
 const DEFAULT_MODEL = "claude-sonnet-4-20250514";
@@ -54,5 +53,3 @@ export class AnthropicProvider implements AIProvider {
     }
   }
 }
-
-registerProvider("anthropic", (config) => new AnthropicProvider(config));

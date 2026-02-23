@@ -1,11 +1,10 @@
 import { Ollama } from "ollama";
 import type { GeneratedText } from "~~/shared/types/utils";
-import {
-  registerProvider,
-  type AICompletionResult,
-  type AIPrompt,
-  type AIProvider,
-  type AIRuntimeConfig,
+import type {
+  AICompletionResult,
+  AIPrompt,
+  AIProvider,
+  AIRuntimeConfig,
 } from "./index";
 
 const DEFAULT_MODEL = "llama3.1";
@@ -29,7 +28,9 @@ export class OllamaProvider implements AIProvider {
       ],
     });
 
-    return { text: response.message.content as GeneratedText };
+    const text = response.message.content ?? "";
+
+    return { text: text as GeneratedText };
   }
 
   async *stream(prompt: AIPrompt): AsyncIterable<GeneratedText> {
@@ -49,5 +50,3 @@ export class OllamaProvider implements AIProvider {
     }
   }
 }
-
-registerProvider("ollama", (config) => new OllamaProvider(config));

@@ -1,4 +1,6 @@
 import type { GeneratedText } from "~~/shared/types/utils";
+import { AnthropicProvider } from "./anthropic";
+import { OllamaProvider } from "./ollama";
 
 /**
  * The shape returned by prompt builders in `server/services/ai/prompts/`.
@@ -69,12 +71,7 @@ const providerRegistry = new Map<
 >();
 
 /**
- * Register a provider factory. Called by each provider module at import time.
- *
- * @example
- * // In server/services/ai/anthropic.ts (CAM-11):
- * import { registerProvider } from "./index";
- * registerProvider("anthropic", (config) => new AnthropicProvider(config));
+ * Register a provider factory.
  */
 export function registerProvider(
   name: AIProviderName,
@@ -134,3 +131,7 @@ export function getAIProvider(): AIProvider {
 
   return factory(config.ai);
 }
+
+/** Explicit provider registration — ensures factories are available at runtime. */
+registerProvider("anthropic", (config) => new AnthropicProvider(config));
+registerProvider("ollama", (config) => new OllamaProvider(config));

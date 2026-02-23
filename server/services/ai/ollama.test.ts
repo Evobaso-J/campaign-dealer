@@ -13,15 +13,6 @@ const { mockChat, MockOllama } = vi.hoisted(() => {
 
 vi.mock("ollama", () => ({ Ollama: MockOllama }));
 
-const { mockRegisterProvider } = vi.hoisted(() => ({
-  mockRegisterProvider: vi.fn(),
-}));
-
-vi.mock("./index", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./index")>();
-  return { ...actual, registerProvider: mockRegisterProvider };
-});
-
 const baseConfig: AIRuntimeConfig = {
   provider: "ollama",
   apiKey: "http://127.0.0.1:11434",
@@ -90,6 +81,28 @@ describe("OllamaProvider", () => {
       expect(mockChat).toHaveBeenCalledWith(
         expect.objectContaining({ model: "mistral" }),
       );
+    });
+
+    it("returns empty string when content is undefined", async () => {
+      mockChat.mockResolvedValue({
+        message: { content: undefined },
+      });
+
+      const provider = new OllamaProvider(baseConfig);
+      const result = await provider.complete({ system: "sys", user: "usr" });
+
+      expect(result.text).toBe("");
+    });
+
+    it("returns empty string when content is null", async () => {
+      mockChat.mockResolvedValue({
+        message: { content: null },
+      });
+
+      const provider = new OllamaProvider(baseConfig);
+      const result = await provider.complete({ system: "sys", user: "usr" });
+
+      expect(result.text).toBe("");
     });
 
     it("propagates API errors", async () => {
@@ -178,12 +191,4 @@ describe("OllamaProvider", () => {
     });
   });
 
-  describe("self-registration", () => {
-    it("registers the ollama provider on import", () => {
-      expect(mockRegisterProvider).toHaveBeenCalledWith(
-        "ollama",
-        expect.any(Function),
-      );
-    });
-  });
 });

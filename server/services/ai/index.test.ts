@@ -53,18 +53,6 @@ describe("getAIProvider", () => {
     });
   });
 
-  describe("when provider is not registered", () => {
-    it("throws with the unregistered provider name", () => {
-      mockUseRuntimeConfig.mockReturnValue({
-        ai: { provider: "anthropic", apiKey: "test-key" },
-      });
-      // No registerProvider call — registry is empty for this provider
-      expect(() => getAIProvider()).toThrow(
-        'AI provider "anthropic" is not registered',
-      );
-    });
-  });
-
   describe("when properly configured", () => {
     it("returns an AIProvider instance", () => {
       registerProvider("anthropic", () => createMockProvider());

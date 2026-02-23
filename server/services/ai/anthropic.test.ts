@@ -14,16 +14,6 @@ const { mockCreate, mockStream, MockAnthropic } = vi.hoisted(() => {
 
 vi.mock("@anthropic-ai/sdk", () => ({ default: MockAnthropic }));
 
-// Mock registerProvider to capture the side-effect call.
-const { mockRegisterProvider } = vi.hoisted(() => ({
-  mockRegisterProvider: vi.fn(),
-}));
-
-vi.mock("./index", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./index")>();
-  return { ...actual, registerProvider: mockRegisterProvider };
-});
-
 const baseConfig: AIRuntimeConfig = {
   provider: "anthropic",
   apiKey: "sk-test-key",
@@ -222,12 +212,4 @@ describe("AnthropicProvider", () => {
     });
   });
 
-  describe("self-registration", () => {
-    it("registers the anthropic provider on import", () => {
-      expect(mockRegisterProvider).toHaveBeenCalledWith(
-        "anthropic",
-        expect.any(Function),
-      );
-    });
-  });
 });
