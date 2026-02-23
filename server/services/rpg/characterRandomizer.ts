@@ -12,7 +12,7 @@ import {
   CharacterSuit,
 } from "~~/shared/types/character";
 
-type CharacterTemplate = Omit<CharacterSheet, "characterIdentity"> & {
+export type CharacterTemplate = Omit<CharacterSheet, "characterIdentity"> & {
   suitCharacterization: SuitCharacterization;
   archetypeCharacterization: ArchetypeCharacterization;
 };
