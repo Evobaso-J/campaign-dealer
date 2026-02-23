@@ -104,14 +104,22 @@ describe("buildScriptPrompt", () => {
       expect(system).toContain("exactly 3");
     });
 
-    it("maps each session to defeating one target", () => {
+    it("does not hardcode a fixed archetype order for sessions", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
-      expect(system).toContain("scenes[0]");
-      expect(system).toContain("Jack");
-      expect(system).toContain("scenes[1]");
-      expect(system).toContain("Queen");
-      expect(system).toContain("scenes[2]");
-      expect(system).toContain("King");
+      expect(system).toContain("narrative escalation");
+      expect(system).toContain("need not follow Jack, Queen, King");
+    });
+
+    it("mentions the Diamonds faction", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system).toContain("Diamonds");
+    });
+
+    it("mentions the three approaches to defeating targets", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system.toLowerCase()).toContain("captured");
+      expect(system.toLowerCase()).toContain("converted");
+      expect(system.toLowerCase()).toContain("eliminated");
     });
   });
 
