@@ -229,6 +229,10 @@ describe.skipIf(!hasCredentials)(
       lines.push(`    ${gmScript.centralTension}`);
       lines.push("");
 
+      lines.push(`  Plot:`);
+      lines.push(`    ${gmScript.plot}`);
+      lines.push("");
+
       // Targets
       const targets = gmScript.targets as Record<
         string,
@@ -331,10 +335,11 @@ describe.skipIf(!hasCredentials)(
       }
     });
 
-    it("GM script has scenes and central tension", () => {
+    it("GM script has scenes, central tension, and plot", () => {
       expect(gmScript.scenes).toBeDefined();
       expect((gmScript.scenes as string[]).length).toBeGreaterThanOrEqual(1);
       expect(gmScript.centralTension).toBeTruthy();
+      expect(gmScript.plot).toBeTruthy();
     });
   },
 );

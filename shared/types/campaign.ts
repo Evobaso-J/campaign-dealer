@@ -64,6 +64,7 @@ type GameMasterScript = {
   }[];
   scenes: GeneratedText[];
   centralTension: GeneratedText;
+  plot: GeneratedText;
 };
 
 export interface Campaign {

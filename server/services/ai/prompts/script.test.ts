@@ -111,6 +111,11 @@ describe("buildScriptPrompt", () => {
       expect(system).toContain("three sessions");
     });
 
+    it("includes the plot field in the schema", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system).toContain('"plot"');
+    });
+
     it("does not hardcode a fixed archetype order for sessions", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
       expect(system).toContain("narrative escalation");

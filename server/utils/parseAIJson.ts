@@ -18,7 +18,6 @@ export function parseAIJson<T>(raw: string): T {
 
   try {
     const parsedJson = JSON.parse(jsonrepair(text));
-    console.log({ parsedJson });
     if (!parsedJson || typeof parsedJson !== "object") {
       throw new Error("Parsed JSON is falsy");
     }

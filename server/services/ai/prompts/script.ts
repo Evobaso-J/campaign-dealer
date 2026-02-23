@@ -34,7 +34,8 @@ GameMasterScript schema:
     }
   ] (required, exactly 10 items) — weak points in the Diamonds organization that the players can discover and exploit,
   "scenes": string[] — scenarios or encounters for each session that advance the plot and challenge the players, with hints about which approach (capture, convert, eliminate) might be most effective or dramatic for the Target featured in that session,
-  "centralTension": string (required) — a one-sentence description of the core conflict driving the campaign
+  "centralTension": string (required) — a one-sentence description of the core conflict driving the campaign,
+  "plot": string (required) — a multi-paragraph narrative overview of the full campaign arc, covering the three sessions and the key story beats that connect them
 }
 
 Guidelines:
@@ -44,6 +45,7 @@ Guidelines:
 - Each scene should hint at which approach (capture, convert, or eliminate) might be most effective or dramatic for that Target.
 - Each weak point must be a distinct character or resource with a unique role and exploitable motive.
 - The central tension should tie together the player characters, the setting, and the antagonist Targets.
+- The plot should read as a coherent story summary — not a bullet list — connecting all three sessions into a single narrative.
 - Tailor all content to the specific player characters and campaign setting provided.`;
 
 export function buildScriptPrompt(

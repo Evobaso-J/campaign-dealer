@@ -12,8 +12,8 @@ Do not include any text, explanation, or markdown formatting outside of the JSON
 
 CharacterIdentity schema:
 {
-  "name": string (required) — the character's full name or alias, fitting the campaign setting,
-  "pronouns": string | undefined — the character's pronouns (e.g. "he/him", "she/her", "they/them"),
+  "name": string (required) — the character's full name or alias, fitting the campaign setting. It doesn't have to match the character's archetype or suit,
+  "pronouns": string | undefined — the character's pronouns (e.g. "he/him", "she/her", "they/them"). It doesn't have to match the character's archetype or suit,
   "concept": string (required) — a brief, evocative description of who this character is and why they fight against the Diamonds. Be incisive — imagine describing them to a friend in one sentence,
   "weapon": { "name": string, "concealed": boolean } | undefined — the character's signature weapon. If the item is not self-explanatory, describe its function,
   "instrument": { "name": string, "concealed": boolean } | undefined — the character's signature instrument or tool. If the item is not self-explanatory, describe its function,
