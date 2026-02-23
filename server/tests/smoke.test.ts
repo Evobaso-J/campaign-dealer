@@ -11,9 +11,9 @@ import {
   generateRandomDistinctCharacters,
   type CharacterTemplate,
 } from "~~/server/services/rpg/characterRandomizer";
+import { parseAIJson } from "~~/server/utils/parseAIJson";
 import type { CharacterSheet } from "~~/shared/types/character";
 import type { Genre } from "~~/shared/types/campaign";
-import type { GeneratedText } from "~~/shared/types/utils";
 
 /**
  * Smoke test — exercises the full campaign generation pipeline:
@@ -83,17 +83,6 @@ function createProvider(
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-function extractJson(raw: string): string {
-  let text = raw;
-  const fenced = text.match(/```(?:json)?\s*\n([\s\S]*?)```/);
-  if (fenced) text = fenced[1]!;
-  // The prompt schema uses "undefined" for optional fields, which some
-  // models emit literally. Replace bare `undefined` values with `null`
-  // so JSON.parse succeeds.
-  text = text.replace(/:\s*undefined\b/g, ": null");
-  return text.trim();
-}
-
 function elapsed(startMs: number): string {
   return ((Date.now() - startMs) / 1000).toFixed(1) + "s";
 }
@@ -134,7 +123,7 @@ describe.skipIf(!hasCredentials)(
         const startMs = Date.now();
         const prompt = buildCharacterPrompt(template, SETTING);
         const result = await provider.complete(prompt);
-        const identity = JSON.parse(extractJson(result.text));
+        const identity = parseAIJson<CharacterSheet["characterIdentity"]>(result.text);
 
         log(`    [${i + 1}/${templates.length}] ${label} → ${identity.name} (${elapsed(startMs)})`);
 
@@ -145,23 +134,7 @@ describe.skipIf(!hasCredentials)(
           modifiers: template.modifiers,
           suitSkill: template.suitSkill,
           archetypeSkills: template.archetypeSkills,
-          characterIdentity: {
-            name: identity.name as GeneratedText,
-            pronouns: identity.pronouns as GeneratedText | undefined,
-            concept: identity.concept as GeneratedText | undefined,
-            weapon: identity.weapon
-              ? {
-                  name: identity.weapon.name as GeneratedText,
-                  concealed: identity.weapon.concealed,
-                }
-              : undefined,
-            instrument: identity.instrument
-              ? {
-                  name: identity.instrument.name as GeneratedText,
-                  concealed: identity.instrument.concealed,
-                }
-              : undefined,
-          },
+          characterIdentity: identity,
         });
       }
 
@@ -170,7 +143,7 @@ describe.skipIf(!hasCredentials)(
       const scriptStart = Date.now();
       const scriptPrompt = buildScriptPrompt(characterSheets, SETTING);
       const scriptResult = await provider.complete(scriptPrompt);
-      gmScript = JSON.parse(extractJson(scriptResult.text));
+      gmScript = parseAIJson<Record<string, unknown>>(scriptResult.text);
       log(`    Done (${elapsed(scriptStart)})`);
       log(`    Hook: ${(gmScript.hook as string).slice(0, 80)}…`);
       log(`    Central tension: ${gmScript.centralTension}\n`);

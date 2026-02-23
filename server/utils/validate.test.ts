@@ -120,6 +120,6 @@ describe("scriptRequestSchema", () => {
       characters: [char],
       setting: ["spaceOpera"],
     });
-    expect(result.characters[0].characterIdentity.weapon?.name).toBe("Sword");
+    expect(result.characters[0]!.characterIdentity.weapon?.name).toBe("Sword");
   });
 });
