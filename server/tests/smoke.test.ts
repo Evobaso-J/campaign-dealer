@@ -94,6 +94,24 @@ function elapsed(startMs: number): string {
   return ((Date.now() - startMs) / 1000).toFixed(1) + "s";
 }
 
+function wrapText(text: string, lineWidth: number, indent: string): string {
+  const words = String(text).split(" ");
+  const lines: string[] = [];
+  let current = indent;
+  for (const word of words) {
+    if (current === indent) {
+      current += word;
+    } else if (current.length + 1 + word.length <= lineWidth) {
+      current += " " + word;
+    } else {
+      lines.push(current);
+      current = indent + word;
+    }
+  }
+  if (current !== indent) lines.push(current);
+  return lines.join("\n");
+}
+
 const log = console.log;
 
 // ── Test suite ─────────────────────────────────────────────────────────
@@ -195,7 +213,8 @@ describe.skipIf(!hasCredentials)(
           `      Modifiers: ♥${sheet.modifiers.hearts} ♣${sheet.modifiers.clubs} ♠${sheet.modifiers.spades}`,
         );
         if (id.concept) {
-          lines.push(`      Concept: ${id.concept}`);
+          lines.push(`      Concept:`);
+          lines.push(wrapText(id.concept, 72, "        "));
         }
         if (id.weapon) {
           lines.push(
@@ -222,15 +241,15 @@ describe.skipIf(!hasCredentials)(
       lines.push("");
 
       lines.push(`  Hook:`);
-      lines.push(`    ${gmScript.hook}`);
+      lines.push(wrapText(gmScript.hook as string, 72, "    "));
       lines.push("");
 
       lines.push(`  Central Tension:`);
-      lines.push(`    ${gmScript.centralTension}`);
+      lines.push(wrapText(gmScript.centralTension as string, 72, "    "));
       lines.push("");
 
       lines.push(`  Plot:`);
-      lines.push(`    ${gmScript.plot}`);
+      lines.push(wrapText(gmScript.plot as string, 72, "    "));
       lines.push("");
 
       // Targets
@@ -243,9 +262,18 @@ describe.skipIf(!hasCredentials)(
         const t = targets[role];
         if (!t) continue;
         lines.push(`    ${role.toUpperCase()}: ${t.name}`);
-        if (t.description) lines.push(`      Description: ${t.description}`);
-        if (t.fate) lines.push(`      Fate: ${t.fate}`);
-        if (t.notes) lines.push(`      Notes: ${t.notes}`);
+        if (t.description) {
+          lines.push(`      Description:`);
+          lines.push(wrapText(t.description, 72, "        "));
+        }
+        if (t.fate) {
+          lines.push(`      Fate:`);
+          lines.push(wrapText(t.fate, 72, "        "));
+        }
+        if (t.notes) {
+          lines.push(`      Notes:`);
+          lines.push(wrapText(t.notes, 72, "        "));
+        }
       }
       lines.push("");
 
@@ -266,7 +294,10 @@ describe.skipIf(!hasCredentials)(
       const scenes = gmScript.scenes as string[];
       lines.push(`  Scenes (${scenes.length}):`);
       for (const [j, scene] of scenes.entries()) {
-        lines.push(`    ${String(j + 1).padStart(2, " ")}. ${scene}`);
+        const prefix = `    ${String(j + 1).padStart(2, " ")}. `;
+        const continuation = " ".repeat(prefix.length);
+        const wrapped = wrapText(scene, 72, continuation);
+        lines.push(prefix + wrapped.slice(continuation.length));
       }
 
       lines.push("");
