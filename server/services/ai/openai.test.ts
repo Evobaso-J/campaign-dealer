@@ -46,6 +46,7 @@ describe("OpenAIProvider", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         model: "gpt-4o",
         max_tokens: 4096,
+        temperature: 1.2,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: "You are a GM." },
@@ -180,6 +181,7 @@ describe("OpenAIProvider", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         model: "gpt-4o",
         max_tokens: 4096,
+        temperature: 1.2,
         stream: true,
         messages: [
           { role: "system", content: "Stream system" },

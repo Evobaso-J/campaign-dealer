@@ -28,6 +28,7 @@ export class AnthropicProvider implements AIProvider {
     const response = await this.client.messages.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
+      temperature: 1.0,
       system: prompt.system,
       messages: [
         { role: "user", content: prompt.user },
@@ -51,6 +52,7 @@ export class AnthropicProvider implements AIProvider {
     const stream = this.client.messages.stream({
       model: this.model,
       max_tokens: MAX_TOKENS,
+      temperature: 1.0,
       system: prompt.system,
       messages: [
         { role: "user", content: prompt.user },

@@ -23,6 +23,7 @@ export class OpenAIProvider implements AIProvider {
     const response = await this.client.chat.completions.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
+      temperature: 1.2,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: prompt.system },
@@ -39,6 +40,7 @@ export class OpenAIProvider implements AIProvider {
     const stream = await this.client.chat.completions.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
+      temperature: 1.2,
       stream: true,
       messages: [
         { role: "system", content: prompt.system },

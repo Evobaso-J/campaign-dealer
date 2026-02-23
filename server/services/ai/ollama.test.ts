@@ -49,6 +49,7 @@ describe("OllamaProvider", () => {
         model: "llama3.1",
         stream: false,
         format: "json",
+        options: { temperature: 1.2 },
         messages: [
           { role: "system", content: "You are a GM." },
           { role: "user", content: "Create a character." },
@@ -184,6 +185,7 @@ describe("OllamaProvider", () => {
       expect(mockChat).toHaveBeenCalledWith({
         model: "llama3.1",
         stream: true,
+        options: { temperature: 1.2 },
         messages: [
           { role: "system", content: "Stream system" },
           { role: "user", content: "Stream user" },
@@ -191,5 +193,4 @@ describe("OllamaProvider", () => {
       });
     });
   });
-
 });

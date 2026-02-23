@@ -48,6 +48,7 @@ describe("AnthropicProvider", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
+        temperature: 1.0,
         system: "You are a GM.",
         messages: [
           { role: "user", content: "Create a character." },
@@ -209,6 +210,7 @@ describe("AnthropicProvider", () => {
       expect(mockStream).toHaveBeenCalledWith({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
+        temperature: 1.0,
         system: "Stream system",
         messages: [
           { role: "user", content: "Stream user" },
@@ -217,5 +219,4 @@ describe("AnthropicProvider", () => {
       });
     });
   });
-
 });

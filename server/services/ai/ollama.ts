@@ -23,6 +23,7 @@ export class OllamaProvider implements AIProvider {
       model: this.model,
       stream: false,
       format: "json",
+      options: { temperature: 1.2 },
       messages: [
         { role: "system", content: prompt.system },
         { role: "user", content: prompt.user },
@@ -38,6 +39,7 @@ export class OllamaProvider implements AIProvider {
     const response = await this.client.chat({
       model: this.model,
       stream: true,
+      options: { temperature: 1.2 },
       messages: [
         { role: "system", content: prompt.system },
         { role: "user", content: prompt.user },
