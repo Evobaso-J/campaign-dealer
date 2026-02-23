@@ -10,7 +10,6 @@ import { jsonrepair } from "jsonrepair";
  */
 export function parseAIJson<T>(raw: string): T {
   let text = raw;
-
   const fenced = text.match(/```(?:json)?\s*\n([\s\S]*?)```/);
   if (fenced) text = fenced[1]!;
 
@@ -18,7 +17,12 @@ export function parseAIJson<T>(raw: string): T {
   text = text.trim();
 
   try {
-    return JSON.parse(jsonrepair(text)) as T;
+    const parsedJson = JSON.parse(jsonrepair(text));
+    console.log({ parsedJson });
+    if (!parsedJson || typeof parsedJson !== "object") {
+      throw new Error("Parsed JSON is falsy");
+    }
+    return parsedJson as T;
   } catch (cause) {
     throw new Error("Failed to parse AI JSON response", { cause });
   }
