@@ -20,11 +20,19 @@ export class AnthropicProvider implements AIProvider {
   }
 
   async complete(prompt: AIPrompt): Promise<AICompletionResult> {
+    // Assistant prefill: by ending the messages array with an assistant turn
+    // that starts with "{", we force Claude to continue from that character.
+    // The model cannot produce any prose before the JSON — it is already
+    // mid-object. The API returns only the continuation (without the "{"),
+    // so we prepend it manually to reconstruct the full JSON string.
     const response = await this.client.messages.create({
       model: this.model,
       max_tokens: MAX_TOKENS,
       system: prompt.system,
-      messages: [{ role: "user", content: prompt.user }],
+      messages: [
+        { role: "user", content: prompt.user },
+        { role: "assistant", content: "{" },
+      ],
     });
 
     const text = response.content
@@ -32,15 +40,22 @@ export class AnthropicProvider implements AIProvider {
       .map((block) => block.text)
       .join("");
 
-    return { text: text as GeneratedText };
+    return { text: ("{" + text) as GeneratedText };
   }
 
   async *stream(prompt: AIPrompt): AsyncIterable<GeneratedText> {
+    // Same prefill technique as complete() — see comment above.
+    // Yield "{" immediately so the consumer receives the full JSON from the start.
+    yield "{" as GeneratedText;
+
     const stream = this.client.messages.stream({
       model: this.model,
       max_tokens: MAX_TOKENS,
       system: prompt.system,
-      messages: [{ role: "user", content: prompt.user }],
+      messages: [
+        { role: "user", content: prompt.user },
+        { role: "assistant", content: "{" },
+      ],
     });
 
     for await (const event of stream) {

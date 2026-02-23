@@ -22,6 +22,7 @@ export class OllamaProvider implements AIProvider {
     const response = await this.client.chat({
       model: this.model,
       stream: false,
+      format: "json",
       messages: [
         { role: "system", content: prompt.system },
         { role: "user", content: prompt.user },
