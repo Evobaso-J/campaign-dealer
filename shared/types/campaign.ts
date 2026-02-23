@@ -60,7 +60,6 @@ type GameMasterScript = {
   weakPoints: {
     name: GeneratedText;
     role: GeneratedText;
-    motive: GeneratedText;
   }[];
   scenes: GeneratedText[];
   centralTension: GeneratedText;

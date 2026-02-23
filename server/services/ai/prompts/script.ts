@@ -29,12 +29,11 @@ GameMasterScript schema:
   } (required) — the three antagonist Targets the players must defeat, one per archetype,
   "weakPoints": [
     {
-      "name": string (required) — the name of an antagonist Target or their associate,
-      "role": string (required) — their role in the Diamonds organization,
-      "motive": string (required) — a secret motive or vulnerability the players can exploit
+      "name": string (required) — the name of an antagonist Target associate or resource. Might be a person, location, secret, or asset that the players can use to their advantage,
+      "role": string (required) — their role in the Diamonds organization
     }
   ] (required, exactly 10 items) — weak points in the Diamonds organization that the players can discover and exploit,
-  "scenes": string[] (required, exactly 3 items) — one scene per session, each described in 2-3 sentences; each scene culminates in the defeat of one Target,
+  "scenes": string[] — scenarios or encounters for each session that advance the plot and challenge the players, with hints about which approach (capture, convert, eliminate) might be most effective or dramatic for the Target featured in that session,
   "centralTension": string (required) — a one-sentence description of the core conflict driving the campaign
 }
 

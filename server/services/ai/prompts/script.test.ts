@@ -4,9 +4,7 @@ import type { Genre } from "~~/shared/types/campaign";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import { buildScriptPrompt } from "./script";
 
-const makeCharacter = (
-  overrides?: Partial<CharacterSheet>,
-): CharacterSheet =>
+const makeCharacter = (overrides?: Partial<CharacterSheet>): CharacterSheet =>
   ({
     archetype: "jack",
     suit: "clubs",
@@ -101,7 +99,6 @@ describe("buildScriptPrompt", () => {
     it("structures the campaign as three sessions", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
       expect(system).toContain("three sessions");
-      expect(system).toContain("exactly 3");
     });
 
     it("does not hardcode a fixed archetype order for sessions", () => {
@@ -158,8 +155,7 @@ describe("buildScriptPrompt", () => {
           suit: "hearts",
           characterIdentity: {
             name: "Lady Seraphina" as GeneratedText,
-            concept:
-              "A cunning diplomat hiding dark secrets" as GeneratedText,
+            concept: "A cunning diplomat hiding dark secrets" as GeneratedText,
           },
         }),
       ];
@@ -203,9 +199,7 @@ describe("buildScriptPrompt", () => {
     });
 
     it("handles a single character array", () => {
-      expect(() =>
-        buildScriptPrompt([makeCharacter()], SETTING),
-      ).not.toThrow();
+      expect(() => buildScriptPrompt([makeCharacter()], SETTING)).not.toThrow();
     });
 
     it("handles a large party of characters", () => {
