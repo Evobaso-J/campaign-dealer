@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@nuxt/ui": "4.4.0",
     "@nuxtjs/i18n": "10.2.3",
     "@pinia/nuxt": "^0.11.3",
