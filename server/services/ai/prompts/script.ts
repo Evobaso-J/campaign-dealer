@@ -10,6 +10,11 @@ Do not include any text, explanation, or markdown formatting outside of the JSON
 GameMasterScript schema:
 {
   "hook": string (required) — an opening narrative hook (2-4 sentences) that sets the scene and draws the players into the story,
+  "targets": {
+    "king": { "name": string (required) — the name of the King-archetype antagonist Target },
+    "queen": { "name": string (required) — the name of the Queen-archetype antagonist Target },
+    "jack": { "name": string (required) — the name of the Jack-archetype antagonist Target }
+  } (required) — the three antagonist Targets the players must defeat, one per archetype,
   "weakPoints": [
     {
       "name": string (required) — the name of an antagonist Target or their associate,
@@ -23,6 +28,7 @@ GameMasterScript schema:
 
 Guidelines:
 - The hook should reference the campaign setting and hint at the central tension.
+- Each target must be a distinct, named antagonist fitting the campaign setting and their archetype role.
 - Each weak point must be a distinct character with a unique role and exploitable motive.
 - The scenes should form a natural narrative progression from introduction to rising action.
 - The central tension should tie together the player characters, the setting, and the antagonist targets.

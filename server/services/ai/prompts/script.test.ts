@@ -85,6 +85,13 @@ describe("buildScriptPrompt", () => {
       expect(system).toContain("The House Doesn't Always Win");
     });
 
+    it("describes the three target archetypes", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      expect(system).toContain('"king"');
+      expect(system).toContain('"queen"');
+      expect(system).toContain('"jack"');
+    });
+
     it("specifies exactly 10 weak points", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
       expect(system).toContain("exactly 10");
