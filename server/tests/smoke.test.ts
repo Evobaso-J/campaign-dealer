@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { AnthropicProvider } from "~~/server/services/ai/anthropic";
 import type { AIProvider, AIRuntimeConfig } from "~~/server/services/ai/index";
 import { OllamaProvider } from "~~/server/services/ai/ollama";
+import { OpenAIProvider } from "~~/server/services/ai/openai";
 import { buildCharacterPrompt } from "~~/server/services/ai/prompts/character";
 import { buildScriptPrompt } from "~~/server/services/ai/prompts/script";
 import {
@@ -84,6 +85,9 @@ function createProvider(
 ): AIProvider {
   if (providerName === "ollama") {
     return new OllamaProvider(config);
+  }
+  if (providerName === "openai") {
+    return new OpenAIProvider(config);
   }
   return new AnthropicProvider(config);
 }
