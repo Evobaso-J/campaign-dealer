@@ -10,17 +10,17 @@ Do not include any text, explanation, or markdown formatting outside of the JSON
 CharacterIdentity schema:
 {
   "name": string (required) — the character's full name, fitting the campaign setting,
-  "pronouns": string | null — the character's pronouns (e.g. "he/him", "she/her", "they/them"),
-  "concept": string | null — a one-sentence description of who this character is,
-  "weapon": { "name": string, "concealed": boolean } | null — the character's signature weapon,
-  "instrument": { "name": string, "concealed": boolean } | null — the character's signature instrument or tool
+  "pronouns": string | undefined — the character's pronouns (e.g. "he/him", "she/her", "they/them"),
+  "concept": string — a one-sentence description of who this character is,
+  "weapon": { "name": string, "concealed": boolean } | undefined — the character's signature weapon,
+  "instrument": { "name": string, "concealed": boolean } | undefined — the character's signature instrument or tool
 }
 
 Guidelines:
 - The name, weapon, and instrument must be thematically appropriate for the campaign setting.
 - The concept should reflect the character's archetype and suit personality.
 - The "concealed" field indicates whether the item is hidden on the character's person.
-- If a weapon or instrument is not appropriate for the character, set the field to null.`;
+- If a weapon or instrument is not appropriate for the character, set the field to undefined.`;
 
 export function buildCharacterPrompt(
   template: CharacterTemplate,
