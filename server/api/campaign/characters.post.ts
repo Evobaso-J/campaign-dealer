@@ -6,7 +6,6 @@ import { charactersRequestSchema } from "~~/server/utils/validate";
 import type { CharacterSheet } from "~~/shared/types/character";
 
 export default defineEventHandler(async (event) => {
-  // 1. Validate request body
   const body = await readBody(event);
   const parsed = charactersRequestSchema.safeParse(body);
 
@@ -20,7 +19,6 @@ export default defineEventHandler(async (event) => {
 
   const { playerCount, setting } = parsed.data;
 
-  // 2. Generate random character templates
   let templates;
   try {
     templates = generateRandomDistinctCharacters(playerCount);
@@ -32,7 +30,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 3. Generate character identities via AI (in parallel)
   let provider;
   try {
     provider = getAIProvider();
@@ -80,7 +77,6 @@ export default defineEventHandler(async (event) => {
 
     return characterSheets;
   } catch (error) {
-    // Re-throw errors already wrapped with createError
     if (error && typeof error === "object" && "statusCode" in error) {
       throw error;
     }
