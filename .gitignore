@@ -13,6 +13,9 @@ node_modules
 logs
 *.log
 
+# Smoke test output
+server/tests/smoke-output
+
 # Misc
 .DS_Store
 .fleet

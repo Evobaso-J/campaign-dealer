@@ -1,6 +1,6 @@
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { AnthropicProvider } from "~~/server/services/ai/anthropic";
 import type { AIProvider, AIRuntimeConfig } from "~~/server/services/ai/index";
@@ -112,7 +112,9 @@ describe.skipIf(!hasCredentials)(
       log(`\n  Generating ${CHARACTER_COUNT} character templates…`);
       templates = generateRandomDistinctCharacters(CHARACTER_COUNT);
       for (const t of templates) {
-        log(`    ${t.archetype} of ${t.suit}  |  ♥${t.modifiers.hearts} ♣${t.modifiers.clubs} ♠${t.modifiers.spades}`);
+        log(
+          `    ${t.archetype} of ${t.suit}  |  ♥${t.modifiers.hearts} ♣${t.modifiers.clubs} ♠${t.modifiers.spades}`,
+        );
       }
 
       // Step 2: Generate character identities via AI
@@ -123,9 +125,13 @@ describe.skipIf(!hasCredentials)(
         const startMs = Date.now();
         const prompt = buildCharacterPrompt(template, SETTING);
         const result = await provider.complete(prompt);
-        const identity = parseAIJson<CharacterSheet["characterIdentity"]>(result.text);
+        const identity = parseAIJson<CharacterSheet["characterIdentity"]>(
+          result.text,
+        );
 
-        log(`    [${i + 1}/${templates.length}] ${label} → ${identity.name} (${elapsed(startMs)})`);
+        log(
+          `    [${i + 1}/${templates.length}] ${label} → ${identity.name} (${elapsed(startMs)})`,
+        );
 
         characterSheets.push({
           archetype: template.archetype,
@@ -148,6 +154,119 @@ describe.skipIf(!hasCredentials)(
       log(`    Hook: ${(gmScript.hook as string).slice(0, 80)}…`);
       log(`    Central tension: ${gmScript.centralTension}\n`);
     }, 180_000);
+
+    afterAll(() => {
+      if (!characterSheets?.length || !gmScript) return;
+
+      const lines: string[] = [];
+      const divider = "═".repeat(72);
+      const thinDivider = "─".repeat(72);
+      const timestamp = new Date().toISOString();
+
+      lines.push(divider);
+      lines.push(`  SMOKE TEST — CAMPAIGN OUTPUT`);
+      lines.push(`  ${timestamp}`);
+      lines.push(
+        `  Provider: ${providerName}${config.model ? ` | Model: ${config.model}` : ""}`,
+      );
+      lines.push(`  Setting: ${SETTING.join(", ")}`);
+      lines.push(divider);
+      lines.push("");
+
+      // ── Characters ──
+      lines.push("▌ CHARACTERS");
+      lines.push(thinDivider);
+      for (const [i, sheet] of characterSheets.entries()) {
+        const id = sheet.characterIdentity;
+        lines.push(``);
+        lines.push(`  [${i + 1}] ${id.name}`);
+        if (id.pronouns) lines.push(`      Pronouns: ${id.pronouns}`);
+        lines.push(
+          `      Archetype: ${sheet.archetype}  |  Suit: ${sheet.suit}`,
+        );
+        lines.push(
+          `      Modifiers: ♥${sheet.modifiers.hearts} ♣${sheet.modifiers.clubs} ♠${sheet.modifiers.spades}`,
+        );
+        if (id.concept) {
+          lines.push(`      Concept: ${id.concept}`);
+        }
+        if (id.weapon) {
+          lines.push(
+            `      Weapon: ${id.weapon.name}${id.weapon.concealed ? " (concealed)" : ""}`,
+          );
+        }
+        if (id.instrument) {
+          lines.push(
+            `      Instrument: ${id.instrument.name}${id.instrument.concealed ? " (concealed)" : ""}`,
+          );
+        }
+        lines.push(`      Suit Skill: ${sheet.suitSkill.name}`);
+        lines.push(
+          `      Archetype Skills: ${sheet.archetypeSkills.map((s) => s.name).join(", ")}`,
+        );
+      }
+
+      lines.push("");
+      lines.push("");
+
+      // ── GM Script ──
+      lines.push("▌ GM SCRIPT");
+      lines.push(thinDivider);
+      lines.push("");
+
+      lines.push(`  Hook:`);
+      lines.push(`    ${gmScript.hook}`);
+      lines.push("");
+
+      lines.push(`  Central Tension:`);
+      lines.push(`    ${gmScript.centralTension}`);
+      lines.push("");
+
+      // Targets
+      const targets = gmScript.targets as Record<
+        string,
+        { name: string; fate?: string; notes?: string }
+      >;
+      lines.push(`  Targets:`);
+      for (const role of ["king", "queen", "jack"] as const) {
+        const t = targets[role];
+        if (!t) continue;
+        lines.push(`    ${role.toUpperCase()}: ${t.name}`);
+        if (t.fate) lines.push(`      Fate: ${t.fate}`);
+        if (t.notes) lines.push(`      Notes: ${t.notes}`);
+      }
+      lines.push("");
+
+      // Weak Points
+      const weakPoints = gmScript.weakPoints as {
+        name: string;
+        role: string;
+      }[];
+      lines.push(`  Weak Points (${weakPoints.length}):`);
+      for (const [j, wp] of weakPoints.entries()) {
+        lines.push(
+          `    ${String(j + 1).padStart(2, " ")}. ${wp.name} — ${wp.role}`,
+        );
+      }
+      lines.push("");
+
+      // Scenes
+      const scenes = gmScript.scenes as string[];
+      lines.push(`  Scenes (${scenes.length}):`);
+      for (const [j, scene] of scenes.entries()) {
+        lines.push(`    ${String(j + 1).padStart(2, " ")}. ${scene}`);
+      }
+
+      lines.push("");
+      lines.push(divider);
+
+      const outputDir = resolve(process.cwd(), "server/tests/smoke-output");
+      mkdirSync(outputDir, { recursive: true });
+      const filename = `smoke-${timestamp.replace(/[:.]/g, "-")}.txt`;
+      const outputPath = resolve(outputDir, filename);
+      writeFileSync(outputPath, lines.join("\n"), "utf-8");
+      log(`\n  📄 Output written to ${outputPath}\n`);
+    });
 
     it("generates the correct number of distinct character templates", () => {
       expect(templates).toHaveLength(CHARACTER_COUNT);
