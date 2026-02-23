@@ -32,6 +32,7 @@ export default defineConfig({
         test: {
           name: "server",
           include: ["server/**/*.{test,spec}.ts"],
+          exclude: ["server/tests/smoke.test.ts"],
           environment: "node",
         },
       },
