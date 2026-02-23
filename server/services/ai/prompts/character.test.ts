@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+import type { Genre } from "~~/shared/types/campaign";
 import type { I18nKey } from "~~/shared/types/utils";
 import { buildCharacterPrompt } from "./character";
 
-const makeTemplate = (
-  overrides?: Partial<CharacterTemplate>,
-): CharacterTemplate =>
+const makeTemplate = (overrides?: Partial<CharacterTemplate>): CharacterTemplate =>
   ({
     archetype: "jack",
     suit: "clubs",
@@ -27,7 +26,7 @@ const makeTemplate = (
     ...overrides,
   }) as CharacterTemplate;
 
-const SETTING = "1920s Chicago speakeasy run by a supernatural crime boss";
+const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
 
 describe("buildCharacterPrompt", () => {
   describe("return shape", () => {
@@ -56,7 +55,7 @@ describe("buildCharacterPrompt", () => {
       const result1 = buildCharacterPrompt(makeTemplate(), SETTING);
       const result2 = buildCharacterPrompt(
         makeTemplate({ archetype: "queen", suit: "hearts" }),
-        "Fantasy medieval kingdom",
+        ["highFantasy"],
       );
 
       expect(result1.system).toBe(result2.system);
@@ -76,6 +75,17 @@ describe("buildCharacterPrompt", () => {
     it("mentions the game name", () => {
       const { system } = buildCharacterPrompt(makeTemplate(), SETTING);
       expect(system).toContain("The House Doesn't Always Win");
+    });
+
+    it("mentions the Diamonds faction and revolutionary context", () => {
+      const { system } = buildCharacterPrompt(makeTemplate(), SETTING);
+      expect(system).toContain("Diamonds");
+      expect(system).toContain("revolutionaries");
+    });
+
+    it("guides equipment to be realistic for underdogs", () => {
+      const { system } = buildCharacterPrompt(makeTemplate(), SETTING);
+      expect(system).toContain("realistically available");
     });
   });
 
@@ -104,9 +114,10 @@ describe("buildCharacterPrompt", () => {
       );
     });
 
-    it("includes the campaign setting", () => {
+    it("includes all genre names from the setting", () => {
       const { user } = buildCharacterPrompt(makeTemplate(), SETTING);
-      expect(user).toContain(SETTING);
+      expect(user).toContain("cyberpunk");
+      expect(user).toContain("conspiracyThriller");
     });
 
     it("reflects different template values", () => {
@@ -114,23 +125,23 @@ describe("buildCharacterPrompt", () => {
         archetype: "queen",
         suit: "spades",
       });
-      const { user } = buildCharacterPrompt(template, "Cyberpunk dystopia");
+      const { user } = buildCharacterPrompt(template, ["highFantasy", "gothicHorror"]);
 
       expect(user).toContain("queen");
       expect(user).toContain("spades");
-      expect(user).toContain("Cyberpunk dystopia");
+      expect(user).toContain("highFantasy");
+      expect(user).toContain("gothicHorror");
     });
   });
 
   describe("edge cases", () => {
-    it("handles an empty setting string without throwing", () => {
-      expect(() => buildCharacterPrompt(makeTemplate(), "")).not.toThrow();
+    it("handles an empty setting array without throwing", () => {
+      expect(() => buildCharacterPrompt(makeTemplate(), [])).not.toThrow();
     });
 
-    it("handles a setting string with special characters", () => {
-      const setting = 'A world of "fire & ice" <with> special chars';
-      const { user } = buildCharacterPrompt(makeTemplate(), setting);
-      expect(user).toContain(setting);
+    it("handles a single genre setting", () => {
+      const { user } = buildCharacterPrompt(makeTemplate(), ["steampunk"]);
+      expect(user).toContain("steampunk");
     });
   });
 });
