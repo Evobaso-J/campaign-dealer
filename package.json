@@ -15,7 +15,7 @@
     "test:unit": "vitest --project unit",
     "test:nuxt": "vitest --project nuxt",
     "smoke": "vitest run --config vitest.smoke.config.ts",
-    "smoke:ollama": "NUXT_AI_PROVIDER=ollama NUXT_AI_OLLAMA_HOST=http://127.0.0.1:11434 NUXT_AI_MODEL=llama3.1:latest pnpm smoke",
+    "smoke:ollama": "NUXT_AI_PROVIDER=ollama NUXT_AI_OLLAMA_HOST=http://127.0.0.1:11434 NUXT_AI_MODEL=gemma2:9b pnpm smoke",
     "prepare": "husky"
   },
   "dependencies": {
