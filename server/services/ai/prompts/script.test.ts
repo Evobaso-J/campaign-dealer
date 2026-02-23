@@ -91,6 +91,16 @@ describe("buildScriptPrompt", () => {
       expect(system).toContain('"jack"');
     });
 
+    it("requires a description for each target", () => {
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      // Each target object in the schema must include a "description" field
+      const descriptionMatches = system.match(
+        /"description": string \(required\)/g,
+      );
+      expect(descriptionMatches).not.toBeNull();
+      expect(descriptionMatches!.length).toBe(3);
+    });
+
     it("specifies exactly 10 weak points", () => {
       const { system } = buildScriptPrompt([makeCharacter()], SETTING);
       expect(system).toContain("exactly 10");

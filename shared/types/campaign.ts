@@ -5,6 +5,7 @@ type TargetFate = "captured" | "converted" | "eliminated";
 
 interface TargetEnemy {
   name: GeneratedText;
+  description: GeneratedText;
   fate?: TargetFate;
   notes?: string;
 }

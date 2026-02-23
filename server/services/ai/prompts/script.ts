@@ -23,9 +23,9 @@ GameMasterScript schema:
 {
   "hook": string (required) — an opening narrative hook (2-4 sentences) that sets the scene and draws the players into the story,
   "targets": {
-    "king": { "name": string (required) — the name of the King-archetype antagonist Target },
-    "queen": { "name": string (required) — the name of the Queen-archetype antagonist Target },
-    "jack": { "name": string (required) — the name of the Jack-archetype antagonist Target }
+    "king": { "name": string (required) — the name of the King-archetype antagonist Target, "description": string (required) — a brief description of the King Target: who they are, their role within the Diamonds, and why they are dangerous },
+    "queen": { "name": string (required) — the name of the Queen-archetype antagonist Target, "description": string (required) — a brief description of the Queen Target: who they are, their role within the Diamonds, and why they are dangerous },
+    "jack": { "name": string (required) — the name of the Jack-archetype antagonist Target, "description": string (required) — a brief description of the Jack Target: who they are, their role within the Diamonds, and why they are dangerous }
   } (required) — the three antagonist Targets the players must defeat, one per archetype,
   "weakPoints": [
     {

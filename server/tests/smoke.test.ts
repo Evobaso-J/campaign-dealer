@@ -13,7 +13,7 @@ import {
 } from "~~/server/services/rpg/characterRandomizer";
 import { parseAIJson } from "~~/server/utils/parseAIJson";
 import type { CharacterSheet } from "~~/shared/types/character";
-import type { Genre } from "~~/shared/types/campaign";
+import { GenreGroups, type Genre } from "~~/shared/types/campaign";
 
 /**
  * Smoke test — exercises the full campaign generation pipeline:
@@ -48,7 +48,14 @@ function loadDotEnv(): Record<string, string> {
 
 // ── Configuration ──────────────────────────────────────────────────────
 
-const SETTING: Genre[] = ["cyberpunk", "cosmicHorror"];
+const ALL_GENRES: Genre[] = Object.values(GenreGroups).flat() as Genre[];
+
+function pickRandomSettings(count: number): Genre[] {
+  const shuffled = [...ALL_GENRES].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+const SETTING: Genre[] = pickRandomSettings(2);
 const CHARACTER_COUNT = 3;
 
 function buildConfig(): { config: AIRuntimeConfig; providerName: string } {
@@ -225,13 +232,14 @@ describe.skipIf(!hasCredentials)(
       // Targets
       const targets = gmScript.targets as Record<
         string,
-        { name: string; fate?: string; notes?: string }
+        { name: string; description?: string; fate?: string; notes?: string }
       >;
       lines.push(`  Targets:`);
       for (const role of ["king", "queen", "jack"] as const) {
         const t = targets[role];
         if (!t) continue;
         lines.push(`    ${role.toUpperCase()}: ${t.name}`);
+        if (t.description) lines.push(`      Description: ${t.description}`);
         if (t.fate) lines.push(`      Fate: ${t.fate}`);
         if (t.notes) lines.push(`      Notes: ${t.notes}`);
       }
@@ -295,14 +303,20 @@ describe.skipIf(!hasCredentials)(
       expect(gmScript.hook).toBeTruthy();
     });
 
-    it("GM script has all three targets", () => {
-      const targets = gmScript.targets as Record<string, { name: string }>;
+    it("GM script has all three targets with descriptions", () => {
+      const targets = gmScript.targets as Record<
+        string,
+        { name: string; description: string }
+      >;
       expect(targets.king).toBeDefined();
       expect(targets.king!.name).toBeTruthy();
+      expect(targets.king!.description).toBeTruthy();
       expect(targets.queen).toBeDefined();
       expect(targets.queen!.name).toBeTruthy();
+      expect(targets.queen!.description).toBeTruthy();
       expect(targets.jack).toBeDefined();
       expect(targets.jack!.name).toBeTruthy();
+      expect(targets.jack!.description).toBeTruthy();
     });
 
     it("GM script has 10 weak points", () => {
