@@ -1,6 +1,7 @@
 import type { GeneratedText } from "~~/shared/types/utils";
 import { AnthropicProvider } from "./anthropic";
 import { OllamaProvider } from "./ollama";
+import { OpenAIProvider } from "./openai";
 
 /**
  * The shape returned by prompt builders in `server/services/ai/prompts/`.
@@ -49,6 +50,7 @@ export interface AIProvider {
 export const AIProviderName = {
   anthropic: "anthropic",
   ollama: "ollama",
+  openai: "openai",
 } as const;
 export type AIProviderName =
   (typeof AIProviderName)[keyof typeof AIProviderName];
@@ -143,3 +145,4 @@ export function getAIProvider(): AIProvider {
 /** Explicit provider registration — ensures factories are available at runtime. */
 registerProvider("anthropic", (config) => new AnthropicProvider(config));
 registerProvider("ollama", (config) => new OllamaProvider(config));
+registerProvider("openai", (config) => new OpenAIProvider(config));

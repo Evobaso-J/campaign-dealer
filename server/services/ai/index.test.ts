@@ -67,10 +67,10 @@ describe("getAIProvider", () => {
   describe("when provider name is invalid", () => {
     it("throws listing valid options", () => {
       mockUseRuntimeConfig.mockReturnValue({
-        ai: { provider: "openai", apiKey: "test-key" },
+        ai: { provider: "gemini", apiKey: "test-key" },
       });
       expect(() => getAIProvider()).toThrow(
-        'Invalid AI provider "openai"',
+        'Invalid AI provider "gemini"',
       );
     });
   });
