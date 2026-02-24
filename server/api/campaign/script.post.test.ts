@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterSheet } from "~~/shared/types/character";
+import { AIProviderError } from "~~/server/utils/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/script.post";
@@ -172,7 +173,7 @@ describe("POST /api/campaign/script", () => {
         language: "en",
       });
       vi.mocked(getAIProvider).mockImplementation(() => {
-        throw new Error("AI provider is not configured");
+        throw new AIProviderError("AI provider is not configured");
       });
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {

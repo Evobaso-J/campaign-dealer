@@ -5,6 +5,7 @@ import type {
   ArchetypeCharacterization,
   SuitCharacterization,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
+import { AIProviderError, ValidationError } from "~~/server/utils/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/characters.post";
@@ -153,7 +154,7 @@ describe("POST /api/campaign/characters", () => {
     it("throws 422 when randomizer throws", async () => {
       mockReadBody.mockResolvedValue({ playerCount: 3, setting: ["cyberpunk"], language: "en" });
       mockGenerate.mockImplementation(() => {
-        throw new Error("Cannot generate 10 distinct characters");
+        throw new ValidationError("Cannot generate 10 distinct characters");
       });
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
@@ -168,7 +169,7 @@ describe("POST /api/campaign/characters", () => {
       mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
       mockGenerate.mockReturnValue([fakeTemplate()]);
       vi.mocked(getAIProvider).mockImplementation(() => {
-        throw new Error("AI provider is not configured");
+        throw new AIProviderError("AI provider is not configured");
       });
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {

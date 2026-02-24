@@ -1,4 +1,5 @@
 import type { GeneratedText } from "~~/shared/types/utils";
+import { AIProviderError } from "~~/server/utils/errors";
 import { AnthropicProvider } from "./anthropic";
 import { OllamaProvider } from "./ollama";
 import { OpenAIProvider } from "./openai";
@@ -90,28 +91,28 @@ function assertAiConfigValidity(config: {
   ollamaHost?: string;
 }): asserts config is AIRuntimeConfig {
   if (!config.provider) {
-    throw new Error(
+    throw new AIProviderError(
       "AI provider is not configured. Set runtimeConfig.ai.provider in nuxt.config.ts.",
     );
   }
   const aiProviders = Object.values(AIProviderName);
   if (!aiProviders.includes(config.provider as AIProviderName)) {
     const valid = aiProviders.join(", ");
-    throw new Error(
+    throw new AIProviderError(
       `Invalid AI provider "${config.provider}". Valid options are: ${valid}. ` +
         "Set runtimeConfig.ai.provider in nuxt.config.ts.",
     );
   }
 
   if (config.provider === AIProviderName.ollama && !config.ollamaHost) {
-    throw new Error(
+    throw new AIProviderError(
       'AI provider "ollama" is configured but no host was provided. ' +
         "Set runtimeConfig.ai.ollamaHost via NUXT_AI_OLLAMA_HOST environment variable.",
     );
   }
 
   if (!config.apiKey && config.provider !== AIProviderName.ollama) {
-    throw new Error(
+    throw new AIProviderError(
       `AI provider "${config.provider}" is configured but no API key was provided. ` +
         "Set runtimeConfig.ai.apiKey via NUXT_AI_API_KEY environment variable.",
     );
@@ -132,7 +133,7 @@ export function getAIProvider(): AIProvider {
   const factory = providerRegistry.get(config.ai.provider);
   if (!factory) {
     const available = [...providerRegistry.keys()].join(", ") || "(none)";
-    throw new Error(
+    throw new AIProviderError(
       `AI provider "${config.ai.provider}" is not registered. ` +
         `Available providers: ${available}. ` +
         `Ensure the provider module is imported.`,
