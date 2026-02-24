@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { GenreGroups, Locales, type Genre, type Locale } from "~~/shared/types/campaign";
+import {
+  GenreGroups,
+  Locales,
+  type Genre,
+  type GameMasterScript,
+  type Locale,
+  type TargetArchetype,
+} from "~~/shared/types/campaign";
 import {
   CharacterArchetype,
   CharacterSuit,
@@ -84,4 +91,37 @@ export const scriptRequestSchema: z.ZodType<{
   characters: z.array(characterSheetSchema).min(1),
   setting: settingSchema,
   language: z.enum(Locales),
+});
+
+const targetFateSchema = z.enum(["captured", "converted", "eliminated"]);
+
+const targetEnemySchema = z.object({
+  name: generatedText,
+  description: generatedText,
+  fate: targetFateSchema.optional(),
+  notes: z.string().optional(),
+});
+
+const targetArchetypes: [TargetArchetype, ...TargetArchetype[]] = [
+  "king",
+  "queen",
+  "jack",
+];
+
+export const gameMasterScriptSchema: z.ZodType<GameMasterScript> = z.object({
+  hook: generatedText,
+  targets: z.object(
+    Object.fromEntries(targetArchetypes.map((k) => [k, targetEnemySchema])) as {
+      [K in TargetArchetype]: typeof targetEnemySchema;
+    },
+  ),
+  weakPoints: z.array(
+    z.object({
+      name: generatedText,
+      role: generatedText,
+    }),
+  ),
+  scenes: z.array(generatedText),
+  centralTension: generatedText,
+  plot: generatedText,
 });

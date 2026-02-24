@@ -8,10 +8,10 @@ export const LocaleNames: Record<Locale, string> = {
   it: "Italian",
 };
 
-type TargetArchetype = "king" | "queen" | "jack";
-type TargetFate = "captured" | "converted" | "eliminated";
+export type TargetArchetype = "king" | "queen" | "jack";
+export type TargetFate = "captured" | "converted" | "eliminated";
 
-interface TargetEnemy {
+export interface TargetEnemy {
   name: GeneratedText;
   description: GeneratedText;
   fate?: TargetFate;
@@ -58,7 +58,7 @@ export const GenreGroups = {
 export type GenreGroup = keyof typeof GenreGroups;
 export type Genre = (typeof GenreGroups)[GenreGroup][number];
 
-type GameMasterScript = {
+export type GameMasterScript = {
   hook: GeneratedText;
   /** One antagonist Target per archetype (king, queen, jack). */
   targets: { [key in TargetArchetype]: TargetEnemy };
