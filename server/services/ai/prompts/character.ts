@@ -26,11 +26,15 @@ Guidelines:
 - The "concealed" field indicates whether the item is small or subtle enough to be hidden on the character's person. A knife or lockpick can be concealed; a rifle or a ladder cannot.
 - If a weapon or instrument is not appropriate for the character, set the field to undefined.`;
 
-export function buildCharacterPrompt(
-  template: CharacterTemplate,
-  setting: Genre[],
-  language: Locale,
-): AIPrompt {
+export function buildCharacterPrompt({
+  template,
+  setting,
+  language,
+}: {
+  template: CharacterTemplate;
+  setting: Genre[];
+  language: Locale;
+}): AIPrompt {
   const user = `Generate a CharacterIdentity for this character:
 
 Archetype: ${template.archetype}

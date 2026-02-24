@@ -50,11 +50,15 @@ Guidelines:
 - The plot should read as a coherent story summary — not a bullet list — connecting all three sessions into a single narrative.
 - Tailor all content to the specific player characters and campaign setting provided.`;
 
-export function buildScriptPrompt(
-  characters: CharacterSheet[],
-  setting: Genre[],
-  language: Locale,
-): AIPrompt {
+export function buildScriptPrompt({
+  characters,
+  setting,
+  language,
+}: {
+  characters: CharacterSheet[];
+  setting: Genre[];
+  language: Locale;
+}): AIPrompt {
   const characterSummaries = characters
     .map((c, i) => {
       const identity = c.characterIdentity;

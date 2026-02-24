@@ -49,7 +49,7 @@ export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
   try {
     const characterSheets: CharacterSheet[] = await Promise.all(
       templates.map(async (template) => {
-        const prompt = buildCharacterPrompt(template, setting, language);
+        const prompt = buildCharacterPrompt({ template, setting, language });
 
         let result: Awaited<ReturnType<typeof provider.complete>>;
         try {

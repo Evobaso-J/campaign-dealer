@@ -152,7 +152,7 @@ describe.skipIf(!hasCredentials)(
       for (const [i, template] of templates.entries()) {
         const label = `${template.archetype} of ${template.suit}`;
         const startMs = Date.now();
-        const prompt = buildCharacterPrompt(template, SETTING);
+        const prompt = buildCharacterPrompt({ template, setting: SETTING, language: "en" });
         const result = await provider.complete(prompt);
         const identity = parseAIJson<CharacterSheet["characterIdentity"]>(
           result.text,
@@ -176,7 +176,7 @@ describe.skipIf(!hasCredentials)(
       // Step 3: Generate GM script via AI
       log(`\n  Calling ${providerName} for GM script…`);
       const scriptStart = Date.now();
-      const scriptPrompt = buildScriptPrompt(characterSheets, SETTING);
+      const scriptPrompt = buildScriptPrompt({ characters: characterSheets, setting: SETTING, language: "en" });
       const scriptResult = await provider.complete(scriptPrompt);
       gmScript = parseAIJson<Record<string, unknown>>(scriptResult.text);
       log(`    Done (${elapsed(scriptStart)})`);
