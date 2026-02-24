@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+
+import { getAIProvider } from "~~/server/services/ai/index";
+import handler from "~~/server/api/campaign/characters.post";
 
 // --- Mocks ---
 
@@ -27,9 +30,6 @@ vi.mock("h3", async () => {
   const actual = await vi.importActual<typeof import("h3")>("h3");
   return { ...actual, readBody: mockReadBody };
 });
-
-import { getAIProvider } from "~~/server/services/ai/index";
-import handler from "~~/server/api/campaign/characters.post";
 
 // --- Fixtures ---
 
