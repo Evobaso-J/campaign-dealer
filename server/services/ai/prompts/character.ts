@@ -12,7 +12,7 @@ Do not include any text, explanation, or markdown formatting outside of the JSON
 
 CharacterIdentity schema:
 {
-  "name": string (required) — the character's full name or alias, fitting the campaign setting. It doesn't have to match the character's archetype or suit,
+  "name": string (required) — the character's full name or alias, fitting the campaign setting. It doesn't have to match the character's archetype or suit or match the locale of the campaign setting, but it should be plausible for that setting and consistent with the character's identity,
   "pronouns": string | undefined — the character's pronouns (e.g. "he/him", "she/her", "they/them"). It doesn't have to match the character's archetype or suit,
   "concept": string (required) — a brief, evocative description of who this character is and why they fight against the Diamonds. Be incisive — imagine describing them to a friend in one sentence,
   "weapon": { "name": string, "concealed": boolean } | undefined — the character's signature weapon. If the item is not self-explanatory, describe its function,
@@ -46,7 +46,7 @@ ${template.suitCharacterization}
 Campaign setting: ${setting.join(", ")}
 
 Language: ${LocaleNames[language]}
-All generated text must be written in ${LocaleNames[language]}.`;
+All generated text must be written in ${LocaleNames[language]}, exept for the names, which can be in any language but must be consistent with the campaign setting and genre.`;
 
   return {
     system: SYSTEM_PROMPT,

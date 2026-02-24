@@ -11,11 +11,6 @@ The faction controls the world and its resources. The players' goal is to disman
 
 Important: Jack, Queen, and King are archetype labels, NOT a power hierarchy. The King is not necessarily the most powerful — all three Targets may have equal rank and influence, or the hierarchy may differ from what the labels suggest. Arrange the three sessions in the order that creates the best narrative escalation for this specific story.
 
-Each Target can be neutralized in one of three ways:
-- Captured (subdued and taken prisoner)
-- Converted (persuaded or coerced into switching sides)
-- Eliminated (killed or permanently removed from power)
-
 Weak Points are cracks in the enemy faction's armor — key associates, hidden secrets, exploitable resources, or internal tensions that the players can discover and leverage against the Targets.
 
 You MUST respond with ONLY a valid JSON object matching the GameMasterScript schema below.
@@ -25,9 +20,9 @@ GameMasterScript schema:
 {
   "hook": string (required) — an opening narrative hook (2-4 sentences) that sets the scene and draws the players into the story,
   "targets": {
-    "king": { "name": string (required) — the name of the King-archetype antagonist Target, "description": string (required) — a brief description of the King Target: who they are, their role within the faction, and why they are dangerous },
-    "queen": { "name": string (required) — the name of the Queen-archetype antagonist Target, "description": string (required) — a brief description of the Queen Target: who they are, their role within the faction, and why they are dangerous },
-    "jack": { "name": string (required) — the name of the Jack-archetype antagonist Target, "description": string (required) — a brief description of the Jack Target: who they are, their role within the faction, and why they are dangerous }
+    "king": { "name": string (required) — the name of the King-archetype antagonist Target. It doesn't have to match the character's archetype or suit or match the locale of the campaign setting, but it should be plausible for that setting and consistent with the character's identity, "description": string (required) — a brief description of the King Target: who they are, their role within the faction, and why they are dangerous },
+    "queen": { "name": string (required) — the name of the Queen-archetype antagonist Target. It doesn't have to match the character's archetype or suit or match the locale of the campaign setting, but it should be plausible for that setting and consistent with the character's identity, "description": string (required) — a brief description of the Queen Target: who they are, their role within the faction, and why they are dangerous },
+    "jack": { "name": string (required) — the name of the Jack-archetype antagonist Target. It doesn't have to match the character's archetype or suit or match the locale of the campaign setting, but it should be plausible for that setting and consistent with the character's identity, "description": string (required) — a brief description of the Jack Target: who they are, their role within the faction, and why they are dangerous }
   } (required) — the three antagonist Targets the players must defeat, one per archetype,
   "weakPoints": [
     {
@@ -64,8 +59,6 @@ export function buildScriptPrompt({
       const identity = c.characterIdentity;
       return `Character ${i + 1}:
   Name: ${identity.name}
-  Archetype: ${c.archetype}
-  Suit: ${c.suit}
   Concept: ${identity.concept ?? "N/A"}`;
     })
     .join("\n\n");
@@ -78,7 +71,7 @@ ${characterSummaries}
 Campaign setting: ${setting.join(", ")}
 
 Language: ${LocaleNames[language]}
-All generated text must be written in ${LocaleNames[language]}.`;
+All generated text must be written in ${LocaleNames[language]}, exept for the names, which can be in any language but must be consistent with the campaign setting and genre.`;
 
   return {
     system: SYSTEM_PROMPT,
