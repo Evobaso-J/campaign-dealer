@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GenreGroups, type Genre } from "~~/shared/types/campaign";
+import { GenreGroups, Locales, type Genre, type Locale } from "~~/shared/types/campaign";
 import {
   CharacterArchetype,
   CharacterSuit,
@@ -20,7 +20,7 @@ const characterItemSchema = z.object({
   concealed: z.boolean(),
 });
 
-const characterIdentitySchema = z.object({
+export const characterIdentitySchema = z.object({
   name: generatedText,
   pronouns: generatedText.optional(),
   concept: generatedText.optional(),
@@ -69,15 +69,19 @@ const settingSchema = z.array(genreSchema).min(1);
 export const charactersRequestSchema: z.ZodType<{
   playerCount: number;
   setting: Genre[];
+  language: Locale;
 }> = z.object({
   playerCount: z.int().min(1).max(9),
   setting: settingSchema,
+  language: z.enum(Locales),
 });
 
 export const scriptRequestSchema: z.ZodType<{
   characters: CharacterSheet[];
   setting: Genre[];
+  language: Locale;
 }> = z.object({
   characters: z.array(characterSheetSchema).min(1),
   setting: settingSchema,
+  language: z.enum(Locales),
 });
