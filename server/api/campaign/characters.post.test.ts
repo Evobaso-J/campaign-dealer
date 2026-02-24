@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+import type {
+  ArchetypeCharacterization,
+  SuitCharacterization,
+} from "~~/server/data/houseDoesntWin/characterTemplates";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/characters.post";
@@ -50,8 +54,8 @@ const fakeTemplate = (
       description: "skill.king.1.desc" as I18nKey,
     },
   ],
-  suitCharacterization: "Hearts are empathetic.",
-  archetypeCharacterization: "The King rules.",
+  suitCharacterization: "Hearts are empathetic." as SuitCharacterization,
+  archetypeCharacterization: "The King rules." as ArchetypeCharacterization,
   ...overrides,
 });
 
@@ -83,7 +87,8 @@ beforeEach(() => {
   // Reset getAIProvider to default: returns a mock provider with mockComplete
   vi.mocked(getAIProvider).mockReturnValue({
     complete: mockComplete,
-  } as ReturnType<typeof getAIProvider>);
+    stream: vi.fn(),
+  } as unknown as ReturnType<typeof getAIProvider>);
 });
 
 describe("POST /api/campaign/characters", () => {
