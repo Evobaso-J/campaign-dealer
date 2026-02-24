@@ -20,7 +20,7 @@ const characterItemSchema = z.object({
   concealed: z.boolean(),
 });
 
-const characterIdentitySchema = z.object({
+export const characterIdentitySchema = z.object({
   name: generatedText,
   pronouns: generatedText.optional(),
   concept: generatedText.optional(),

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { charactersRequestSchema, scriptRequestSchema } from "./validate";
+import {
+  characterIdentitySchema,
+  charactersRequestSchema,
+  scriptRequestSchema,
+} from "./validate";
 
 describe("charactersRequestSchema", () => {
   it("accepts valid input", () => {
@@ -121,5 +125,39 @@ describe("scriptRequestSchema", () => {
       setting: ["spaceOpera"],
     });
     expect(result.characters[0]!.characterIdentity.weapon?.name).toBe("Sword");
+  });
+});
+
+describe("characterIdentitySchema", () => {
+  it("accepts identity with only required name", () => {
+    const result = characterIdentitySchema.parse({ name: "Solo" });
+    expect(result.name).toBe("Solo");
+  });
+
+  it("accepts full identity with all optional fields", () => {
+    const result = characterIdentitySchema.parse({
+      name: "Evelyn Cross",
+      pronouns: "she/her",
+      concept: "A former spy",
+      weapon: { name: "Stiletto", concealed: true },
+      instrument: { name: "Skeleton keys", concealed: true },
+    });
+    expect(result.name).toBe("Evelyn Cross");
+    expect(result.weapon?.name).toBe("Stiletto");
+  });
+
+  it("rejects missing name", () => {
+    expect(() =>
+      characterIdentitySchema.parse({ pronouns: "they/them" }),
+    ).toThrow();
+  });
+
+  it("rejects weapon missing concealed field", () => {
+    expect(() =>
+      characterIdentitySchema.parse({
+        name: "Alice",
+        weapon: { name: "Sword" },
+      }),
+    ).toThrow();
   });
 });
