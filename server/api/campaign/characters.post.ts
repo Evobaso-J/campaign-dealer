@@ -17,41 +17,42 @@ import {
 import type { CharacterSheet } from "~~/shared/types/character";
 
 export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
-  try {
-    const body = await readBody(event);
-    const parsed = charactersRequestSchema.safeParse(body);
-    if (!parsed.success) {
-      throw new ValidationError("Validation failed", parsed.error.issues);
-    }
-
-    const { playerCount, setting, language } = parsed.data;
-    const templates = generateRandomDistinctCharacters(playerCount);
-    const provider = getAIProvider();
-
-    const characterSheets: CharacterSheet[] = await Promise.all(
-      templates.map(async (template) => {
-        const prompt = buildCharacterPrompt({ template, setting, language });
-        const result = await withAIProvider(() => provider.complete(prompt));
-        const identity = parseAndValidateAIResponse(
-          result.text,
-          characterIdentitySchema,
-          "characters",
-        );
-
-        return {
-          archetype: template.archetype,
-          suit: template.suit,
-          damage: template.damage,
-          modifiers: template.modifiers,
-          suitSkill: template.suitSkill,
-          archetypeSkills: template.archetypeSkills,
-          characterIdentity: identity,
-        };
-      }),
-    );
-
-    return characterSheets;
-  } catch (error) {
-    toHttpError(error);
+  const body = await readBody(event);
+  const parsed = charactersRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    toHttpError(new ValidationError("Validation failed", parsed.error.issues));
   }
+
+  const { playerCount, setting, language } = parsed.data;
+
+  const templates = generateRandomDistinctCharacters(playerCount);
+  if (!templates.ok) toHttpError(templates.error);
+
+  const provider = getAIProvider();
+  if (!provider.ok) toHttpError(provider.error);
+
+  return Promise.all(
+    templates.value.map(async (template) => {
+      const prompt = buildCharacterPrompt({ template, setting, language });
+      const result = await withAIProvider(() => provider.value.complete(prompt));
+      if (!result.ok) toHttpError(result.error);
+
+      const identity = parseAndValidateAIResponse(
+        result.value.text,
+        characterIdentitySchema,
+        "characters",
+      );
+      if (!identity.ok) toHttpError(identity.error);
+
+      return {
+        archetype: template.archetype,
+        suit: template.suit,
+        damage: template.damage,
+        modifiers: template.modifiers,
+        suitSkill: template.suitSkill,
+        archetypeSkills: template.archetypeSkills,
+        characterIdentity: identity.value,
+      };
+    }),
+  );
 });

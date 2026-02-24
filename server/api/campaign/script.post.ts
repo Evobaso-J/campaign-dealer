@@ -16,24 +16,27 @@ import {
 import type { GameMasterScript } from "~~/shared/types/campaign";
 
 export default defineEventHandler(async (event): Promise<GameMasterScript> => {
-  try {
-    const body = await readBody(event);
-    const parsed = scriptRequestSchema.safeParse(body);
-    if (!parsed.success) {
-      throw new ValidationError("Validation failed", parsed.error.issues);
-    }
-
-    const { characters, setting, language } = parsed.data;
-    const provider = getAIProvider();
-    const prompt = buildScriptPrompt({ characters, setting, language });
-    const result = await withAIProvider(() => provider.complete(prompt));
-
-    return parseAndValidateAIResponse(
-      result.text,
-      gameMasterScriptSchema,
-      "script",
-    );
-  } catch (error) {
-    toHttpError(error);
+  const body = await readBody(event);
+  const parsed = scriptRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    toHttpError(new ValidationError("Validation failed", parsed.error.issues));
   }
+
+  const { characters, setting, language } = parsed.data;
+
+  const provider = getAIProvider();
+  if (!provider.ok) toHttpError(provider.error);
+
+  const prompt = buildScriptPrompt({ characters, setting, language });
+  const result = await withAIProvider(() => provider.value.complete(prompt));
+  if (!result.ok) toHttpError(result.error);
+
+  const script = parseAndValidateAIResponse(
+    result.value.text,
+    gameMasterScriptSchema,
+    "script",
+  );
+  if (!script.ok) toHttpError(script.error);
+
+  return script.value;
 });

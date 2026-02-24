@@ -2,6 +2,22 @@ import { createError } from "h3";
 import type { ZodType } from "zod";
 import { parseAIJson } from "./parseAIJson";
 
+// --- Result type ---
+
+export type Result<T, E = AppError> =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+export function ok<T>(value: T): Result<T, never> {
+  return { ok: true, value };
+}
+
+export function err<E>(error: E): Result<never, E> {
+  return { ok: false, error };
+}
+
+// --- Error classes ---
+
 export class AppError extends Error {
   constructor(
     message: string,
@@ -35,13 +51,15 @@ export class AIResponseError extends AppError {
   }
 }
 
-export async function withAIProvider<T>(fn: () => Promise<T>): Promise<T> {
+// --- Helpers ---
+
+export async function withAIProvider<T>(
+  fn: () => Promise<T>,
+): Promise<Result<T, AIProviderError>> {
   try {
-    return await fn();
+    return ok(await fn());
   } catch (error) {
-    throw new AIProviderError("AI service error", {
-      cause: error,
-    });
+    return err(new AIProviderError("AI service error", { cause: error }));
   }
 }
 
@@ -49,34 +67,33 @@ export function parseAndValidateAIResponse<T>(
   raw: string,
   schema: ZodType<T>,
   label: string,
-): T {
-  let parsed: unknown;
-  try {
-    parsed = parseAIJson<unknown>(raw);
-  } catch (cause) {
+): Result<T, AIResponseError> {
+  const parsed = parseAIJson<unknown>(raw);
+  if (!parsed.ok) {
     console.error(`[${label}] Failed to parse AI JSON. Raw text:`, raw);
-    throw new AIResponseError("AI returned an unparseable response", { cause });
+    return err(
+      new AIResponseError("AI returned an unparseable response", {
+        cause: parsed.error,
+      }),
+    );
   }
 
-  const result = schema.safeParse(parsed);
+  const result = schema.safeParse(parsed.value);
   if (!result.success) {
     console.error(
       `[${label}] AI output failed schema validation:`,
       result.error.issues,
     );
-    throw new AIResponseError("AI returned an invalid response");
+    return err(new AIResponseError("AI returned an invalid response"));
   }
 
-  return result.data;
+  return ok(result.data);
 }
 
-export function toHttpError(error: unknown): never {
-  if (error instanceof AppError) {
-    throw createError({
-      statusCode: error.statusCode,
-      statusMessage: error.message,
-      data: error.data,
-    });
-  }
-  throw error;
+export function toHttpError(error: AppError): never {
+  throw createError({
+    statusCode: error.statusCode,
+    statusMessage: error.message,
+    data: error.data,
+  });
 }

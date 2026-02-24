@@ -134,18 +134,24 @@ describe("generateRandomDistinctCharacters", () => {
     it.for([1, 3, 5, MAX_DISTINCT])(
       "returns exactly %i character(s)",
       (count) => {
-        expect(generateRandomDistinctCharacters(count)).toHaveLength(count);
+        const result = generateRandomDistinctCharacters(count);
+        expect(result.ok).toBe(true);
+        if (result.ok) expect(result.value).toHaveLength(count);
       },
     );
   });
 
   describe("validation", () => {
     it.for([MAX_DISTINCT + 1, MAX_DISTINCT + 10])(
-      "throws when count (%i) exceeds the number of unique archetype-suit combinations",
+      "returns error when count (%i) exceeds the number of unique archetype-suit combinations",
       (count) => {
-        expect(() => generateRandomDistinctCharacters(count)).toThrow(
-          `Cannot generate ${count} distinct characters: only ${MAX_DISTINCT} unique archetype-suit combinations exist.`,
-        );
+        const result = generateRandomDistinctCharacters(count);
+        expect(result.ok).toBe(false);
+        if (!result.ok) {
+          expect(result.error.message).toContain(
+            `Cannot generate ${count} distinct characters`,
+          );
+        }
       },
     );
   });
@@ -154,9 +160,12 @@ describe("generateRandomDistinctCharacters", () => {
     it.for([1, 3, MAX_DISTINCT])(
       "all archetype-suit combinations are unique (count=%i)",
       (count) => {
-        const chars = generateRandomDistinctCharacters(count);
-        const keys = chars.map((c) => `${c.archetype}-${c.suit}`);
-        expect(new Set(keys).size).toBe(count);
+        const result = generateRandomDistinctCharacters(count);
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+          const keys = result.value.map((c) => `${c.archetype}-${c.suit}`);
+          expect(new Set(keys).size).toBe(count);
+        }
       },
     );
 
@@ -177,11 +186,13 @@ describe("generateRandomDistinctCharacters", () => {
         .mockReturnValueOnce(randomFor(0, ALL_ARCHETYPES.length)) // king
         .mockReturnValueOnce(0);
 
-      const chars = generateRandomDistinctCharacters(2);
-
-      expect(chars).toHaveLength(2);
-      expect(chars[0]).toMatchObject({ suit: "hearts", archetype: "king" });
-      expect(chars[1]).toMatchObject({ suit: "clubs", archetype: "king" });
+      const result = generateRandomDistinctCharacters(2);
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toHaveLength(2);
+        expect(result.value[0]).toMatchObject({ suit: "hearts", archetype: "king" });
+        expect(result.value[1]).toMatchObject({ suit: "clubs", archetype: "king" });
+      }
     });
   });
 });

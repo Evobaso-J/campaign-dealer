@@ -5,7 +5,12 @@ import type {
   ArchetypeCharacterization,
   SuitCharacterization,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
-import { AIProviderError, ValidationError } from "~~/server/utils/errors";
+import {
+  AIProviderError,
+  ValidationError,
+  ok,
+  err,
+} from "~~/server/utils/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/characters.post";
@@ -85,17 +90,22 @@ function expectError(error: unknown, statusCode: number) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  // Reset getAIProvider to default: returns a mock provider with mockComplete
-  vi.mocked(getAIProvider).mockReturnValue({
-    complete: mockComplete,
-    stream: vi.fn(),
-  } as unknown as ReturnType<typeof getAIProvider>);
+  // Reset getAIProvider to default: returns ok with a mock provider
+  vi.mocked(getAIProvider).mockReturnValue(
+    ok({
+      complete: mockComplete,
+      stream: vi.fn(),
+    }) as ReturnType<typeof getAIProvider>,
+  );
 });
 
 describe("POST /api/campaign/characters", () => {
   describe("request validation (422)", () => {
     it("throws 422 when playerCount is missing", async () => {
-      mockReadBody.mockResolvedValue({ setting: ["cyberpunk"], language: "en" });
+      mockReadBody.mockResolvedValue({
+        setting: ["cyberpunk"],
+        language: "en",
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
         return true;
@@ -103,7 +113,11 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("throws 422 when playerCount is 0", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 0, setting: ["cyberpunk"], language: "en" });
+      mockReadBody.mockResolvedValue({
+        playerCount: 0,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
         return true;
@@ -123,7 +137,11 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("throws 422 when setting is empty", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 3, setting: [], language: "en" });
+      mockReadBody.mockResolvedValue({
+        playerCount: 3,
+        setting: [],
+        language: "en",
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
         return true;
@@ -131,7 +149,10 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("throws 422 when language is missing", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 3, setting: ["cyberpunk"] });
+      mockReadBody.mockResolvedValue({
+        playerCount: 3,
+        setting: ["cyberpunk"],
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
         return true;
@@ -139,7 +160,11 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("includes Zod issues in error data", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 0, setting: [], language: "en" });
+      mockReadBody.mockResolvedValue({
+        playerCount: 0,
+        setting: [],
+        language: "en",
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         const error = e as { statusCode: number; data: unknown[] };
         expect(error.statusCode).toBe(422);
@@ -151,11 +176,15 @@ describe("POST /api/campaign/characters", () => {
   });
 
   describe("randomizer failure (422)", () => {
-    it("throws 422 when randomizer throws", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 3, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockImplementation(() => {
-        throw new ValidationError("Cannot generate 10 distinct characters");
+    it("throws 422 when randomizer returns error", async () => {
+      mockReadBody.mockResolvedValue({
+        playerCount: 3,
+        setting: ["cyberpunk"],
+        language: "en",
       });
+      mockGenerate.mockReturnValue(
+        err(new ValidationError("Cannot generate 10 distinct characters")),
+      );
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
@@ -165,12 +194,16 @@ describe("POST /api/campaign/characters", () => {
   });
 
   describe("AI provider failure (502)", () => {
-    it("throws 502 when getAIProvider throws", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
-      vi.mocked(getAIProvider).mockImplementation(() => {
-        throw new AIProviderError("AI provider is not configured");
+    it("throws 502 when getAIProvider returns error", async () => {
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
       });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
+      vi.mocked(getAIProvider).mockReturnValue(
+        err(new AIProviderError("AI provider is not configured")),
+      );
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 502);
@@ -179,8 +212,12 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("throws 502 when provider.complete rejects", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockRejectedValue(new Error("network error"));
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
@@ -195,8 +232,12 @@ describe("POST /api/campaign/characters", () => {
       const consoleSpy = vi
         .spyOn(console, "error")
         .mockImplementation(() => {});
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: "I cannot generate characters" as GeneratedText,
       });
@@ -210,8 +251,12 @@ describe("POST /api/campaign/characters", () => {
 
     it("throws 502 when AI JSON is missing required name field", async () => {
       vi.spyOn(console, "error").mockImplementation(() => {});
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({ pronouns: "they/them" }) as GeneratedText,
       });
@@ -224,8 +269,12 @@ describe("POST /api/campaign/characters", () => {
 
     it("throws 502 when weapon is malformed", async () => {
       vi.spyOn(console, "error").mockImplementation(() => {});
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({
           name: "Alice",
@@ -242,8 +291,12 @@ describe("POST /api/campaign/characters", () => {
 
   describe("happy path", () => {
     it("returns CharacterSheet[] for a single player", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -254,9 +307,13 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("merges template fields into the returned CharacterSheet", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
       const template = fakeTemplate();
-      mockGenerate.mockReturnValue([template]);
+      mockGenerate.mockReturnValue(ok([template]));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -277,8 +334,12 @@ describe("POST /api/campaign/characters", () => {
         fakeTemplate({ archetype: "queen" as const, suit: "clubs" as const }),
         fakeTemplate({ archetype: "jack" as const, suit: "spades" as const }),
       ];
-      mockReadBody.mockResolvedValue({ playerCount: 3, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue(templates);
+      mockReadBody.mockResolvedValue({
+        playerCount: 3,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok(templates));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -289,8 +350,12 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("accepts minimal identity with only name", async () => {
-      mockReadBody.mockResolvedValue({ playerCount: 1, setting: ["cyberpunk"], language: "en" });
-      mockGenerate.mockReturnValue([fakeTemplate()]);
+      mockReadBody.mockResolvedValue({
+        playerCount: 1,
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({ name: "Solo" }) as GeneratedText,
       });

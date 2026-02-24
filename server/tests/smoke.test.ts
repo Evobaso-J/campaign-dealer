@@ -139,7 +139,9 @@ describe.skipIf(!hasCredentials)(
 
       // Step 1: Generate character templates
       log(`\n  Generating ${CHARACTER_COUNT} character templates…`);
-      templates = generateRandomDistinctCharacters(CHARACTER_COUNT);
+      const templatesResult = generateRandomDistinctCharacters(CHARACTER_COUNT);
+      if (!templatesResult.ok) throw new Error(templatesResult.error.message);
+      templates = templatesResult.value;
       for (const t of templates) {
         log(
           `    ${t.archetype} of ${t.suit}  |  ♥${t.modifiers.hearts} ♣${t.modifiers.clubs} ♠${t.modifiers.spades}`,
@@ -152,11 +154,17 @@ describe.skipIf(!hasCredentials)(
       for (const [i, template] of templates.entries()) {
         const label = `${template.archetype} of ${template.suit}`;
         const startMs = Date.now();
-        const prompt = buildCharacterPrompt({ template, setting: SETTING, language: "en" });
+        const prompt = buildCharacterPrompt({
+          template,
+          setting: SETTING,
+          language: "en",
+        });
         const result = await provider.complete(prompt);
-        const identity = parseAIJson<CharacterSheet["characterIdentity"]>(
+        const identityResult = parseAIJson<CharacterSheet["characterIdentity"]>(
           result.text,
         );
+        if (!identityResult.ok) throw new Error(identityResult.error.message);
+        const identity = identityResult.value;
 
         log(
           `    [${i + 1}/${templates.length}] ${label} → ${identity.name} (${elapsed(startMs)})`,
@@ -176,9 +184,17 @@ describe.skipIf(!hasCredentials)(
       // Step 3: Generate GM script via AI
       log(`\n  Calling ${providerName} for GM script…`);
       const scriptStart = Date.now();
-      const scriptPrompt = buildScriptPrompt({ characters: characterSheets, setting: SETTING, language: "en" });
+      const scriptPrompt = buildScriptPrompt({
+        characters: characterSheets,
+        setting: SETTING,
+        language: "en",
+      });
       const scriptResult = await provider.complete(scriptPrompt);
-      gmScript = parseAIJson<Record<string, unknown>>(scriptResult.text);
+      const scriptParsed = parseAIJson<Record<string, unknown>>(
+        scriptResult.text,
+      );
+      if (!scriptParsed.ok) throw new Error(scriptParsed.error.message);
+      gmScript = scriptParsed.value;
       log(`    Done (${elapsed(scriptStart)})`);
       log(`    Hook: ${(gmScript.hook as string).slice(0, 80)}…`);
       log(`    Central tension: ${gmScript.centralTension}\n`);
