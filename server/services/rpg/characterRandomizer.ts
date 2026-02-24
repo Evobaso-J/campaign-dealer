@@ -7,6 +7,12 @@ import {
   type SuitCharacterization,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
 import {
+  ValidationError,
+  ok,
+  err,
+  type Result,
+} from "~~/server/utils/errors";
+import {
   CharacterArchetype,
   type CharacterSheet,
   CharacterSuit,
@@ -83,13 +89,15 @@ export const generateCharacter = (): CharacterTemplate => {
 
 export const generateRandomDistinctCharacters = (
   count: number,
-): CharacterTemplate[] => {
+): Result<CharacterTemplate[], ValidationError> => {
   const suits = Object.values(CharacterSuit);
   const archetypes = Object.values(CharacterArchetype);
   const maxDistinct = suits.length * archetypes.length;
   if (count > maxDistinct) {
-    throw new Error(
-      `Cannot generate ${count} distinct characters: only ${maxDistinct} unique archetype-suit combinations exist.`,
+    return err(
+      new ValidationError(
+        `Cannot generate ${count} distinct characters: only ${maxDistinct} unique archetype-suit combinations exist.`,
+      ),
     );
   }
 
@@ -104,5 +112,5 @@ export const generateRandomDistinctCharacters = (
       generatedCharacters.set(key, newCharacter);
     }
   }
-  return Array.from(generatedCharacters.values());
+  return ok(Array.from(generatedCharacters.values()));
 };

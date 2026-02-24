@@ -27,27 +27,39 @@ afterEach(() => {
 
 describe("getAIProvider", () => {
   describe("when AI config is missing", () => {
-    it("throws if ai.provider is not set", () => {
+    it("returns error if ai.provider is not set", () => {
       mockUseRuntimeConfig.mockReturnValue({ ai: {} });
-      expect(() => getAIProvider()).toThrow("AI provider is not configured");
+      const result = getAIProvider();
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.message).toContain("AI provider is not configured");
+      }
     });
   });
 
   describe("when API key is missing", () => {
-    it("throws with a message referencing the provider name", () => {
+    it("returns error with a message referencing the provider name", () => {
       mockUseRuntimeConfig.mockReturnValue({
         ai: { provider: "anthropic" },
       });
-      expect(() => getAIProvider()).toThrow("no API key was provided");
+      const result = getAIProvider();
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.message).toContain("no API key was provided");
+      }
     });
   });
 
   describe("when ollamaHost is missing for ollama provider", () => {
-    it("throws with a message referencing the host", () => {
+    it("returns error with a message referencing the host", () => {
       mockUseRuntimeConfig.mockReturnValue({
         ai: { provider: "ollama" },
       });
-      expect(() => getAIProvider()).toThrow("no host was provided");
+      const result = getAIProvider();
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.message).toContain("no host was provided");
+      }
     });
   });
 
@@ -58,20 +70,25 @@ describe("getAIProvider", () => {
         ai: { provider: "ollama", ollamaHost: "http://127.0.0.1:11434" },
       });
 
-      const provider = getAIProvider();
-      expect(provider).toBeDefined();
-      expect(provider.complete).toBeDefined();
+      const result = getAIProvider();
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toBeDefined();
+        expect(result.value.complete).toBeDefined();
+      }
     });
   });
 
   describe("when provider name is invalid", () => {
-    it("throws listing valid options", () => {
+    it("returns error listing valid options", () => {
       mockUseRuntimeConfig.mockReturnValue({
         ai: { provider: "gemini", apiKey: "test-key" },
       });
-      expect(() => getAIProvider()).toThrow(
-        'Invalid AI provider "gemini"',
-      );
+      const result = getAIProvider();
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.message).toContain('Invalid AI provider "gemini"');
+      }
     });
   });
 
@@ -82,10 +99,13 @@ describe("getAIProvider", () => {
         ai: { provider: "anthropic", apiKey: "test-key" },
       });
 
-      const provider = getAIProvider();
-      expect(provider).toBeDefined();
-      expect(provider.complete).toBeDefined();
-      expect(provider.stream).toBeDefined();
+      const result = getAIProvider();
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toBeDefined();
+        expect(result.value.complete).toBeDefined();
+        expect(result.value.stream).toBeDefined();
+      }
     });
 
     it("passes config to the provider factory", () => {
@@ -114,7 +134,10 @@ describe("registerProvider", () => {
       ai: { provider: "anthropic", apiKey: "test-key" },
     });
 
-    const provider = getAIProvider();
-    expect(provider).toBe(mockProvider);
+    const result = getAIProvider();
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toBe(mockProvider);
+    }
   });
 });

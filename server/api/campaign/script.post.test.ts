@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterSheet } from "~~/shared/types/character";
+import { AIProviderError, ok, err } from "~~/server/utils/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/script.post";
@@ -97,10 +98,12 @@ function expectError(error: unknown, statusCode: number) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(getAIProvider).mockReturnValue({
-    complete: mockComplete,
-    stream: vi.fn(),
-  } as unknown as ReturnType<typeof getAIProvider>);
+  vi.mocked(getAIProvider).mockReturnValue(
+    ok({
+      complete: mockComplete,
+      stream: vi.fn(),
+    }) as ReturnType<typeof getAIProvider>,
+  );
 });
 
 describe("POST /api/campaign/script", () => {
@@ -165,15 +168,15 @@ describe("POST /api/campaign/script", () => {
   });
 
   describe("AI provider failure (502)", () => {
-    it("throws 502 when getAIProvider throws", async () => {
+    it("throws 502 when getAIProvider returns error", async () => {
       mockReadBody.mockResolvedValue({
         characters: [fakeCharacter()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      vi.mocked(getAIProvider).mockImplementation(() => {
-        throw new Error("AI provider is not configured");
-      });
+      vi.mocked(getAIProvider).mockReturnValue(
+        err(new AIProviderError("AI provider is not configured")),
+      );
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 502);

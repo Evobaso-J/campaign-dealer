@@ -1,4 +1,5 @@
 import { jsonrepair } from "jsonrepair";
+import { ok, err, type Result } from "./errors";
 
 /**
  * Extracts and parses JSON from raw AI completion text.
@@ -8,7 +9,7 @@ import { jsonrepair } from "jsonrepair";
  *   2. Literal `undefined` values where JSON expects `null`
  *   3. Structural issues (missing commas, trailing commas, etc.) via jsonrepair
  */
-export function parseAIJson<T>(raw: string): T {
+export function parseAIJson<T>(raw: string): Result<T, Error> {
   let text = raw;
   const fenced = text.match(/```(?:json)?\s*\n([\s\S]*?)```/);
   if (fenced) text = fenced[1]!;
@@ -19,10 +20,10 @@ export function parseAIJson<T>(raw: string): T {
   try {
     const parsedJson = JSON.parse(jsonrepair(text));
     if (!parsedJson || typeof parsedJson !== "object") {
-      throw new Error("Parsed JSON is falsy");
+      return err(new Error("Parsed JSON is falsy"));
     }
-    return parsedJson as T;
+    return ok(parsedJson as T);
   } catch (cause) {
-    throw new Error("Failed to parse AI JSON response", { cause });
+    return err(new Error("Failed to parse AI JSON response", { cause }));
   }
 }
