@@ -1,32 +1,27 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { setup, $fetch } from "@nuxt/test-utils/e2e";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { AnthropicProvider } from "~~/server/services/ai/anthropic";
-import type { AIProvider, AIRuntimeConfig } from "~~/server/services/ai/index";
-import { OllamaProvider } from "~~/server/services/ai/ollama";
-import { OpenAIProvider } from "~~/server/services/ai/openai";
-import { buildCharacterPrompt } from "~~/server/services/ai/prompts/character";
-import { buildScriptPrompt } from "~~/server/services/ai/prompts/script";
 import {
-  generateRandomDistinctCharacters,
-  type CharacterTemplate,
-} from "~~/server/services/rpg/characterRandomizer";
-import { parseAIJson } from "~~/server/utils/parseAIJson";
+  GenreGroups,
+  type GameMasterScript,
+  type Locale,
+  type Genre,
+} from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
-import { GenreGroups, type Genre } from "~~/shared/types/campaign";
 
 /**
- * Smoke test — exercises the full campaign generation pipeline:
- *   1. Generate random character templates (pure logic)
- *   2. Call AI provider to create character identities for each template
- *   3. Call AI provider to generate a GM script for the party
+ * E2E smoke test — exercises the full campaign generation pipeline via HTTP:
+ *   1. Starts a real Nuxt server
+ *   2. POST /api/campaign/characters → CharacterSheet[]
+ *   3. POST /api/campaign/script    → GameMasterScript
  *
  * Run:  pnpm smoke
  * Requires:  .env with NUXT_AI_API_KEY set (or NUXT_AI_PROVIDER=ollama)
  */
 
-// ── .env loader ────────────────────────────────────────────────────────
+// ── .env loader (only used for the skip-check & report header) ─────────
 
 function loadDotEnv(): Record<string, string> {
   const envVars: Record<string, string> = {};
@@ -56,47 +51,21 @@ function pickRandomSettings(count: number): Genre[] {
   return shuffled.slice(0, count);
 }
 
+const dotenv = loadDotEnv();
+const providerName =
+  process.env.NUXT_AI_PROVIDER || dotenv.NUXT_AI_PROVIDER || "anthropic";
+const modelName =
+  process.env.NUXT_AI_MODEL || dotenv.NUXT_AI_MODEL || undefined;
+const apiKey = process.env.NUXT_AI_API_KEY || dotenv.NUXT_AI_API_KEY;
+
 const SETTING: Genre[] = pickRandomSettings(2);
 const CHARACTER_COUNT = 3;
+const LANGUAGE: Locale = "it" as const;
 
-function buildConfig(): { config: AIRuntimeConfig; providerName: string } {
-  const dotenv = loadDotEnv();
-  const providerName =
-    process.env.NUXT_AI_PROVIDER || dotenv.NUXT_AI_PROVIDER || "anthropic";
-  const apiKey = process.env.NUXT_AI_API_KEY || dotenv.NUXT_AI_API_KEY;
-  const model = process.env.NUXT_AI_MODEL || dotenv.NUXT_AI_MODEL || undefined;
-  const ollamaHost =
-    process.env.NUXT_AI_OLLAMA_HOST || dotenv.NUXT_AI_OLLAMA_HOST || undefined;
-
-  return {
-    providerName,
-    config: {
-      provider: providerName as AIRuntimeConfig["provider"],
-      apiKey: apiKey || "ollama",
-      model,
-      ollamaHost,
-    },
-  };
-}
-
-function createProvider(
-  providerName: string,
-  config: AIRuntimeConfig,
-): AIProvider {
-  if (providerName === "ollama") {
-    return new OllamaProvider(config);
-  }
-  if (providerName === "openai") {
-    return new OpenAIProvider(config);
-  }
-  return new AnthropicProvider(config);
-}
+const hasCredentials =
+  providerName === "ollama" || (apiKey && apiKey !== "ollama");
 
 // ── Helpers ──────────────────────────────────────────────────────────
-
-function elapsed(startMs: number): string {
-  return ((Date.now() - startMs) / 1000).toFixed(1) + "s";
-}
 
 function wrapText(text: string, lineWidth: number, indent: string): string {
   const words = String(text).split(" ");
@@ -120,85 +89,68 @@ const log = console.log;
 
 // ── Test suite ─────────────────────────────────────────────────────────
 
-const { config, providerName } = buildConfig();
-const hasCredentials =
-  providerName === "ollama" || (config.apiKey && config.apiKey !== "ollama");
-
 describe.skipIf(!hasCredentials)(
-  "smoke test: full campaign generation pipeline",
-  () => {
-    const provider = createProvider(providerName, config);
-
-    let templates: CharacterTemplate[];
+  "e2e: full campaign generation pipeline",
+  async () => {
     let characterSheets: CharacterSheet[];
-    let gmScript: Record<string, unknown>;
+    let gmScript: GameMasterScript;
+
+    // Start a real Nuxt server.
+    // In production mode, Nuxt doesn't load .env — we forward the
+    // vars we already read so the server's runtimeConfig is populated.
+    await setup({
+      env: {
+        ...dotenv,
+        ...Object.fromEntries(
+          Object.entries(process.env).filter(([k]) =>
+            k.startsWith("NUXT_"),
+          ) as [string, string][],
+        ),
+      },
+    });
 
     beforeAll(async () => {
       log(`\n  Provider: ${providerName}`);
-      if (config.model) log(`  Model: ${config.model}`);
+      if (modelName) log(`  Model: ${modelName}`);
+      log(`  Setting: ${SETTING.join(", ")}`);
 
-      // Step 1: Generate character templates
-      log(`\n  Generating ${CHARACTER_COUNT} character templates…`);
-      const templatesResult = generateRandomDistinctCharacters(CHARACTER_COUNT);
-      if (!templatesResult.ok) throw new Error(templatesResult.error.message);
-      templates = templatesResult.value;
-      for (const t of templates) {
-        log(
-          `    ${t.archetype} of ${t.suit}  |  ♥${t.modifiers.hearts} ♣${t.modifiers.clubs} ♠${t.modifiers.spades}`,
-        );
-      }
-
-      // Step 2: Generate character identities via AI
-      log(`\n  Calling ${providerName} for character identities…`);
-      characterSheets = [];
-      for (const [i, template] of templates.entries()) {
-        const label = `${template.archetype} of ${template.suit}`;
-        const startMs = Date.now();
-        const prompt = buildCharacterPrompt({
-          template,
+      // Step 1: Generate characters via API
+      log(`\n  POST /api/campaign/characters (${CHARACTER_COUNT} players)…`);
+      const charStart = Date.now();
+      characterSheets = await $fetch("/api/campaign/characters", {
+        method: "POST",
+        body: {
+          playerCount: CHARACTER_COUNT,
           setting: SETTING,
-          language: "en",
-        });
-        const result = await provider.complete(prompt);
-        const identityResult = parseAIJson<CharacterSheet["characterIdentity"]>(
-          result.text,
-        );
-        if (!identityResult.ok) throw new Error(identityResult.error.message);
-        const identity = identityResult.value;
-
+          language: LANGUAGE,
+        },
+      });
+      const charElapsed = ((Date.now() - charStart) / 1000).toFixed(1);
+      log(
+        `    ✓ Received ${characterSheets.length} characters (${charElapsed}s)`,
+      );
+      for (const sheet of characterSheets) {
         log(
-          `    [${i + 1}/${templates.length}] ${label} → ${identity.name} (${elapsed(startMs)})`,
+          `      ${sheet.archetype} of ${sheet.suit} → ${sheet.characterIdentity.name}`,
         );
-
-        characterSheets.push({
-          archetype: template.archetype,
-          suit: template.suit,
-          damage: template.damage,
-          modifiers: template.modifiers,
-          suitSkill: template.suitSkill,
-          archetypeSkills: template.archetypeSkills,
-          characterIdentity: identity,
-        });
       }
 
-      // Step 3: Generate GM script via AI
-      log(`\n  Calling ${providerName} for GM script…`);
+      // Step 2: Generate GM script via API
+      log(`\n  POST /api/campaign/script…`);
       const scriptStart = Date.now();
-      const scriptPrompt = buildScriptPrompt({
-        characters: characterSheets,
-        setting: SETTING,
-        language: "en",
+      gmScript = await $fetch("/api/campaign/script", {
+        method: "POST",
+        body: {
+          characters: characterSheets,
+          setting: SETTING,
+          language: LANGUAGE,
+        },
       });
-      const scriptResult = await provider.complete(scriptPrompt);
-      const scriptParsed = parseAIJson<Record<string, unknown>>(
-        scriptResult.text,
-      );
-      if (!scriptParsed.ok) throw new Error(scriptParsed.error.message);
-      gmScript = scriptParsed.value;
-      log(`    Done (${elapsed(scriptStart)})`);
-      log(`    Hook: ${(gmScript.hook as string).slice(0, 80)}…`);
+      const scriptElapsed = ((Date.now() - scriptStart) / 1000).toFixed(1);
+      log(`    ✓ Done (${scriptElapsed}s)`);
+      log(`    Hook: ${String(gmScript.hook).slice(0, 80)}…`);
       log(`    Central tension: ${gmScript.centralTension}\n`);
-    }, 180_000);
+    }, 300_000);
 
     afterAll(() => {
       if (!characterSheets?.length || !gmScript) return;
@@ -209,10 +161,10 @@ describe.skipIf(!hasCredentials)(
       const timestamp = new Date().toISOString();
 
       lines.push(divider);
-      lines.push(`  SMOKE TEST — CAMPAIGN OUTPUT`);
+      lines.push(`  E2E SMOKE TEST — CAMPAIGN OUTPUT`);
       lines.push(`  ${timestamp}`);
       lines.push(
-        `  Provider: ${providerName}${config.model ? ` | Model: ${config.model}` : ""}`,
+        `  Provider: ${providerName}${modelName ? ` | Model: ${modelName}` : ""}`,
       );
       lines.push(`  Setting: ${SETTING.join(", ")}`);
       lines.push(divider);
@@ -273,10 +225,7 @@ describe.skipIf(!hasCredentials)(
       lines.push("");
 
       // Targets
-      const targets = gmScript.targets as Record<
-        string,
-        { name: string; description?: string; fate?: string; notes?: string }
-      >;
+      const targets = gmScript.targets;
       lines.push(`  Targets:`);
       for (const role of ["king", "queen", "jack"] as const) {
         const t = targets[role];
@@ -298,10 +247,7 @@ describe.skipIf(!hasCredentials)(
       lines.push("");
 
       // Weak Points
-      const weakPoints = gmScript.weakPoints as {
-        name: string;
-        role: string;
-      }[];
+      const weakPoints = gmScript.weakPoints;
       lines.push(`  Weak Points (${weakPoints.length}):`);
       for (const [j, wp] of weakPoints.entries()) {
         lines.push(
@@ -311,7 +257,7 @@ describe.skipIf(!hasCredentials)(
       lines.push("");
 
       // Scenes
-      const scenes = gmScript.scenes as string[];
+      const scenes = gmScript.scenes;
       lines.push(`  Scenes (${scenes.length}):`);
       for (const [j, scene] of scenes.entries()) {
         const prefix = `    ${String(j + 1).padStart(2, " ")}. `;
@@ -331,27 +277,24 @@ describe.skipIf(!hasCredentials)(
       log(`\n  📄 Output written to ${outputPath}\n`);
     });
 
-    it("generates the correct number of distinct character templates", () => {
-      expect(templates).toHaveLength(CHARACTER_COUNT);
-      const keys = templates.map((t) => `${t.archetype}-${t.suit}`);
-      expect(new Set(keys).size).toBe(CHARACTER_COUNT);
-    });
-
-    it("each template has required fields", () => {
-      for (const t of templates) {
-        expect(t.archetype).toBeDefined();
-        expect(t.suit).toBeDefined();
-        expect(t.modifiers).toBeDefined();
-        expect(t.suitSkill).toBeDefined();
-        expect(t.archetypeSkills.length).toBeGreaterThanOrEqual(1);
-      }
-    });
-
-    it("each character sheet has a valid AI-generated identity", () => {
+    it("returns the correct number of character sheets", () => {
       expect(characterSheets).toHaveLength(CHARACTER_COUNT);
+    });
+
+    it("each character sheet has required fields and a valid identity", () => {
       for (const sheet of characterSheets) {
+        expect(sheet.archetype).toBeDefined();
+        expect(sheet.suit).toBeDefined();
+        expect(sheet.modifiers).toBeDefined();
+        expect(sheet.suitSkill).toBeDefined();
+        expect(sheet.archetypeSkills.length).toBeGreaterThanOrEqual(1);
         expect(sheet.characterIdentity.name).toBeTruthy();
       }
+    });
+
+    it("character sheets are distinct (unique archetype-suit combos)", () => {
+      const keys = characterSheets.map((s) => `${s.archetype}-${s.suit}`);
+      expect(new Set(keys).size).toBe(CHARACTER_COUNT);
     });
 
     it("GM script has a hook", () => {
@@ -359,26 +302,20 @@ describe.skipIf(!hasCredentials)(
     });
 
     it("GM script has all three targets with descriptions", () => {
-      const targets = gmScript.targets as Record<
-        string,
-        { name: string; description: string }
-      >;
+      const targets = gmScript.targets;
       expect(targets.king).toBeDefined();
-      expect(targets.king!.name).toBeTruthy();
-      expect(targets.king!.description).toBeTruthy();
+      expect(targets.king.name).toBeTruthy();
+      expect(targets.king.description).toBeTruthy();
       expect(targets.queen).toBeDefined();
-      expect(targets.queen!.name).toBeTruthy();
-      expect(targets.queen!.description).toBeTruthy();
+      expect(targets.queen.name).toBeTruthy();
+      expect(targets.queen.description).toBeTruthy();
       expect(targets.jack).toBeDefined();
-      expect(targets.jack!.name).toBeTruthy();
-      expect(targets.jack!.description).toBeTruthy();
+      expect(targets.jack.name).toBeTruthy();
+      expect(targets.jack.description).toBeTruthy();
     });
 
     it("GM script has 10 weak points", () => {
-      const weakPoints = gmScript.weakPoints as {
-        name: string;
-        role: string;
-      }[];
+      const weakPoints = gmScript.weakPoints;
       expect(weakPoints).toHaveLength(10);
       for (const wp of weakPoints) {
         expect(wp.name).toBeTruthy();
@@ -388,7 +325,7 @@ describe.skipIf(!hasCredentials)(
 
     it("GM script has scenes, central tension, and plot", () => {
       expect(gmScript.scenes).toBeDefined();
-      expect((gmScript.scenes as string[]).length).toBeGreaterThanOrEqual(1);
+      expect(gmScript.scenes.length).toBeGreaterThanOrEqual(1);
       expect(gmScript.centralTension).toBeTruthy();
       expect(gmScript.plot).toBeTruthy();
     });
