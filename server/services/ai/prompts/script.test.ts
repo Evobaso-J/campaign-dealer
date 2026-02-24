@@ -35,7 +35,7 @@ const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
 describe("buildScriptPrompt", () => {
   describe("return shape", () => {
     it("returns an object with system and user string properties", () => {
-      const result = buildScriptPrompt([makeCharacter()], SETTING);
+      const result = buildScriptPrompt([makeCharacter()], SETTING, "en");
 
       expect(result).toHaveProperty("system");
       expect(result).toHaveProperty("user");
@@ -44,55 +44,56 @@ describe("buildScriptPrompt", () => {
     });
 
     it("system prompt is non-empty", () => {
-      const result = buildScriptPrompt([makeCharacter()], SETTING);
+      const result = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(result.system.length).toBeGreaterThan(0);
     });
 
     it("user prompt is non-empty", () => {
-      const result = buildScriptPrompt([makeCharacter()], SETTING);
+      const result = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(result.user.length).toBeGreaterThan(0);
     });
   });
 
   describe("system prompt", () => {
     it("is the same regardless of input characters or setting", () => {
-      const result1 = buildScriptPrompt([makeCharacter()], SETTING);
+      const result1 = buildScriptPrompt([makeCharacter()], SETTING, "en");
       const result2 = buildScriptPrompt(
         [
           makeCharacter({ archetype: "queen", suit: "hearts" }),
           makeCharacter({ archetype: "king", suit: "spades" }),
         ],
         ["highFantasy"],
+        "en",
       );
 
       expect(result1.system).toBe(result2.system);
     });
 
     it("mentions the GameMasterScript schema", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("GameMasterScript");
     });
 
     it("instructs the AI to respond with only JSON", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("ONLY");
       expect(system).toContain("JSON");
     });
 
     it("mentions the game name", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("The House Doesn't Always Win");
     });
 
     it("describes the three target archetypes", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain('"king"');
       expect(system).toContain('"queen"');
       expect(system).toContain('"jack"');
     });
 
     it("requires a description for each target", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       // Each target object in the schema must include a "description" field
       const descriptionMatches = system.match(
         /"description": string \(required\)/g,
@@ -102,33 +103,33 @@ describe("buildScriptPrompt", () => {
     });
 
     it("specifies exactly 10 weak points", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("exactly 10");
     });
 
     it("structures the campaign as three sessions", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("three sessions");
     });
 
     it("includes the plot field in the schema", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain('"plot"');
     });
 
     it("does not hardcode a fixed archetype order for sessions", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("narrative escalation");
       expect(system).toContain("need not follow Jack, Queen, King");
     });
 
     it("mentions the Diamonds faction", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system).toContain("Diamonds");
     });
 
     it("mentions the three approaches to defeating targets", () => {
-      const { system } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { system } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(system.toLowerCase()).toContain("captured");
       expect(system.toLowerCase()).toContain("converted");
       expect(system.toLowerCase()).toContain("eliminated");
@@ -137,27 +138,27 @@ describe("buildScriptPrompt", () => {
 
   describe("user prompt", () => {
     it("includes the character name", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(user).toContain("Vinnie 'Two-Fingers' Malone");
     });
 
     it("includes the character archetype", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(user).toContain("jack");
     });
 
     it("includes the character suit", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(user).toContain("clubs");
     });
 
     it("includes the character concept", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(user).toContain("A streetwise enforcer with a heart of gold");
     });
 
     it("includes all genre names from the setting", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], SETTING);
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
       expect(user).toContain("cyberpunk");
       expect(user).toContain("conspiracyThriller");
     });
@@ -174,7 +175,7 @@ describe("buildScriptPrompt", () => {
           },
         }),
       ];
-      const { user } = buildScriptPrompt(characters, SETTING);
+      const { user } = buildScriptPrompt(characters, SETTING, "en");
 
       expect(user).toContain("Vinnie 'Two-Fingers' Malone");
       expect(user).toContain("Lady Seraphina");
@@ -186,6 +187,7 @@ describe("buildScriptPrompt", () => {
       const { user } = buildScriptPrompt(
         [makeCharacter()],
         ["highFantasy", "gothicHorror"],
+        "en",
       );
       expect(user).toContain("highFantasy");
       expect(user).toContain("gothicHorror");
@@ -197,24 +199,38 @@ describe("buildScriptPrompt", () => {
           name: "The Nameless" as GeneratedText,
         },
       });
-      const { user } = buildScriptPrompt([character], SETTING);
+      const { user } = buildScriptPrompt([character], SETTING, "en");
       expect(user).toContain("The Nameless");
       expect(user).not.toContain("undefined");
     });
   });
 
+  describe("language instruction", () => {
+    it("includes English language instruction when language is 'en'", () => {
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "en");
+      expect(user).toContain("Language: English");
+      expect(user).toContain("All generated text must be written in English.");
+    });
+
+    it("includes Italian language instruction when language is 'it'", () => {
+      const { user } = buildScriptPrompt([makeCharacter()], SETTING, "it");
+      expect(user).toContain("Language: Italian");
+      expect(user).toContain("All generated text must be written in Italian.");
+    });
+  });
+
   describe("edge cases", () => {
     it("handles an empty setting array without throwing", () => {
-      expect(() => buildScriptPrompt([makeCharacter()], [])).not.toThrow();
+      expect(() => buildScriptPrompt([makeCharacter()], [], "en")).not.toThrow();
     });
 
     it("handles a single genre setting", () => {
-      const { user } = buildScriptPrompt([makeCharacter()], ["steampunk"]);
+      const { user } = buildScriptPrompt([makeCharacter()], ["steampunk"], "en");
       expect(user).toContain("steampunk");
     });
 
     it("handles a single character array", () => {
-      expect(() => buildScriptPrompt([makeCharacter()], SETTING)).not.toThrow();
+      expect(() => buildScriptPrompt([makeCharacter()], SETTING, "en")).not.toThrow();
     });
 
     it("handles a large party of characters", () => {
@@ -226,7 +242,7 @@ describe("buildScriptPrompt", () => {
           },
         }),
       );
-      const { user } = buildScriptPrompt(characters, SETTING);
+      const { user } = buildScriptPrompt(characters, SETTING, "en");
       expect(user).toContain("Character 1");
       expect(user).toContain("Character 9");
     });

@@ -1,5 +1,13 @@
 import type { GeneratedText } from "./utils";
 
+export const Locales = ["en", "it"] as const;
+export type Locale = (typeof Locales)[number];
+
+export const LocaleNames: Record<Locale, string> = {
+  en: "English",
+  it: "Italian",
+};
+
 type TargetArchetype = "king" | "queen" | "jack";
 type TargetFate = "captured" | "converted" | "eliminated";
 

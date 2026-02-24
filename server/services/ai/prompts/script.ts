@@ -1,6 +1,6 @@
 import type { AIPrompt } from "~~/server/services/ai/index";
 import type { CharacterSheet } from "~~/shared/types/character";
-import type { Genre } from "~~/shared/types/campaign";
+import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
 Your task is to generate a Game Master script for a three-session campaign.
@@ -53,6 +53,7 @@ Guidelines:
 export function buildScriptPrompt(
   characters: CharacterSheet[],
   setting: Genre[],
+  language: Locale,
 ): AIPrompt {
   const characterSummaries = characters
     .map((c, i) => {
@@ -70,7 +71,10 @@ export function buildScriptPrompt(
 Party:
 ${characterSummaries}
 
-Campaign setting: ${setting.join(", ")}`;
+Campaign setting: ${setting.join(", ")}
+
+Language: ${LocaleNames[language]}
+All generated text must be written in ${LocaleNames[language]}.`;
 
   return {
     system: SYSTEM_PROMPT,

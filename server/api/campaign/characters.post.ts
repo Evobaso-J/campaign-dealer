@@ -23,7 +23,7 @@ export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
     });
   }
 
-  const { playerCount, setting } = parsed.data;
+  const { playerCount, setting, language } = parsed.data;
 
   let templates: ReturnType<typeof generateRandomDistinctCharacters>;
   try {
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
   try {
     const characterSheets: CharacterSheet[] = await Promise.all(
       templates.map(async (template) => {
-        const prompt = buildCharacterPrompt(template, setting);
+        const prompt = buildCharacterPrompt(template, setting, language);
 
         let result: Awaited<ReturnType<typeof provider.complete>>;
         try {

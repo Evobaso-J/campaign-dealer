@@ -1,6 +1,6 @@
 import type { AIPrompt } from "~~/server/services/ai/index";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
-import type { Genre } from "~~/shared/types/campaign";
+import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
 Your task is to generate a character identity for a player character.
@@ -29,6 +29,7 @@ Guidelines:
 export function buildCharacterPrompt(
   template: CharacterTemplate,
   setting: Genre[],
+  language: Locale,
 ): AIPrompt {
   const user = `Generate a CharacterIdentity for this character:
 
@@ -38,7 +39,10 @@ ${template.archetypeCharacterization}
 Suit: ${template.suit}
 ${template.suitCharacterization}
 
-Campaign setting: ${setting.join(", ")}`;
+Campaign setting: ${setting.join(", ")}
+
+Language: ${LocaleNames[language]}
+All generated text must be written in ${LocaleNames[language]}.`;
 
   return {
     system: SYSTEM_PROMPT,
