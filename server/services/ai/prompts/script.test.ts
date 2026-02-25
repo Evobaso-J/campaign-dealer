@@ -55,6 +55,24 @@ describe("buildScriptPrompt", () => {
       const result = buildScriptPrompt(defaults());
       expect(result.user.length).toBeGreaterThan(0);
     });
+
+    it("includes a jsonSchema for structured output", () => {
+      const result = buildScriptPrompt(defaults());
+      expect(result.jsonSchema).toBeDefined();
+      expect(result.jsonSchema).toHaveProperty("type", "object");
+      expect(result.jsonSchema).toHaveProperty("properties");
+    });
+
+    it("jsonSchema includes the expected GameMasterScript fields", () => {
+      const result = buildScriptPrompt(defaults());
+      const props = result.jsonSchema!.properties as Record<string, unknown>;
+      expect(props).toHaveProperty("hook");
+      expect(props).toHaveProperty("targets");
+      expect(props).toHaveProperty("weakPoints");
+      expect(props).toHaveProperty("scenes");
+      expect(props).toHaveProperty("centralTension");
+      expect(props).toHaveProperty("plot");
+    });
   });
 
   describe("system prompt", () => {
