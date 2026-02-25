@@ -158,13 +158,13 @@ describe("buildCharacterPrompt", () => {
     it("includes English language instruction when language is 'en'", () => {
       const { user } = buildCharacterPrompt(defaults());
       expect(user).toContain("Language: English");
-      expect(user).toContain("All generated text must be written in English.");
+      expect(user).toContain("All generated text must be written in English,");
     });
 
     it("includes Italian language instruction when language is 'it'", () => {
       const { user } = buildCharacterPrompt({ ...defaults(), language: "it" });
       expect(user).toContain("Language: Italian");
-      expect(user).toContain("All generated text must be written in Italian.");
+      expect(user).toContain("All generated text must be written in Italian,");
     });
   });
 
