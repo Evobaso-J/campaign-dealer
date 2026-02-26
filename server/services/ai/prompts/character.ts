@@ -4,10 +4,7 @@ import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomiz
 import { characterIdentitySchema } from "~~/server/utils/validate";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
 
-const CHARACTER_JSON_SCHEMA = z.toJSONSchema(characterIdentitySchema) as Record<
-  string,
-  unknown
->;
+const CHARACTER_JSON_SCHEMA = z.toJSONSchema(characterIdentitySchema);
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
 Your task is to generate a character identity for a player character.
