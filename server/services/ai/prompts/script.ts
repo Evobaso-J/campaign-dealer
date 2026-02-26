@@ -1,6 +1,10 @@
+import { z } from "zod";
 import type { AIPrompt } from "~~/server/services/ai/index";
+import { gameMasterScriptSchema } from "~~/server/utils/validate";
 import type { CharacterSheet } from "~~/shared/types/character";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
+
+const SCRIPT_JSON_SCHEMA = z.toJSONSchema(gameMasterScriptSchema);
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
 Your task is to generate a Game Master script for a three-session campaign.
@@ -76,5 +80,6 @@ All generated text must be written in ${LocaleNames[language]}, exept for the na
   return {
     system: SYSTEM_PROMPT,
     user,
+    jsonSchema: SCRIPT_JSON_SCHEMA,
   };
 }

@@ -1,6 +1,10 @@
+import { z } from "zod";
 import type { AIPrompt } from "~~/server/services/ai/index";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+import { characterIdentitySchema } from "~~/server/utils/validate";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
+
+const CHARACTER_JSON_SCHEMA = z.toJSONSchema(characterIdentitySchema);
 
 const SYSTEM_PROMPT = `You are a creative writing assistant for a tabletop RPG called "The House Doesn't Always Win."
 Your task is to generate a character identity for a player character.
@@ -51,5 +55,6 @@ All generated text must be written in ${LocaleNames[language]}, exept for the na
   return {
     system: SYSTEM_PROMPT,
     user,
+    jsonSchema: CHARACTER_JSON_SCHEMA,
   };
 }

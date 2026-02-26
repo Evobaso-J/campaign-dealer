@@ -51,6 +51,22 @@ describe("buildCharacterPrompt", () => {
       const result = buildCharacterPrompt(defaults());
       expect(result.user.length).toBeGreaterThan(0);
     });
+
+    it("includes a jsonSchema for structured output", () => {
+      const result = buildCharacterPrompt(defaults());
+      expect(result.jsonSchema).toBeDefined();
+      expect(result.jsonSchema).toHaveProperty("type", "object");
+      expect(result.jsonSchema).toHaveProperty("properties");
+    });
+
+    it("jsonSchema includes the expected CharacterIdentity fields", () => {
+      const result = buildCharacterPrompt(defaults());
+      const props = result.jsonSchema!.properties as Record<string, unknown>;
+      expect(props).toHaveProperty("name");
+      expect(props).toHaveProperty("concept");
+      expect(props).toHaveProperty("weapon");
+      expect(props).toHaveProperty("instrument");
+    });
   });
 
   describe("system prompt", () => {
@@ -142,13 +158,13 @@ describe("buildCharacterPrompt", () => {
     it("includes English language instruction when language is 'en'", () => {
       const { user } = buildCharacterPrompt(defaults());
       expect(user).toContain("Language: English");
-      expect(user).toContain("All generated text must be written in English.");
+      expect(user).toContain("All generated text must be written in English,");
     });
 
     it("includes Italian language instruction when language is 'it'", () => {
       const { user } = buildCharacterPrompt({ ...defaults(), language: "it" });
       expect(user).toContain("Language: Italian");
-      expect(user).toContain("All generated text must be written in Italian.");
+      expect(user).toContain("All generated text must be written in Italian,");
     });
   });
 

@@ -17,6 +17,9 @@ import { OpenAIProvider } from "./openai";
 export interface AIPrompt {
   system: string;
   user: string;
+  /** JSON Schema for structured output. Providers that support it (e.g. Anthropic
+   *  tool_use) will constrain the response to match this schema. Others ignore it. */
+  jsonSchema?: Record<string, unknown>;
 }
 
 /**

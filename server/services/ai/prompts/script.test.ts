@@ -55,6 +55,24 @@ describe("buildScriptPrompt", () => {
       const result = buildScriptPrompt(defaults());
       expect(result.user.length).toBeGreaterThan(0);
     });
+
+    it("includes a jsonSchema for structured output", () => {
+      const result = buildScriptPrompt(defaults());
+      expect(result.jsonSchema).toBeDefined();
+      expect(result.jsonSchema).toHaveProperty("type", "object");
+      expect(result.jsonSchema).toHaveProperty("properties");
+    });
+
+    it("jsonSchema includes the expected GameMasterScript fields", () => {
+      const result = buildScriptPrompt(defaults());
+      const props = result.jsonSchema!.properties as Record<string, unknown>;
+      expect(props).toHaveProperty("hook");
+      expect(props).toHaveProperty("targets");
+      expect(props).toHaveProperty("weakPoints");
+      expect(props).toHaveProperty("scenes");
+      expect(props).toHaveProperty("centralTension");
+      expect(props).toHaveProperty("plot");
+    });
   });
 
   describe("system prompt", () => {
@@ -133,9 +151,9 @@ describe("buildScriptPrompt", () => {
 
     it("mentions the three approaches to defeating targets", () => {
       const { system } = buildScriptPrompt(defaults());
-      expect(system.toLowerCase()).toContain("captured");
-      expect(system.toLowerCase()).toContain("converted");
-      expect(system.toLowerCase()).toContain("eliminated");
+      expect(system.toLowerCase()).toContain("capture");
+      expect(system.toLowerCase()).toContain("convert");
+      expect(system.toLowerCase()).toContain("eliminate");
     });
   });
 
@@ -145,14 +163,10 @@ describe("buildScriptPrompt", () => {
       expect(user).toContain("Vinnie 'Two-Fingers' Malone");
     });
 
-    it("includes the character archetype", () => {
+    it("includes the character name and concept, not archetype or suit", () => {
       const { user } = buildScriptPrompt(defaults());
-      expect(user).toContain("jack");
-    });
-
-    it("includes the character suit", () => {
-      const { user } = buildScriptPrompt(defaults());
-      expect(user).toContain("clubs");
+      expect(user).toContain("Vinnie 'Two-Fingers' Malone");
+      expect(user).toContain("A streetwise enforcer with a heart of gold");
     });
 
     it("includes the character concept", () => {
@@ -185,8 +199,7 @@ describe("buildScriptPrompt", () => {
 
       expect(user).toContain("Vinnie 'Two-Fingers' Malone");
       expect(user).toContain("Lady Seraphina");
-      expect(user).toContain("queen");
-      expect(user).toContain("hearts");
+      expect(user).toContain("A cunning diplomat hiding dark secrets");
     });
 
     it("reflects different setting values", () => {
@@ -218,13 +231,13 @@ describe("buildScriptPrompt", () => {
     it("includes English language instruction when language is 'en'", () => {
       const { user } = buildScriptPrompt(defaults());
       expect(user).toContain("Language: English");
-      expect(user).toContain("All generated text must be written in English.");
+      expect(user).toContain("All generated text must be written in English,");
     });
 
     it("includes Italian language instruction when language is 'it'", () => {
       const { user } = buildScriptPrompt({ ...defaults(), language: "it" });
       expect(user).toContain("Language: Italian");
-      expect(user).toContain("All generated text must be written in Italian.");
+      expect(user).toContain("All generated text must be written in Italian,");
     });
   });
 
