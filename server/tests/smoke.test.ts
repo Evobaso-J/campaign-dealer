@@ -60,7 +60,7 @@ const apiKey = process.env.NUXT_AI_API_KEY || dotenv.NUXT_AI_API_KEY;
 
 const SETTING: Genre[] = pickRandomSettings(2);
 const CHARACTER_COUNT = 3;
-const LANGUAGE: Locale = "it" as const;
+const LANGUAGE: Locale = "en" as const;
 
 const hasCredentials =
   providerName === "ollama" || (apiKey && apiKey !== "ollama");
