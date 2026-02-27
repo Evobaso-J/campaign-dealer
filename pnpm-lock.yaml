@@ -32,6 +32,9 @@ importers:
       openai:
         specifier: ^6.23.0
         version: 6.23.0(ws@8.19.0)(zod@4.3.6)
+      pinia:
+        specifier: ^3.0.4
+        version: 3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3))
       vue:
         specifier: ^3.5.28
         version: 3.5.28(typescript@5.9.3)
