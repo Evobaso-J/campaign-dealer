@@ -68,7 +68,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
       <label>
         Player count:
-        <input v-model.number="playerCount" type="number" min="1" max="6" style="width: 4rem; margin-left: 0.5rem;" />
+        <input v-model.number="playerCount" type="number" min="1" max="6" style="width: 4rem; margin-left: 0.5rem;" >
       </label>
 
       <div style="margin-top: 1rem;">
@@ -76,10 +76,10 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
           <label v-for="genre in allGenres" :key="genre" style="cursor: pointer;">
             <input
+              v-model="selectedGenres"
               type="checkbox"
               :value="genre"
-              v-model="selectedGenres"
-            />
+            >
             {{ genre }}
           </label>
         </div>
