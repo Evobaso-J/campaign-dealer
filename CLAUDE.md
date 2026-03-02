@@ -77,8 +77,8 @@ The randomizer (`server/services/rpg/characterRandomizer.ts`) produces a `Charac
 
 Three Vitest projects configured in `vitest.config.ts`:
 
-- `unit` — `test/unit/**`, node environment, pure logic
-- `nuxt` — `test/nuxt/**`, Nuxt environment with `@nuxt/test-utils`
+- `unit` — `app/**/*.test.ts` (excludes `*.nuxt.test.ts`), node environment, pure logic
+- `nuxt` — `app/**/*.nuxt.test.ts`, Nuxt environment with `@nuxt/test-utils`
 - `server` — `server/**/*.test.ts`, node environment with path aliases (`~~` = root, `~` = `app/`)
 
 ### i18n
