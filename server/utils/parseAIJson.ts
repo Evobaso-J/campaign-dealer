@@ -1,5 +1,5 @@
 import { jsonrepair } from "jsonrepair";
-import { ok, err, type Result } from "./errors";
+import { ok, err, type Result } from "~~/shared/types/errors";
 
 /**
  * Extracts and parses JSON from raw AI completion text.

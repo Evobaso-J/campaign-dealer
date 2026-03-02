@@ -3,8 +3,8 @@ import "~~/server/services/ai/anthropic";
 import "~~/server/services/ai/ollama";
 import { getAIProvider } from "~~/server/services/ai/index";
 import { buildScriptPrompt } from "~~/server/services/ai/prompts/script";
+import { ValidationError } from "~~/shared/types/errors";
 import {
-  ValidationError,
   withAIProvider,
   parseAndValidateAIResponse,
   toHttpError,

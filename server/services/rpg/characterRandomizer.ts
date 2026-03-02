@@ -11,7 +11,7 @@ import {
   ok,
   err,
   type Result,
-} from "~~/server/utils/errors";
+} from "~~/shared/types/errors";
 import {
   CharacterArchetype,
   type CharacterSheet,

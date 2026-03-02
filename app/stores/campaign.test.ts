@@ -87,14 +87,14 @@ describe("campaign store", () => {
     });
   });
 
-  describe("$reset", () => {
+  describe("reset", () => {
     it("returns all state to initial values from done state", () => {
       const store = useCampaignStore();
       store.setInput(3, ["cyberpunk"] as Genre[]);
       store.setCharacters([mockCharacter]);
       store.setScript(mockScript);
 
-      store.$reset();
+      store.reset();
 
       expect(store.playerCount).toBe(0);
       expect(store.campaignSetting).toEqual([]);
@@ -107,7 +107,7 @@ describe("campaign store", () => {
     it("returns to initial state from error state", () => {
       const store = useCampaignStore();
       store.setError("failure");
-      store.$reset();
+      store.reset();
       expect(store.generationStatus).toBe("idle");
       expect(store.errorMessage).toBeUndefined();
     });
