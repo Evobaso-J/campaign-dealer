@@ -5,7 +5,7 @@ import type {
   AIPrompt,
   AIProvider,
   AIRuntimeConfig,
-} from "./index";
+} from "./types";
 
 const DEFAULT_MODEL = "llama3.1";
 const MODEL_TEMPERATURE = 1.5;

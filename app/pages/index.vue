@@ -82,14 +82,14 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           min="1"
           max="6"
           class="w-16 ml-2"
-        />
+        >
       </label>
 
       <div class="mt-4">
         <strong>Genres:</strong>
         <div class="flex flex-wrap gap-2 mt-2">
           <label v-for="genre in allGenres" :key="genre" class="cursor-pointer">
-            <input v-model="selectedGenres" type="checkbox" :value="genre" />
+            <input v-model="selectedGenres" type="checkbox" :value="genre" >
             {{ genre }}
           </label>
         </div>

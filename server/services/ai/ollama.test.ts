@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText } from "~~/shared/types/utils";
-import type { AIRuntimeConfig } from "./index";
+import type { AIRuntimeConfig } from "./types";
 import { OllamaProvider } from "./ollama";
 
 const { mockChat, MockOllama } = vi.hoisted(() => {

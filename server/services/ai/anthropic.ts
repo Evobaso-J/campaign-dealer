@@ -5,7 +5,7 @@ import type {
   AIPrompt,
   AIProvider,
   AIRuntimeConfig,
-} from "./index";
+} from "./types";
 
 const DEFAULT_MODEL = "claude-sonnet-4-20250514";
 const MAX_TOKENS = 4096;

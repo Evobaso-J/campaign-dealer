@@ -5,7 +5,7 @@ import type {
   AIPrompt,
   AIProvider,
   AIRuntimeConfig,
-} from "./index";
+} from "./types";
 
 const DEFAULT_MODEL = "gpt-4o";
 const MAX_TOKENS = 4096;

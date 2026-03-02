@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type { AIPrompt } from "~~/server/services/ai/index";
 import { gameMasterScriptSchema } from "~~/server/utils/validate";
 import type { CharacterSheet } from "~~/shared/types/character";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
+import type { AIPrompt } from "../types";
 
 const SCRIPT_JSON_SCHEMA = z.toJSONSchema(gameMasterScriptSchema);
 

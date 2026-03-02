@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type { AIPrompt } from "~~/server/services/ai/index";
 import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
 import { characterIdentitySchema } from "~~/server/utils/validate";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
+import type { AIPrompt } from "../types";
 
 const CHARACTER_JSON_SCHEMA = z.toJSONSchema(characterIdentitySchema);
 

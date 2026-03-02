@@ -1,11 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText } from "~~/shared/types/utils";
-import {
-  getAIProvider,
-  registerProvider,
-  type AIProvider,
-  type AIRuntimeConfig,
-} from "~~/server/services/ai/index";
+import { getAIProvider, registerProvider } from "~~/server/services/ai/index";
+import type { AIProvider, AIRuntimeConfig } from "~~/server/services/ai/types";
 
 // vi.hoisted runs before imports, so useRuntimeConfig is available
 // when the module under test is loaded.
