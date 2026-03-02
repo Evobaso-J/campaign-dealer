@@ -34,7 +34,7 @@ Campaign Dealer is a **Nuxt 4 full-stack app** for generating tabletop RPG campa
 
 ### Key data flow
 
-```
+```txt
 User fills wizard
   → useCampaign.ts composable
       → POST /api/campaign/characters
