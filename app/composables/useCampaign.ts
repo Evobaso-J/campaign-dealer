@@ -49,5 +49,5 @@ export function useCampaign() {
     }
   }
 
-  return { generateCampaign, store };
+  return { generateCampaign, fetchCharacters, fetchScript, store };
 }

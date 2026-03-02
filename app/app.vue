@@ -4,9 +4,8 @@ const { generationStatus } = useCampaignStore();
 
 <template>
   <div>
-    {{ $t("welcome") }}
     {{ generationStatus }}
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <NuxtPage />
   </div>
 </template>

@@ -152,6 +152,5 @@
                 "description": "Permanently reduce your Spades personal modifier by 1, up to a maximum of -2."
             }
         }
-    },
-    "welcome": "Welcome to Nuxt Starter"
+    }
 }
