@@ -4,8 +4,8 @@ import "~~/server/services/ai/ollama";
 import { getAIProvider } from "~~/server/services/ai/index";
 import { buildCharacterPrompt } from "~~/server/services/ai/prompts/character";
 import { generateRandomDistinctCharacters } from "~~/server/services/rpg/characterRandomizer";
+import { ValidationError } from "~~/shared/types/errors";
 import {
-  ValidationError,
   withAIProvider,
   parseAndValidateAIResponse,
   toHttpError,

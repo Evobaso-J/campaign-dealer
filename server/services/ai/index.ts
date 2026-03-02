@@ -4,7 +4,7 @@ import {
   ok,
   err,
   type Result,
-} from "~~/server/utils/errors";
+} from "~~/shared/types/errors";
 import { AnthropicProvider } from "./anthropic";
 import { OllamaProvider } from "./ollama";
 import { OpenAIProvider } from "./openai";

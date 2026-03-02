@@ -64,7 +64,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     generationStatus.value = "error";
   }
 
-  function $reset() {
+  function reset() {
     playerCount.value = 0;
     campaignSetting.value = [];
     characters.value = [];
@@ -87,6 +87,6 @@ export const useCampaignStore = defineStore("campaign", () => {
     setCharacters,
     setScript,
     setError,
-    $reset,
+    reset,
   };
 });

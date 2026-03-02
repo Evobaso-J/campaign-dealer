@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterSheet } from "~~/shared/types/character";
-import { AIProviderError, ok, err } from "~~/server/utils/errors";
+import { AIProviderError, ok, err } from "~~/shared/types/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/script.post";

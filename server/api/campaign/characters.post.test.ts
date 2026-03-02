@@ -10,7 +10,7 @@ import {
   ValidationError,
   ok,
   err,
-} from "~~/server/utils/errors";
+} from "~~/shared/types/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/characters.post";
