@@ -20,7 +20,11 @@ async function onFetchCharacters() {
   charactersError.value = null;
   fetchingCharacters.value = true;
   try {
-    characters.value = await fetchCharacters(playerCount.value, selectedGenres.value, locale.value);
+    characters.value = await fetchCharacters(
+      playerCount.value,
+      selectedGenres.value,
+      locale.value,
+    );
   } catch (e: unknown) {
     charactersError.value = e instanceof Error ? e.message : String(e);
   } finally {
@@ -42,7 +46,11 @@ async function onFetchScript() {
   scriptError.value = null;
   fetchingScript.value = true;
   try {
-    script.value = await fetchScript(characters.value, selectedGenres.value, locale.value);
+    script.value = await fetchScript(
+      characters.value,
+      selectedGenres.value,
+      locale.value,
+    );
   } catch (e: unknown) {
     scriptError.value = e instanceof Error ? e.message : String(e);
   } finally {
@@ -59,27 +67,29 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 </script>
 
 <template>
-  <div style="font-family: monospace; padding: 2rem; max-width: 900px; margin: 0 auto;">
+  <div class="font-mono p-8 max-w-4xl mx-auto">
     <h1>useCampaign — Dev Test Page</h1>
 
     <!-- Shared inputs -->
-    <section style="margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem;">
+    <section class="mb-8 border border-gray-300 p-4">
       <h2>Shared Inputs</h2>
 
       <label>
         Player count:
-        <input v-model.number="playerCount" type="number" min="1" max="6" style="width: 4rem; margin-left: 0.5rem;" >
+        <input
+          v-model.number="playerCount"
+          type="number"
+          min="1"
+          max="6"
+          class="w-16 ml-2"
+        />
       </label>
 
-      <div style="margin-top: 1rem;">
+      <div class="mt-4">
         <strong>Genres:</strong>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
-          <label v-for="genre in allGenres" :key="genre" style="cursor: pointer;">
-            <input
-              v-model="selectedGenres"
-              type="checkbox"
-              :value="genre"
-            >
+        <div class="flex flex-wrap gap-2 mt-2">
+          <label v-for="genre in allGenres" :key="genre" class="cursor-pointer">
+            <input v-model="selectedGenres" type="checkbox" :value="genre" />
             {{ genre }}
           </label>
         </div>
@@ -87,28 +97,34 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
     </section>
 
     <!-- Section 1: fetchCharacters -->
-    <section style="margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem;">
+    <section class="mb-8 border border-gray-300 p-4">
       <h2>1. fetchCharacters (standalone)</h2>
       <button :disabled="fetchingCharacters" @click="onFetchCharacters">
         {{ fetchingCharacters ? "Loading…" : "Fetch Characters" }}
       </button>
-      <p v-if="charactersError" style="color: red;">{{ charactersError }}</p>
-      <pre v-if="characters" style="overflow: auto; max-height: 400px; background: #f5f5f5; padding: 1rem;">{{ JSON.stringify(characters, null, 2) }}</pre>
+      <p v-if="charactersError" class="text-red-600">{{ charactersError }}</p>
+      <pre v-if="characters" class="overflow-auto max-h-96 bg-gray-100 p-4">{{
+        JSON.stringify(characters, null, 2)
+      }}</pre>
     </section>
 
     <!-- Section 2: fetchScript -->
-    <section style="margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem;">
+    <section class="mb-8 border border-gray-300 p-4">
       <h2>2. fetchScript (standalone)</h2>
-      <p style="color: #666; font-size: 0.9rem;">Uses characters from section 1. Fetch those first.</p>
+      <p class="text-gray-600 text-sm">
+        Uses characters from section 1. Fetch those first.
+      </p>
       <button :disabled="fetchingScript" @click="onFetchScript">
         {{ fetchingScript ? "Loading…" : "Fetch Script" }}
       </button>
-      <p v-if="scriptError" style="color: red;">{{ scriptError }}</p>
-      <pre v-if="script" style="overflow: auto; max-height: 400px; background: #f5f5f5; padding: 1rem;">{{ JSON.stringify(script, null, 2) }}</pre>
+      <p v-if="scriptError" class="text-red-600">{{ scriptError }}</p>
+      <pre v-if="script" class="overflow-auto max-h-96 bg-gray-100 p-4">{{
+        JSON.stringify(script, null, 2)
+      }}</pre>
     </section>
 
     <!-- Section 3: generateCampaign (full flow) -->
-    <section style="border: 1px solid #ccc; padding: 1rem;">
+    <section class="border border-gray-300 p-4">
       <h2>3. generateCampaign (full flow)</h2>
       <p>
         Status: <strong>{{ store.generationStatus }}</strong>
@@ -117,15 +133,21 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
       <button :disabled="store.isLoading" @click="onGenerateCampaign">
         {{ store.isLoading ? "Generating…" : "Generate Campaign" }}
       </button>
-      <button style="margin-left: 0.5rem;" @click="store.reset()">Reset Store</button>
+      <button class="ml-2" @click="store.reset()">Reset Store</button>
 
-      <p v-if="store.errorMessage" style="color: red; margin-top: 0.5rem;">{{ store.errorMessage }}</p>
+      <p v-if="store.errorMessage" class="text-red-600 mt-2">
+        {{ store.errorMessage }}
+      </p>
 
-      <div v-if="store.hasResult" style="margin-top: 1rem;">
+      <div v-if="store.hasResult" class="mt-4">
         <h3>Characters</h3>
-        <pre style="overflow: auto; max-height: 300px; background: #f5f5f5; padding: 1rem;">{{ JSON.stringify(store.characters, null, 2) }}</pre>
+        <pre class="overflow-auto max-h-80 bg-gray-100 p-4">{{
+          JSON.stringify(store.characters, null, 2)
+        }}</pre>
         <h3>GM Script</h3>
-        <pre style="overflow: auto; max-height: 300px; background: #f5f5f5; padding: 1rem;">{{ JSON.stringify(store.gmScript, null, 2) }}</pre>
+        <pre class="overflow-auto max-h-80 bg-gray-100 p-4">{{
+          JSON.stringify(store.gmScript, null, 2)
+        }}</pre>
       </div>
     </section>
   </div>
