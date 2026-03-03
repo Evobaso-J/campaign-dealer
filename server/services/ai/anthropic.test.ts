@@ -101,7 +101,11 @@ describe("AnthropicProvider", () => {
 
       const provider = new AnthropicProvider(baseConfig);
       await expect(
-        provider.complete({ system: "sys", user: "usr", jsonSchema: testSchema }),
+        provider.complete({
+          system: "sys",
+          user: "usr",
+          jsonSchema: testSchema,
+        }),
       ).rejects.toThrow("Expected tool_use block in response");
     });
   });

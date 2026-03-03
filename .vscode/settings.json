@@ -19,7 +19,7 @@
     "tw-class",
     "ui",
     "active-class",
-    "inactive-class",
+    "inactive-class"
   ],
   "colorize.languages": [
     "css",
@@ -38,9 +38,7 @@
   "i18n-ally.localesPaths": "./app/i18n/locales",
   "i18n-ally.displayLanguage": "en",
   "i18n-ally.sourceLanguage": "en",
-  "i18n-ally.enabledFrameworks": [
-    "vue"
-  ],
+  "i18n-ally.enabledFrameworks": ["vue"],
   "i18n-ally.keystyle": "nested",
   "i18n-ally.theme.annotation": "rgba(52, 137, 235, .8)",
   "i18n-ally.theme.annotationBorder": "rgba(52, 137, 235, .8)",

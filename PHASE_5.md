@@ -43,23 +43,23 @@ type GenerationStatus =
 
 **Actions:**
 
-| Action | Purpose |
-|---|---|
-| `setInput(count, setting)` | Stores the wizard selections before generation begins |
-| `setCharacters(sheets)` | Writes the character array; transitions status to `generating-script` |
-| `setScript(script)` | Writes the GM script; transitions status to `done` |
-| `setError(message)` | Stores the error message; transitions status to `error` |
-| `$reset()` | Resets all state back to `idle` — use Pinia's built-in if setup stores support it, or implement manually |
+| Action                     | Purpose                                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `setInput(count, setting)` | Stores the wizard selections before generation begins                                                    |
+| `setCharacters(sheets)`    | Writes the character array; transitions status to `generating-script`                                    |
+| `setScript(script)`        | Writes the GM script; transitions status to `done`                                                       |
+| `setError(message)`        | Stores the error message; transitions status to `error`                                                  |
+| `$reset()`                 | Resets all state back to `idle` — use Pinia's built-in if setup stores support it, or implement manually |
 
 Actions only hold state-mutation logic. They do **not** call `$fetch` — the composable owns that.
 
 **Getters:**
 
-| Getter | Returns |
-|---|---|
-| `isLoading` | `true` when status is `generating-characters` or `generating-script` |
-| `hasResult` | `true` when status is `done` |
-| `campaign` | A computed `Campaign` object assembled from the individual refs (setting, characters, script), or `undefined` if not `done` |
+| Getter      | Returns                                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `isLoading` | `true` when status is `generating-characters` or `generating-script`                                                        |
+| `hasResult` | `true` when status is `done`                                                                                                |
+| `campaign`  | A computed `Campaign` object assembled from the individual refs (setting, characters, script), or `undefined` if not `done` |
 
 **Notes:**
 
@@ -169,12 +169,12 @@ Test the error path by registering an endpoint that returns a 422 or 502 and ver
 
 ## Files to create / modify
 
-| File | Ticket | Action |
-|---|---|---|
-| `app/stores/campaign.ts` | CAM-6 | **Modify** — expand with actions, getters, richer status |
-| `app/composables/useCampaign.ts` | CAM-23 | **Create** |
-| `test/unit/campaign-store.test.ts` | CAM-6 | **Create** |
-| `test/nuxt/useCampaign.test.ts` | CAM-23 | **Create** |
+| File                               | Ticket | Action                                                   |
+| ---------------------------------- | ------ | -------------------------------------------------------- |
+| `app/stores/campaign.ts`           | CAM-6  | **Modify** — expand with actions, getters, richer status |
+| `app/composables/useCampaign.ts`   | CAM-23 | **Create**                                               |
+| `test/unit/campaign-store.test.ts` | CAM-6  | **Create**                                               |
+| `test/nuxt/useCampaign.test.ts`    | CAM-23 | **Create**                                               |
 
 ---
 

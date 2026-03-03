@@ -76,8 +76,13 @@ const validScriptJson = JSON.stringify({
     { name: "Supply Chain", role: "Logistics bottleneck" },
     { name: "Vault 7", role: "Secret archive" },
   ],
-  scenes: ["Scene 1: The heist begins", "Scene 2: Betrayal", "Scene 3: Showdown"],
-  centralTension: "The revolutionaries must choose between justice and revenge.",
+  scenes: [
+    "Scene 1: The heist begins",
+    "Scene 2: Betrayal",
+    "Scene 3: Showdown",
+  ],
+  centralTension:
+    "The revolutionaries must choose between justice and revenge.",
   plot: "A sprawling campaign across the neon-lit underworld.",
 });
 
@@ -109,7 +114,10 @@ beforeEach(() => {
 describe("POST /api/campaign/script", () => {
   describe("request validation (422)", () => {
     it("throws 422 when characters is missing", async () => {
-      mockReadBody.mockResolvedValue({ setting: ["cyberpunk"], language: "en" });
+      mockReadBody.mockResolvedValue({
+        setting: ["cyberpunk"],
+        language: "en",
+      });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
         expectError(e, 422);
         return true;

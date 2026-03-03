@@ -28,7 +28,11 @@ describe("charactersRequestSchema", () => {
 
   it("rejects playerCount < 1", () => {
     expect(() =>
-      charactersRequestSchema.parse({ playerCount: 0, setting: ["cyberpunk"], language: "en" }),
+      charactersRequestSchema.parse({
+        playerCount: 0,
+        setting: ["cyberpunk"],
+        language: "en",
+      }),
     ).toThrow();
   });
 
@@ -54,7 +58,11 @@ describe("charactersRequestSchema", () => {
 
   it("rejects empty setting array", () => {
     expect(() =>
-      charactersRequestSchema.parse({ playerCount: 3, setting: [], language: "en" }),
+      charactersRequestSchema.parse({
+        playerCount: 3,
+        setting: [],
+        language: "en",
+      }),
     ).toThrow();
   });
 
@@ -91,7 +99,10 @@ describe("scriptRequestSchema", () => {
     suit: "hearts",
     damage: { hearts: false, clubs: false, spades: false },
     modifiers: { hearts: 1, clubs: 0, spades: -1 },
-    suitSkill: { name: "skill.hearts.king", description: "skill.hearts.king.desc" },
+    suitSkill: {
+      name: "skill.hearts.king",
+      description: "skill.hearts.king.desc",
+    },
     characterIdentity: { name: "Test Character" },
     archetypeSkills: [
       { name: "skill.king.1", description: "skill.king.1.desc" },
@@ -109,7 +120,11 @@ describe("scriptRequestSchema", () => {
 
   it("rejects empty characters array", () => {
     expect(() =>
-      scriptRequestSchema.parse({ characters: [], setting: ["cyberpunk"], language: "en" }),
+      scriptRequestSchema.parse({
+        characters: [],
+        setting: ["cyberpunk"],
+        language: "en",
+      }),
     ).toThrow();
   });
 

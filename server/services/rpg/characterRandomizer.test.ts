@@ -190,8 +190,14 @@ describe("generateRandomDistinctCharacters", () => {
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.value).toHaveLength(2);
-        expect(result.value[0]).toMatchObject({ suit: "hearts", archetype: "king" });
-        expect(result.value[1]).toMatchObject({ suit: "clubs", archetype: "king" });
+        expect(result.value[0]).toMatchObject({
+          suit: "hearts",
+          archetype: "king",
+        });
+        expect(result.value[1]).toMatchObject({
+          suit: "clubs",
+          archetype: "king",
+        });
       }
     });
   });

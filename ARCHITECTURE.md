@@ -14,50 +14,50 @@ Campaign Dealer is a Nuxt 4 full-stack application. The architecture is designed
 
 ```md
 campaign-dealer/
-├── app/                              # Nuxt 4 client-side app
-│   ├── pages/
-│   │   ├── index.vue                 # Landing page
-│   │   └── campaign/
-│   │       └── new.vue               # Campaign creation wizard
-│   ├── components/
-│   │   ├── campaign/
-│   │   │   ├── WizardStepper.vue     # Multi-step generation flow
-│   │   │   ├── PlayerCountInput.vue  # 1–6 player stepper
-│   │   │   └── SettingForm.vue       # Setting description + tone selector
-│   │   ├── character/
-│   │   │   ├── CharacterSheet.vue    # Single character card
-│   │   │   └── CharacterGrid.vue     # Responsive grid of sheets
-│   │   └── script/
-│   │       └── GmScript.vue          # GM session-zero script output
-│   ├── composables/
-│   │   └── useCampaign.ts            # Orchestrates the generation flow
-│   └── stores/
-│       └── campaign.ts               # Pinia: campaign state across wizard steps
+├── app/ # Nuxt 4 client-side app
+│ ├── pages/
+│ │ ├── index.vue # Landing page
+│ │ └── campaign/
+│ │ └── new.vue # Campaign creation wizard
+│ ├── components/
+│ │ ├── campaign/
+│ │ │ ├── WizardStepper.vue # Multi-step generation flow
+│ │ │ ├── PlayerCountInput.vue # 1–6 player stepper
+│ │ │ └── SettingForm.vue # Setting description + tone selector
+│ │ ├── character/
+│ │ │ ├── CharacterSheet.vue # Single character card
+│ │ │ └── CharacterGrid.vue # Responsive grid of sheets
+│ │ └── script/
+│ │ └── GmScript.vue # GM session-zero script output
+│ ├── composables/
+│ │ └── useCampaign.ts # Orchestrates the generation flow
+│ └── stores/
+│ └── campaign.ts # Pinia: campaign state across wizard steps
 │
-├── server/                           # Nuxt server (runs server-side only)
-│   ├── api/
-│   │   └── campaign/
-│   │       ├── characters.post.ts    # POST /api/campaign/characters
-│   │       └── script.post.ts        # POST /api/campaign/script
-│   ├── services/
-│   │   ├── ai/
-│   │   │   ├── index.ts              # AIProvider interface + factory
-│   │   │   ├── anthropic.ts          # Anthropic implementation
-│   │   │   └── prompts/
-│   │   │       ├── character.ts      # Prompt builder for character enrichment
-│   │   │       └── script.ts         # Prompt builder for GM script
-│   │   └── rpg/
-│   │       └── randomizer.ts         # Dice rolls and random table lookups
-│   ├── utils/
-│   │   └── validate.ts               # Zod schemas for API input validation
-│   └── data/
-│       └── house-doesnt-win/         # Game system data (server-private, never sent raw to client)
-│           └── character-templates.ts    # Archetype skill pools and modifier skills
+├── server/ # Nuxt server (runs server-side only)
+│ ├── api/
+│ │ └── campaign/
+│ │ ├── characters.post.ts # POST /api/campaign/characters
+│ │ └── script.post.ts # POST /api/campaign/script
+│ ├── services/
+│ │ ├── ai/
+│ │ │ ├── index.ts # AIProvider interface + factory
+│ │ │ ├── anthropic.ts # Anthropic implementation
+│ │ │ └── prompts/
+│ │ │ ├── character.ts # Prompt builder for character enrichment
+│ │ │ └── script.ts # Prompt builder for GM script
+│ │ └── rpg/
+│ │ └── randomizer.ts # Dice rolls and random table lookups
+│ ├── utils/
+│ │ └── validate.ts # Zod schemas for API input validation
+│ └── data/
+│ └── house-doesnt-win/ # Game system data (server-private, never sent raw to client)
+│ └── character-templates.ts # Archetype skill pools and modifier skills
 │
 └── shared/
-    └── types/                        # Types used by both client and server
-        ├── campaign.ts
-        └── character.ts
+└── types/ # Types used by both client and server
+├── campaign.ts
+└── character.ts
 ```
 
 ---
@@ -102,23 +102,23 @@ TypeScript `const` files that define the fixed game system data — skill pools 
 
 ```md
 User fills wizard
-      │
-      ▼
+│
+▼
 useCampaign.ts
-      │
-      ├─► POST /api/campaign/characters
-      │         │
-      │         ├─ validate input (Zod)
-      │         ├─ randomizer.generateSkeleton() × N    ← picks archetype, suit, skills
-      │         └─ aiProvider.complete(characterPrompt(skeleton, setting)) × N
-      │                   └─► generates identity (name, concept, weapon, instrument)
-      │                             └─► merge → CharacterSheet[]
-      │
-      └─► POST /api/campaign/script
-                │
-                ├─ validate input (Zod)
-                └─ aiProvider.complete(scriptPrompt)
-                          └─► returns GmScript
+│
+├─► POST /api/campaign/characters
+│ │
+│ ├─ validate input (Zod)
+│ ├─ randomizer.generateSkeleton() × N ← picks archetype, suit, skills
+│ └─ aiProvider.complete(characterPrompt(skeleton, setting)) × N
+│ └─► generates identity (name, concept, weapon, instrument)
+│ └─► merge → CharacterSheet[]
+│
+└─► POST /api/campaign/script
+│
+├─ validate input (Zod)
+└─ aiProvider.complete(scriptPrompt)
+└─► returns GmScript
 ```
 
 Both API calls write their results into the Pinia store. Components reactively display the results as they arrive.
@@ -127,17 +127,17 @@ Both API calls write their results into the Pinia store. Components reactively d
 
 ## Key decisions
 
-| Concern | Decision | Reason |
-| --- | --- | --- |
-| AI calls location | Server-only | API keys never exposed to the client |
-| AI provider coupling | Interface + factory | Swap providers without touching feature code |
-| Character mechanics | Pre-AI, pure logic | Archetype/suit/skills are instant and testable without API calls |
-| Character identity | AI-generated | Name, concept, weapon, instrument adapt to campaign setting and suit personality |
-| Shared types | `shared/types/` | Single source of truth for client–server contract |
-| Game data | TS consts in `server/data/` | Server-private; typed at compile time; raw data never sent to client |
-| Copyright | `.gitignore` + example files | Rulebook text stays out of public repos; example files document the expected shape |
-| Skill display | i18n keys | `CharacterSkill.name`/`.description` are `I18nKey` strings resolved on the frontend |
-| State management | Pinia | Persists wizard state; straightforward to add persistence/server sync later |
+| Concern              | Decision                     | Reason                                                                              |
+| -------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
+| AI calls location    | Server-only                  | API keys never exposed to the client                                                |
+| AI provider coupling | Interface + factory          | Swap providers without touching feature code                                        |
+| Character mechanics  | Pre-AI, pure logic           | Archetype/suit/skills are instant and testable without API calls                    |
+| Character identity   | AI-generated                 | Name, concept, weapon, instrument adapt to campaign setting and suit personality    |
+| Shared types         | `shared/types/`              | Single source of truth for client–server contract                                   |
+| Game data            | TS consts in `server/data/`  | Server-private; typed at compile time; raw data never sent to client                |
+| Copyright            | `.gitignore` + example files | Rulebook text stays out of public repos; example files document the expected shape  |
+| Skill display        | i18n keys                    | `CharacterSkill.name`/`.description` are `I18nKey` strings resolved on the frontend |
+| State management     | Pinia                        | Persists wizard state; straightforward to add persistence/server sync later         |
 
 ---
 

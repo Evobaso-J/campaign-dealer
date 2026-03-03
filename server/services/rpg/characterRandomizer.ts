@@ -6,12 +6,7 @@ import {
   type ArchetypeCharacterization,
   type SuitCharacterization,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
-import {
-  ValidationError,
-  ok,
-  err,
-  type Result,
-} from "~~/shared/types/errors";
+import { ValidationError, ok, err, type Result } from "~~/shared/types/errors";
 import {
   CharacterArchetype,
   type CharacterSheet,

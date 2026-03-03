@@ -32,8 +32,11 @@ const makeCharacter = (overrides?: Partial<CharacterSheet>): CharacterSheet =>
 
 const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
 
-const defaults = () =>
-  ({ characters: [makeCharacter()], setting: SETTING, language: "en" as const });
+const defaults = () => ({
+  characters: [makeCharacter()],
+  setting: SETTING,
+  language: "en" as const,
+});
 
 describe("buildScriptPrompt", () => {
   describe("return shape", () => {
@@ -189,7 +192,8 @@ describe("buildScriptPrompt", () => {
             suit: "hearts",
             characterIdentity: {
               name: "Lady Seraphina" as GeneratedText,
-              concept: "A cunning diplomat hiding dark secrets" as GeneratedText,
+              concept:
+                "A cunning diplomat hiding dark secrets" as GeneratedText,
             },
           }),
         ],
@@ -243,11 +247,16 @@ describe("buildScriptPrompt", () => {
 
   describe("edge cases", () => {
     it("handles an empty setting array without throwing", () => {
-      expect(() => buildScriptPrompt({ ...defaults(), setting: [] })).not.toThrow();
+      expect(() =>
+        buildScriptPrompt({ ...defaults(), setting: [] }),
+      ).not.toThrow();
     });
 
     it("handles a single genre setting", () => {
-      const { user } = buildScriptPrompt({ ...defaults(), setting: ["steampunk"] });
+      const { user } = buildScriptPrompt({
+        ...defaults(),
+        setting: ["steampunk"],
+      });
       expect(user).toContain("steampunk");
     });
 
@@ -264,7 +273,11 @@ describe("buildScriptPrompt", () => {
           },
         }),
       );
-      const { user } = buildScriptPrompt({ characters, setting: SETTING, language: "en" });
+      const { user } = buildScriptPrompt({
+        characters,
+        setting: SETTING,
+        language: "en",
+      });
       expect(user).toContain("Character 1");
       expect(user).toContain("Character 9");
     });

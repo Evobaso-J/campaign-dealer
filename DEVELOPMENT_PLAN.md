@@ -103,26 +103,26 @@ Wire everything together end-to-end.
 
 ```md
 CAM-5 (types)
-  │
-  ├── CAM-16 (config)
-  │
-  ├── CAM-8 (character templates)   ← no random tables; identity is AI-generated
-  │     └── CAM-9 (randomizer)      ← returns CharacterSkeleton, not CharacterSheet
-  │           └── CAM-14 (characters endpoint)
-  │
-  ├── CAM-10 (AI interface)
-  │     ├── CAM-11 (Anthropic provider)
-  │     ├── CAM-12 (character prompt)  ──► CAM-14  ← generates identity from skeleton + setting
-  │     └── CAM-13 (script prompt)    ──► CAM-15
-  │
-  ├── CAM-26 (Zod schemas) ──► CAM-14, CAM-15
-  │
-  ├── CAM-14 (characters endpoint) ──┐
-  │                                  ├── CAM-23 (useCampaign)
-  ├── CAM-15 (script endpoint)  ────┘        │
-  │                                          ├── CAM-19 (WizardStepper)
-  ├── CAM-6 (Pinia store) ─────────────────┘ ├── CAM-21 (CharacterGrid)
-  │                                           └── CAM-22 (GmScript)
-  │
-  └── CAM-24/25 (pages)  ◄── all components
+│
+├── CAM-16 (config)
+│
+├── CAM-8 (character templates) ← no random tables; identity is AI-generated
+│ └── CAM-9 (randomizer) ← returns CharacterSkeleton, not CharacterSheet
+│ └── CAM-14 (characters endpoint)
+│
+├── CAM-10 (AI interface)
+│ ├── CAM-11 (Anthropic provider)
+│ ├── CAM-12 (character prompt) ──► CAM-14 ← generates identity from skeleton + setting
+│ └── CAM-13 (script prompt) ──► CAM-15
+│
+├── CAM-26 (Zod schemas) ──► CAM-14, CAM-15
+│
+├── CAM-14 (characters endpoint) ──┐
+│ ├── CAM-23 (useCampaign)
+├── CAM-15 (script endpoint) ────┘ │
+│ ├── CAM-19 (WizardStepper)
+├── CAM-6 (Pinia store) ─────────────────┘ ├── CAM-21 (CharacterGrid)
+│ └── CAM-22 (GmScript)
+│
+└── CAM-24/25 (pages) ◄── all components
 ```

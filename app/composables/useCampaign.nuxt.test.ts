@@ -84,7 +84,10 @@ describe("useCampaign", () => {
     registerEndpoint("/api/campaign/characters", {
       method: "POST",
       handler: () => {
-        throw createError({ statusCode: 422, statusMessage: "Validation failed" });
+        throw createError({
+          statusCode: 422,
+          statusMessage: "Validation failed",
+        });
       },
     });
 
@@ -106,7 +109,10 @@ describe("useCampaign", () => {
     registerEndpoint("/api/campaign/script", {
       method: "POST",
       handler: () => {
-        throw createError({ statusCode: 502, statusMessage: "AI service error" });
+        throw createError({
+          statusCode: 502,
+          statusMessage: "AI service error",
+        });
       },
     });
 

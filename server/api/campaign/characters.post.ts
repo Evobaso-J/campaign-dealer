@@ -34,7 +34,9 @@ export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
   return Promise.all(
     templates.value.map(async (template) => {
       const prompt = buildCharacterPrompt({ template, setting, language });
-      const result = await withAIProvider(() => provider.value.complete(prompt));
+      const result = await withAIProvider(() =>
+        provider.value.complete(prompt),
+      );
       if (!result.ok) toHttpError(result.error);
 
       const identity = parseAndValidateAIResponse(

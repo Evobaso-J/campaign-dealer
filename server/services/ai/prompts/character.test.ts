@@ -4,7 +4,9 @@ import type { Genre } from "~~/shared/types/campaign";
 import type { I18nKey } from "~~/shared/types/utils";
 import { buildCharacterPrompt } from "./character";
 
-const makeTemplate = (overrides?: Partial<CharacterTemplate>): CharacterTemplate =>
+const makeTemplate = (
+  overrides?: Partial<CharacterTemplate>,
+): CharacterTemplate =>
   ({
     archetype: "jack",
     suit: "clubs",
@@ -20,7 +22,8 @@ const makeTemplate = (overrides?: Partial<CharacterTemplate>): CharacterTemplate
         description: "skills.jack.archetype.skill1.description" as I18nKey,
       },
     ],
-    suitCharacterization: "Clubs characters lead with their body and their will.",
+    suitCharacterization:
+      "Clubs characters lead with their body and their will.",
     archetypeCharacterization:
       "The Jack is more at ease on the front line than behind a desk.",
     ...overrides,
@@ -28,8 +31,11 @@ const makeTemplate = (overrides?: Partial<CharacterTemplate>): CharacterTemplate
 
 const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
 
-const defaults = () =>
-  ({ template: makeTemplate(), setting: SETTING, language: "en" as const });
+const defaults = () => ({
+  template: makeTemplate(),
+  setting: SETTING,
+  language: "en" as const,
+});
 
 describe("buildCharacterPrompt", () => {
   describe("return shape", () => {
@@ -170,11 +176,16 @@ describe("buildCharacterPrompt", () => {
 
   describe("edge cases", () => {
     it("handles an empty setting array without throwing", () => {
-      expect(() => buildCharacterPrompt({ ...defaults(), setting: [] })).not.toThrow();
+      expect(() =>
+        buildCharacterPrompt({ ...defaults(), setting: [] }),
+      ).not.toThrow();
     });
 
     it("handles a single genre setting", () => {
-      const { user } = buildCharacterPrompt({ ...defaults(), setting: ["steampunk"] });
+      const { user } = buildCharacterPrompt({
+        ...defaults(),
+        setting: ["steampunk"],
+      });
       expect(user).toContain("steampunk");
     });
   });
