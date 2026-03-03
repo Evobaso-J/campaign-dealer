@@ -42,4 +42,14 @@ export default defineNuxtConfig({
   // picked up as actual routes, causing a server error.
   // We exclude them from the build process to prevent this.
   ignore: ["**/*.test.ts", "**/*.spec.ts"],
+  pinia: {
+    /**
+     * Automatically add stores dirs to the auto imports. This is the same as
+     * directly adding the dirs to the `imports.dirs` option. If you want to
+     * also import nested stores, you can use the glob pattern `./stores/**`
+     * (on Nuxt 3) or `app/stores/**` (on Nuxt 4+)
+     *
+     * @default `['stores']`
+     */
+  },
 });

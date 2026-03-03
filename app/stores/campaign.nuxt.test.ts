@@ -1,14 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ref, computed } from "vue";
-import { defineStore, setActivePinia } from "pinia";
-import { createTestingPinia } from "@pinia/testing";
-
-// Stub Nuxt auto-imports so the store module can evaluate
-vi.stubGlobal("defineStore", defineStore);
-vi.stubGlobal("ref", ref);
-vi.stubGlobal("computed", computed);
-
-const { useCampaignStore } = await import("~~/app/stores/campaign");
+import { describe, it, expect, beforeEach } from "vitest";
+import type { CharacterSheet } from "~~/shared/types/character";
+import type { GameMasterScript } from "~~/shared/types/campaign";
+import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 
 // --- Fixtures ---
 
@@ -46,9 +39,7 @@ const mockScript: GameMasterScript = {
 
 describe("campaign store", () => {
   beforeEach(() => {
-    setActivePinia(
-      createTestingPinia({ stubActions: false, createSpy: vi.fn }),
-    );
+    useCampaignStore().reset();
   });
 
   describe("setInput", () => {
