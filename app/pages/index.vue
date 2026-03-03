@@ -17,9 +17,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
 <template>
   <div class="p-8 max-w-4xl mx-auto space-y-6">
-    <h1 class="text-2xl font-bold font-mono">
-      useCampaign — Dev Test Page
-    </h1>
+    <h1 class="text-2xl font-bold font-mono">useCampaign — Dev Test Page</h1>
 
     <!-- Shared inputs -->
     <UCard>
@@ -29,12 +27,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
       <div class="space-y-4">
         <UFormField label="Player count">
-          <UInputNumber
-            v-model="playerCount"
-            :min="1"
-            :max="6"
-            class="w-32"
-          />
+          <UInputNumber v-model="playerCount" :min="1" :max="6" class="w-32" />
         </UFormField>
 
         <div>
@@ -45,10 +38,12 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
               :key="genre"
               :model-value="selectedGenres.includes(genre)"
               :label="genre"
-              @update:model-value="(checked) => {
-                if (checked) selectedGenres.push(genre);
-                else selectedGenres.splice(selectedGenres.indexOf(genre), 1);
-              }"
+              @update:model-value="
+                (checked) => {
+                  if (checked) selectedGenres.push(genre);
+                  else selectedGenres.splice(selectedGenres.indexOf(genre), 1);
+                }
+              "
             />
           </div>
         </div>
@@ -61,8 +56,18 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
       <UBadge :color="store.isLoading ? 'warning' : 'neutral'" variant="subtle">
         {{ store.generationStatus }}
       </UBadge>
-      <UIcon v-if="store.isLoading" name="i-lucide-loader-circle" class="animate-spin" />
-      <UButton color="neutral" variant="outline" size="sm" class="ml-auto" @click="store.reset()">
+      <UIcon
+        v-if="store.isLoading"
+        name="i-lucide-loader-circle"
+        class="animate-spin"
+      />
+      <UButton
+        color="neutral"
+        variant="outline"
+        size="sm"
+        class="ml-auto"
+        @click="store.reset()"
+      >
         Reset
       </UButton>
     </div>
@@ -94,18 +99,31 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
             <template #header>
               <div class="flex items-center justify-between">
                 <div>
-                  <span class="font-semibold">{{ char.characterIdentity.name }}</span>
-                  <span v-if="char.characterIdentity.pronouns" class="text-sm text-neutral-500 ml-2">({{ char.characterIdentity.pronouns }})</span>
+                  <span class="font-semibold">{{
+                    char.characterIdentity.name
+                  }}</span>
+                  <span
+                    v-if="char.characterIdentity.pronouns"
+                    class="text-sm text-neutral-500 ml-2"
+                    >({{ char.characterIdentity.pronouns }})</span
+                  >
                 </div>
                 <div class="flex gap-2">
-                  <UBadge color="neutral" variant="outline">{{ char.archetype }}</UBadge>
-                  <UBadge color="neutral" variant="outline">{{ char.suit }}</UBadge>
+                  <UBadge color="neutral" variant="outline">{{
+                    char.archetype
+                  }}</UBadge>
+                  <UBadge color="neutral" variant="outline">{{
+                    char.suit
+                  }}</UBadge>
                 </div>
               </div>
             </template>
 
             <div class="space-y-3 text-sm">
-              <p v-if="char.characterIdentity.concept" class="italic text-neutral-600 dark:text-neutral-400">
+              <p
+                v-if="char.characterIdentity.concept"
+                class="italic text-neutral-600 dark:text-neutral-400"
+              >
                 {{ char.characterIdentity.concept }}
               </p>
 
@@ -113,12 +131,24 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                 <div v-if="char.characterIdentity.weapon">
                   <span class="font-medium">Weapon:</span>
                   {{ char.characterIdentity.weapon.name }}
-                  <UBadge v-if="char.characterIdentity.weapon.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                  <UBadge
+                    v-if="char.characterIdentity.weapon.concealed"
+                    size="sm"
+                    color="neutral"
+                    variant="subtle"
+                    >concealed</UBadge
+                  >
                 </div>
                 <div v-if="char.characterIdentity.instrument">
                   <span class="font-medium">Instrument:</span>
                   {{ char.characterIdentity.instrument.name }}
-                  <UBadge v-if="char.characterIdentity.instrument.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                  <UBadge
+                    v-if="char.characterIdentity.instrument.concealed"
+                    size="sm"
+                    color="neutral"
+                    variant="subtle"
+                    >concealed</UBadge
+                  >
                 </div>
               </div>
 
@@ -126,15 +156,23 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
               <div>
                 <p class="font-medium mb-1">Suit skill</p>
-                <p><span class="font-medium">{{ t(char.suitSkill.name) }}</span> — {{ t(char.suitSkill.description) }}</p>
+                <p>
+                  <span class="font-medium">{{ t(char.suitSkill.name) }}</span>
+                  — {{ t(char.suitSkill.description) }}
+                </p>
               </div>
 
               <div>
                 <p class="font-medium mb-1">Archetype skills</p>
                 <ul class="space-y-1">
                   <li v-for="(skill, j) in char.archetypeSkills" :key="j">
-                    <span class="font-medium">{{ t(skill.name) }}</span> — {{ t(skill.description) }}
-                    <span v-if="skill.uses" class="text-neutral-400 ml-1">({{ skill.uses.usesLeft }}/{{ skill.uses.maxUses }})</span>
+                    <span class="font-medium">{{ t(skill.name) }}</span> —
+                    {{ t(skill.description) }}
+                    <span v-if="skill.uses" class="text-neutral-400 ml-1"
+                      >({{ skill.uses.usesLeft }}/{{
+                        skill.uses.maxUses
+                      }})</span
+                    >
                   </li>
                 </ul>
               </div>
@@ -172,7 +210,9 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                 <h3 class="font-semibold">Hook</h3>
               </div>
             </template>
-            <p class="italic text-neutral-700 dark:text-neutral-300">{{ store.gmScript.hook }}</p>
+            <p class="italic text-neutral-700 dark:text-neutral-300">
+              {{ store.gmScript.hook }}
+            </p>
           </UCard>
 
           <!-- Central Tension -->
@@ -208,14 +248,33 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
             <div class="space-y-4">
               <div v-for="(arch, idx) in targetArchetypes" :key="arch">
                 <div class="flex items-start gap-3">
-                  <UBadge color="neutral" variant="outline" class="capitalize shrink-0 mt-0.5">{{ arch }}</UBadge>
+                  <UBadge
+                    color="neutral"
+                    variant="outline"
+                    class="capitalize shrink-0 mt-0.5"
+                    >{{ arch }}</UBadge
+                  >
                   <div class="space-y-1 min-w-0">
-                    <p class="font-medium">{{ store.gmScript.targets[arch].name }}</p>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">{{ store.gmScript.targets[arch].description }}</p>
-                    <UBadge v-if="store.gmScript.targets[arch].fate" color="neutral" variant="subtle" size="sm" class="capitalize">{{ store.gmScript.targets[arch].fate }}</UBadge>
+                    <p class="font-medium">
+                      {{ store.gmScript.targets[arch].name }}
+                    </p>
+                    <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                      {{ store.gmScript.targets[arch].description }}
+                    </p>
+                    <UBadge
+                      v-if="store.gmScript.targets[arch].fate"
+                      color="neutral"
+                      variant="subtle"
+                      size="sm"
+                      class="capitalize"
+                      >{{ store.gmScript.targets[arch].fate }}</UBadge
+                    >
                   </div>
                 </div>
-                <USeparator v-if="idx < targetArchetypes.length - 1" class="mt-4" />
+                <USeparator
+                  v-if="idx < targetArchetypes.length - 1"
+                  class="mt-4"
+                />
               </div>
             </div>
           </UCard>
@@ -226,12 +285,21 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-film" class="text-neutral-500" />
                 <h3 class="font-semibold">Scenes</h3>
-                <UBadge color="neutral" variant="subtle" size="sm">{{ store.gmScript.scenes.length }}</UBadge>
+                <UBadge color="neutral" variant="subtle" size="sm">{{
+                  store.gmScript.scenes.length
+                }}</UBadge>
               </div>
             </template>
             <ol class="space-y-3">
-              <li v-for="(scene, i) in store.gmScript.scenes" :key="i" class="flex gap-3">
-                <span class="text-neutral-400 font-mono text-sm shrink-0 pt-px">{{ String(i + 1).padStart(2, '0') }}</span>
+              <li
+                v-for="(scene, i) in store.gmScript.scenes"
+                :key="i"
+                class="flex gap-3"
+              >
+                <span
+                  class="text-neutral-400 font-mono text-sm shrink-0 pt-px"
+                  >{{ String(i + 1).padStart(2, "0") }}</span
+                >
                 <p class="text-sm">{{ scene }}</p>
               </li>
             </ol>
@@ -243,7 +311,9 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-shield-off" class="text-neutral-500" />
                 <h3 class="font-semibold">Weak Points</h3>
-                <UBadge color="neutral" variant="subtle" size="sm">{{ store.gmScript.weakPoints.length }}</UBadge>
+                <UBadge color="neutral" variant="subtle" size="sm">{{
+                  store.gmScript.weakPoints.length
+                }}</UBadge>
               </div>
             </template>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -252,10 +322,14 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                 :key="i"
                 class="flex gap-2 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
               >
-                <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5">{{ i + 1 }}.</span>
+                <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5"
+                  >{{ i + 1 }}.</span
+                >
                 <div class="min-w-0">
                   <p class="text-sm font-medium">{{ wp.name }}</p>
-                  <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ wp.role }}</p>
+                  <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                    {{ wp.role }}
+                  </p>
                 </div>
               </div>
             </div>
