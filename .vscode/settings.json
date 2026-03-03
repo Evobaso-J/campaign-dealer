@@ -1,7 +1,16 @@
 {
   "editor.formatOnSave": true,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
   "eslint.useFlatConfig": true,
   "tailwindCSS.lint.cssConflict": "warning",
+  "tailwindCSS.experimental.classRegex": [
+    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
   "tailwindCSS.classAttributes": [
     "class",
     "className",

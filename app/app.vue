@@ -3,9 +3,9 @@ const { generationStatus } = useCampaignStore();
 </script>
 
 <template>
-  <div>
+  <UApp>
     {{ generationStatus }}
     <NuxtRouteAnnouncer />
     <NuxtPage />
-  </div>
+  </UApp>
 </template>
