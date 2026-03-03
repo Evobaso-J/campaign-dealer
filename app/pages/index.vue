@@ -67,88 +67,147 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
 </script>
 
 <template>
-  <div class="font-mono p-8 max-w-4xl mx-auto">
-    <h1>useCampaign — Dev Test Page</h1>
+  <div class="p-8 max-w-4xl mx-auto space-y-6">
+    <h1 class="text-2xl font-bold font-mono">
+      useCampaign — Dev Test Page
+    </h1>
 
     <!-- Shared inputs -->
-    <section class="mb-8 border border-gray-300 p-4">
-      <h2>Shared Inputs</h2>
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-semibold">Shared Inputs</h2>
+      </template>
 
-      <label>
-        Player count:
-        <input
-          v-model.number="playerCount"
-          type="number"
-          min="1"
-          max="6"
-          class="w-16 ml-2"
-        >
-      </label>
+      <div class="space-y-4">
+        <UFormField label="Player count">
+          <UInputNumber
+            v-model="playerCount"
+            :min="1"
+            :max="6"
+            class="w-32"
+          />
+        </UFormField>
 
-      <div class="mt-4">
-        <strong>Genres:</strong>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <label v-for="genre in allGenres" :key="genre" class="cursor-pointer">
-            <input v-model="selectedGenres" type="checkbox" :value="genre" >
-            {{ genre }}
-          </label>
+        <div>
+          <p class="text-sm font-medium mb-2">Genres</p>
+          <div class="flex flex-wrap gap-3">
+            <UCheckbox
+              v-for="genre in allGenres"
+              :key="genre"
+              :model-value="selectedGenres.includes(genre)"
+              :label="genre"
+              @update:model-value="(checked) => {
+                if (checked) selectedGenres.push(genre);
+                else selectedGenres.splice(selectedGenres.indexOf(genre), 1);
+              }"
+            />
+          </div>
         </div>
       </div>
-    </section>
+    </UCard>
 
     <!-- Section 1: fetchCharacters -->
-    <section class="mb-8 border border-gray-300 p-4">
-      <h2>1. fetchCharacters (standalone)</h2>
-      <button :disabled="fetchingCharacters" @click="onFetchCharacters">
-        {{ fetchingCharacters ? "Loading…" : "Fetch Characters" }}
-      </button>
-      <p v-if="charactersError" class="text-red-600">{{ charactersError }}</p>
-      <pre v-if="characters" class="overflow-auto max-h-96 bg-gray-100 p-4">{{
-        JSON.stringify(characters, null, 2)
-      }}</pre>
-    </section>
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-semibold">1. fetchCharacters (standalone)</h2>
+      </template>
+
+      <div class="space-y-4">
+        <UButton
+          :loading="fetchingCharacters"
+          :disabled="fetchingCharacters"
+          @click="onFetchCharacters"
+        >
+          Fetch Characters
+        </UButton>
+
+        <UAlert
+          v-if="charactersError"
+          color="error"
+          icon="i-lucide-circle-x"
+          :description="charactersError"
+        />
+
+        <pre v-if="characters" class="overflow-auto max-h-96 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(characters, null, 2) }}</pre>
+      </div>
+    </UCard>
 
     <!-- Section 2: fetchScript -->
-    <section class="mb-8 border border-gray-300 p-4">
-      <h2>2. fetchScript (standalone)</h2>
-      <p class="text-gray-600 text-sm">
-        Uses characters from section 1. Fetch those first.
-      </p>
-      <button :disabled="fetchingScript" @click="onFetchScript">
-        {{ fetchingScript ? "Loading…" : "Fetch Script" }}
-      </button>
-      <p v-if="scriptError" class="text-red-600">{{ scriptError }}</p>
-      <pre v-if="script" class="overflow-auto max-h-96 bg-gray-100 p-4">{{
-        JSON.stringify(script, null, 2)
-      }}</pre>
-    </section>
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-semibold">2. fetchScript (standalone)</h2>
+      </template>
+
+      <div class="space-y-4">
+        <p class="text-sm text-neutral-500">
+          Uses characters from section 1. Fetch those first.
+        </p>
+
+        <UButton
+          :loading="fetchingScript"
+          :disabled="fetchingScript"
+          @click="onFetchScript"
+        >
+          Fetch Script
+        </UButton>
+
+        <UAlert
+          v-if="scriptError"
+          color="error"
+          icon="i-lucide-circle-x"
+          :description="scriptError"
+        />
+
+        <pre v-if="script" class="overflow-auto max-h-96 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(script, null, 2) }}</pre>
+      </div>
+    </UCard>
 
     <!-- Section 3: generateCampaign (full flow) -->
-    <section class="border border-gray-300 p-4">
-      <h2>3. generateCampaign (full flow)</h2>
-      <p>
-        Status: <strong>{{ store.generationStatus }}</strong>
-        <span v-if="store.isLoading"> ⏳</span>
-      </p>
-      <button :disabled="store.isLoading" @click="onGenerateCampaign">
-        {{ store.isLoading ? "Generating…" : "Generate Campaign" }}
-      </button>
-      <button class="ml-2" @click="store.reset()">Reset Store</button>
+    <UCard>
+      <template #header>
+        <h2 class="text-lg font-semibold">3. generateCampaign (full flow)</h2>
+      </template>
 
-      <p v-if="store.errorMessage" class="text-red-600 mt-2">
-        {{ store.errorMessage }}
-      </p>
+      <div class="space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">Status:</span>
+          <UBadge :color="store.isLoading ? 'warning' : 'neutral'" variant="subtle">
+            {{ store.generationStatus }}
+          </UBadge>
+          <UIcon v-if="store.isLoading" name="i-lucide-loader-circle" class="animate-spin" />
+        </div>
 
-      <div v-if="store.hasResult" class="mt-4">
-        <h3>Characters</h3>
-        <pre class="overflow-auto max-h-80 bg-gray-100 p-4">{{
-          JSON.stringify(store.characters, null, 2)
-        }}</pre>
-        <h3>GM Script</h3>
-        <pre class="overflow-auto max-h-80 bg-gray-100 p-4">{{
-          JSON.stringify(store.gmScript, null, 2)
-        }}</pre>
+        <div class="flex gap-2">
+          <UButton
+            :loading="store.isLoading"
+            :disabled="store.isLoading"
+            @click="onGenerateCampaign"
+          >
+            Generate Campaign
+          </UButton>
+          <UButton color="neutral" variant="outline" @click="store.reset()">
+            Reset Store
+          </UButton>
+        </div>
+
+        <UAlert
+          v-if="store.errorMessage"
+          color="error"
+          icon="i-lucide-circle-x"
+          :description="store.errorMessage"
+        />
+
+        <div v-if="store.hasResult" class="space-y-4">
+          <div>
+            <h3 class="text-base font-medium mb-2">Characters</h3>
+            <pre class="overflow-auto max-h-80 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(store.characters, null, 2) }}</pre>
+          </div>
+          <div>
+            <h3 class="text-base font-medium mb-2">GM Script</h3>
+            <pre class="overflow-auto max-h-80 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(store.gmScript, null, 2) }}</pre>
+          </div>
+        </div>
       </div>
-    </section>
+    </UCard>
   </div>
 </template>
