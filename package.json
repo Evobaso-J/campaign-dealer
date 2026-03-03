@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "npx nuxt typecheck",
+    "format": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest",
