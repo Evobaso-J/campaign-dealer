@@ -39,7 +39,25 @@ const mockScript: GameMasterScript = {
 // --- Tests ---
 
 describe("useCampaign", () => {
-  it("generates a campaign through the full pipeline", async () => {
+  it("generates characters and stores them", async () => {
+    registerEndpoint("/api/campaign/characters", {
+      method: "POST",
+      handler: () => [mockCharacter],
+    });
+
+    const { generateCharacters } = useCampaign();
+    const store = useCampaignStore();
+
+    expect(store.generationStatus).toBe("idle");
+
+    await generateCharacters(1, ["cyberpunk"]);
+
+    expect(store.characters).toEqual([mockCharacter]);
+    expect(store.generationStatus).toBe("generating-script");
+    expect(store.isLoading).toBe(true);
+  });
+
+  it("generates script and completes the campaign", async () => {
     registerEndpoint("/api/campaign/characters", {
       method: "POST",
       handler: () => [mockCharacter],
@@ -49,11 +67,11 @@ describe("useCampaign", () => {
       handler: () => mockScript,
     });
 
-    const { generateCampaign, store } = useCampaign();
+    const { generateCharacters, generateScript } = useCampaign();
+    const store = useCampaignStore();
 
-    expect(store.generationStatus).toBe("idle");
-
-    await generateCampaign(1, ["cyberpunk"]);
+    await generateCharacters(1, ["cyberpunk"]);
+    await generateScript(["cyberpunk"]);
 
     expect(store.generationStatus).toBe("done");
     expect(store.characters).toEqual([mockCharacter]);
@@ -70,9 +88,10 @@ describe("useCampaign", () => {
       },
     });
 
-    const { generateCampaign, store } = useCampaign();
+    const { generateCharacters } = useCampaign();
+    const store = useCampaignStore();
 
-    await generateCampaign(99, ["cyberpunk"]);
+    await generateCharacters(99, ["cyberpunk"]);
 
     expect(store.generationStatus).toBe("error");
     expect(store.errorMessage).toBeTruthy();
@@ -91,13 +110,23 @@ describe("useCampaign", () => {
       },
     });
 
-    const { generateCampaign, store } = useCampaign();
+    const { generateCharacters, generateScript } = useCampaign();
+    const store = useCampaignStore();
 
-    await generateCampaign(1, ["cyberpunk"]);
+    await generateCharacters(1, ["cyberpunk"]);
+    await generateScript(["cyberpunk"]);
 
     expect(store.generationStatus).toBe("error");
     expect(store.errorMessage).toBeTruthy();
     expect(store.characters).toEqual([mockCharacter]);
+  });
+
+  it("throws when generateScript is called with no characters", async () => {
+    const { generateScript } = useCampaign();
+    const store = useCampaignStore();
+    store.reset();
+
+    await expect(generateScript(["cyberpunk"])).rejects.toThrow();
   });
 
   it("resets store back to idle", async () => {
@@ -110,9 +139,11 @@ describe("useCampaign", () => {
       handler: () => mockScript,
     });
 
-    const { generateCampaign, store } = useCampaign();
+    const { generateCharacters, generateScript } = useCampaign();
+    const store = useCampaignStore();
 
-    await generateCampaign(1, ["cyberpunk"]);
+    await generateCharacters(1, ["cyberpunk"]);
+    await generateScript(["cyberpunk"]);
     expect(store.hasResult).toBe(true);
 
     store.reset();
