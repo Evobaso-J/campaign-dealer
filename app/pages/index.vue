@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
-import type { Genre } from "~~/shared/types/campaign";
+import type { Genre, GameMasterScript, TargetArchetype } from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
+
+const targetArchetypes: TargetArchetype[] = ["king", "queen", "jack"];
 
 const { fetchCharacters, fetchScript, generateCampaign, store } = useCampaign();
 const { locale, t } = useI18n();
@@ -33,7 +35,7 @@ async function onFetchCharacters() {
 }
 
 // --- Section 2: fetchScript ---
-const script = ref<unknown>(null);
+const script = ref<GameMasterScript | null>(null);
 const fetchingScript = ref(false);
 const scriptError = ref<string | null>(null);
 
@@ -209,7 +211,104 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           :description="scriptError"
         />
 
-        <pre v-if="script" class="overflow-auto max-h-96 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(script, null, 2) }}</pre>
+        <div v-if="script" class="space-y-4">
+          <!-- Hook -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-anchor" class="text-neutral-500" />
+                <h3 class="font-semibold">Hook</h3>
+              </div>
+            </template>
+            <p class="italic text-neutral-700 dark:text-neutral-300">{{ script.hook }}</p>
+          </UCard>
+
+          <!-- Central Tension -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-zap" class="text-neutral-500" />
+                <h3 class="font-semibold">Central Tension</h3>
+              </div>
+            </template>
+            <p>{{ script.centralTension }}</p>
+          </UCard>
+
+          <!-- Plot -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-book-open" class="text-neutral-500" />
+                <h3 class="font-semibold">Plot</h3>
+              </div>
+            </template>
+            <p>{{ script.plot }}</p>
+          </UCard>
+
+          <!-- Targets -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-crosshair" class="text-neutral-500" />
+                <h3 class="font-semibold">Antagonist Targets</h3>
+              </div>
+            </template>
+            <div class="space-y-4">
+              <div v-for="(arch, idx) in targetArchetypes" :key="arch">
+                <div class="flex items-start gap-3">
+                  <UBadge color="neutral" variant="outline" class="capitalize shrink-0 mt-0.5">{{ arch }}</UBadge>
+                  <div class="space-y-1 min-w-0">
+                    <p class="font-medium">{{ script.targets[arch].name }}</p>
+                    <p class="text-sm text-neutral-600 dark:text-neutral-400">{{ script.targets[arch].description }}</p>
+                    <UBadge v-if="script.targets[arch].fate" color="neutral" variant="subtle" size="sm" class="capitalize">{{ script.targets[arch].fate }}</UBadge>
+                  </div>
+                </div>
+                <USeparator v-if="idx < targetArchetypes.length - 1" class="mt-4" />
+              </div>
+            </div>
+          </UCard>
+
+          <!-- Scenes -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-film" class="text-neutral-500" />
+                <h3 class="font-semibold">Scenes</h3>
+                <UBadge color="neutral" variant="subtle" size="sm">{{ script.scenes.length }}</UBadge>
+              </div>
+            </template>
+            <ol class="space-y-3">
+              <li v-for="(scene, i) in script.scenes" :key="i" class="flex gap-3">
+                <span class="text-neutral-400 font-mono text-sm shrink-0 pt-px">{{ String(i + 1).padStart(2, '0') }}</span>
+                <p class="text-sm">{{ scene }}</p>
+              </li>
+            </ol>
+          </UCard>
+
+          <!-- Weak Points -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-shield-off" class="text-neutral-500" />
+                <h3 class="font-semibold">Weak Points</h3>
+                <UBadge color="neutral" variant="subtle" size="sm">{{ script.weakPoints.length }}</UBadge>
+              </div>
+            </template>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div
+                v-for="(wp, i) in script.weakPoints"
+                :key="i"
+                class="flex gap-2 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
+              >
+                <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5">{{ i + 1 }}.</span>
+                <div class="min-w-0">
+                  <p class="text-sm font-medium">{{ wp.name }}</p>
+                  <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ wp.role }}</p>
+                </div>
+              </div>
+            </div>
+          </UCard>
+        </div>
       </div>
     </UCard>
 
@@ -305,9 +404,105 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
             </div>
           </div>
 
-          <div>
-            <h3 class="text-base font-medium mb-2">GM Script</h3>
-            <pre class="overflow-auto max-h-80 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(store.gmScript, null, 2) }}</pre>
+          <div v-if="store.gmScript" class="space-y-4">
+            <h3 class="text-base font-medium">GM Script</h3>
+
+            <!-- Hook -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-anchor" class="text-neutral-500" />
+                  <h3 class="font-semibold">Hook</h3>
+                </div>
+              </template>
+              <p class="italic text-neutral-700 dark:text-neutral-300">{{ store.gmScript.hook }}</p>
+            </UCard>
+
+            <!-- Central Tension -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-zap" class="text-neutral-500" />
+                  <h3 class="font-semibold">Central Tension</h3>
+                </div>
+              </template>
+              <p>{{ store.gmScript.centralTension }}</p>
+            </UCard>
+
+            <!-- Plot -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-book-open" class="text-neutral-500" />
+                  <h3 class="font-semibold">Plot</h3>
+                </div>
+              </template>
+              <p>{{ store.gmScript.plot }}</p>
+            </UCard>
+
+            <!-- Targets -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-crosshair" class="text-neutral-500" />
+                  <h3 class="font-semibold">Antagonist Targets</h3>
+                </div>
+              </template>
+              <div class="space-y-4">
+                <div v-for="(arch, idx) in targetArchetypes" :key="arch">
+                  <div class="flex items-start gap-3">
+                    <UBadge color="neutral" variant="outline" class="capitalize shrink-0 mt-0.5">{{ arch }}</UBadge>
+                    <div class="space-y-1 min-w-0">
+                      <p class="font-medium">{{ store.gmScript.targets[arch].name }}</p>
+                      <p class="text-sm text-neutral-600 dark:text-neutral-400">{{ store.gmScript.targets[arch].description }}</p>
+                      <UBadge v-if="store.gmScript.targets[arch].fate" color="neutral" variant="subtle" size="sm" class="capitalize">{{ store.gmScript.targets[arch].fate }}</UBadge>
+                    </div>
+                  </div>
+                  <USeparator v-if="idx < targetArchetypes.length - 1" class="mt-4" />
+                </div>
+              </div>
+            </UCard>
+
+            <!-- Scenes -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-film" class="text-neutral-500" />
+                  <h3 class="font-semibold">Scenes</h3>
+                  <UBadge color="neutral" variant="subtle" size="sm">{{ store.gmScript.scenes.length }}</UBadge>
+                </div>
+              </template>
+              <ol class="space-y-3">
+                <li v-for="(scene, i) in store.gmScript.scenes" :key="i" class="flex gap-3">
+                  <span class="text-neutral-400 font-mono text-sm shrink-0 pt-px">{{ String(i + 1).padStart(2, '0') }}</span>
+                  <p class="text-sm">{{ scene }}</p>
+                </li>
+              </ol>
+            </UCard>
+
+            <!-- Weak Points -->
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-lucide-shield-off" class="text-neutral-500" />
+                  <h3 class="font-semibold">Weak Points</h3>
+                  <UBadge color="neutral" variant="subtle" size="sm">{{ store.gmScript.weakPoints.length }}</UBadge>
+                </div>
+              </template>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div
+                  v-for="(wp, i) in store.gmScript.weakPoints"
+                  :key="i"
+                  class="flex gap-2 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
+                >
+                  <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5">{{ i + 1 }}.</span>
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium">{{ wp.name }}</p>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400">{{ wp.role }}</p>
+                  </div>
+                </div>
+              </div>
+            </UCard>
           </div>
         </div>
       </div>
