@@ -4,7 +4,7 @@ import type { Genre } from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
 
 const { fetchCharacters, fetchScript, generateCampaign, store } = useCampaign();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 // --- Shared inputs ---
 const playerCount = ref(2);
@@ -128,7 +128,58 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           :description="charactersError"
         />
 
-        <pre v-if="characters" class="overflow-auto max-h-96 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(characters, null, 2) }}</pre>
+        <div v-if="characters" class="space-y-3">
+          <UCard v-for="(char, i) in characters" :key="i">
+            <template #header>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold">{{ char.characterIdentity.name }}</span>
+                  <span v-if="char.characterIdentity.pronouns" class="text-sm text-neutral-500 ml-2">({{ char.characterIdentity.pronouns }})</span>
+                </div>
+                <div class="flex gap-2">
+                  <UBadge color="neutral" variant="outline">{{ char.archetype }}</UBadge>
+                  <UBadge color="neutral" variant="outline">{{ char.suit }}</UBadge>
+                </div>
+              </div>
+            </template>
+
+            <div class="space-y-3 text-sm">
+              <p v-if="char.characterIdentity.concept" class="italic text-neutral-600 dark:text-neutral-400">
+                {{ char.characterIdentity.concept }}
+              </p>
+
+              <div class="flex gap-4">
+                <div v-if="char.characterIdentity.weapon">
+                  <span class="font-medium">Weapon:</span>
+                  {{ char.characterIdentity.weapon.name }}
+                  <UBadge v-if="char.characterIdentity.weapon.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                </div>
+                <div v-if="char.characterIdentity.instrument">
+                  <span class="font-medium">Instrument:</span>
+                  {{ char.characterIdentity.instrument.name }}
+                  <UBadge v-if="char.characterIdentity.instrument.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                </div>
+              </div>
+
+              <USeparator />
+
+              <div>
+                <p class="font-medium mb-1">Suit skill</p>
+                <p><span class="font-medium">{{ t(char.suitSkill.name) }}</span> — {{ t(char.suitSkill.description) }}</p>
+              </div>
+
+              <div>
+                <p class="font-medium mb-1">Archetype skills</p>
+                <ul class="space-y-1">
+                  <li v-for="(skill, j) in char.archetypeSkills" :key="j">
+                    <span class="font-medium">{{ t(skill.name) }}</span> — {{ t(skill.description) }}
+                    <span v-if="skill.uses" class="text-neutral-400 ml-1">({{ skill.uses.usesLeft }}/{{ skill.uses.maxUses }})</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </UCard>
+        </div>
       </div>
     </UCard>
 
@@ -200,8 +251,60 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
         <div v-if="store.hasResult" class="space-y-4">
           <div>
             <h3 class="text-base font-medium mb-2">Characters</h3>
-            <pre class="overflow-auto max-h-80 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(store.characters, null, 2) }}</pre>
+            <div class="space-y-3">
+              <UCard v-for="(char, i) in store.characters" :key="i">
+                <template #header>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="font-semibold">{{ char.characterIdentity.name }}</span>
+                      <span v-if="char.characterIdentity.pronouns" class="text-sm text-neutral-500 ml-2">({{ char.characterIdentity.pronouns }})</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <UBadge color="neutral" variant="outline">{{ char.archetype }}</UBadge>
+                      <UBadge color="neutral" variant="outline">{{ char.suit }}</UBadge>
+                    </div>
+                  </div>
+                </template>
+
+                <div class="space-y-3 text-sm">
+                  <p v-if="char.characterIdentity.concept" class="italic text-neutral-600 dark:text-neutral-400">
+                    {{ char.characterIdentity.concept }}
+                  </p>
+
+                  <div class="flex gap-4">
+                    <div v-if="char.characterIdentity.weapon">
+                      <span class="font-medium">Weapon:</span>
+                      {{ char.characterIdentity.weapon.name }}
+                      <UBadge v-if="char.characterIdentity.weapon.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                    </div>
+                    <div v-if="char.characterIdentity.instrument">
+                      <span class="font-medium">Instrument:</span>
+                      {{ char.characterIdentity.instrument.name }}
+                      <UBadge v-if="char.characterIdentity.instrument.concealed" size="sm" color="neutral" variant="subtle">concealed</UBadge>
+                    </div>
+                  </div>
+
+                  <USeparator />
+
+                  <div>
+                    <p class="font-medium mb-1">Suit skill</p>
+                    <p><span class="font-medium">{{ t(char.suitSkill.name) }}</span> — {{ t(char.suitSkill.description) }}</p>
+                  </div>
+
+                  <div>
+                    <p class="font-medium mb-1">Archetype skills</p>
+                    <ul class="space-y-1">
+                      <li v-for="(skill, j) in char.archetypeSkills" :key="j">
+                        <span class="font-medium">{{ t(skill.name) }}</span> — {{ t(skill.description) }}
+                        <span v-if="skill.uses" class="text-neutral-400 ml-1">({{ skill.uses.usesLeft }}/{{ skill.uses.maxUses }})</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </UCard>
+            </div>
           </div>
+
           <div>
             <h3 class="text-base font-medium mb-2">GM Script</h3>
             <pre class="overflow-auto max-h-80 bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-sm font-mono">{{ JSON.stringify(store.gmScript, null, 2) }}</pre>
