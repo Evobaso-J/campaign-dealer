@@ -16,6 +16,7 @@ export default defineNuxtConfig({
       ollamaHost: "",
     },
   },
+  css: ["~/assets/css/main.css"],
   devtools: { enabled: true },
   typescript: {
     /**
