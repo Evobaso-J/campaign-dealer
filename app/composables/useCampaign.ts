@@ -36,6 +36,8 @@ export function useCampaign() {
       throw new AppError("No characters to generate a script for", 400);
     }
 
+    store.generationStatus = "generating-script";
+
     const {
       $i18n: { locale },
     } = useNuxtApp();

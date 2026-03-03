@@ -61,11 +61,11 @@ describe("campaign store", () => {
   });
 
   describe("setCharacters", () => {
-    it("updates characters and transitions status to generating-script", () => {
+    it("updates characters and transitions status to characters-ready", () => {
       const store = useCampaignStore();
       store.setCharacters([mockCharacter]);
       expect(store.characters).toEqual([mockCharacter]);
-      expect(store.generationStatus).toBe("generating-script");
+      expect(store.generationStatus).toBe("characters-ready");
     });
   });
 
@@ -125,9 +125,15 @@ describe("campaign store", () => {
       expect(store.isLoading).toBe(true);
     });
 
-    it("returns true when generating-script", () => {
+    it("returns false when characters-ready", () => {
       const store = useCampaignStore();
       store.setCharacters([mockCharacter]);
+      expect(store.isLoading).toBe(false);
+    });
+
+    it("returns true when generating-script", () => {
+      const store = useCampaignStore();
+      store.generationStatus = "generating-script";
       expect(store.isLoading).toBe(true);
     });
 

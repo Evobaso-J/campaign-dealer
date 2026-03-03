@@ -8,6 +8,7 @@ import type { CharacterSheet } from "~~/shared/types/character";
 type GenerationStatus =
   | "idle"
   | "generating-characters"
+  | "characters-ready"
   | "generating-script"
   | "done"
   | "error";
@@ -51,7 +52,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   function setCharacters(sheets: CharacterSheet[]) {
     characters.value = sheets;
-    generationStatus.value = "generating-script";
+    generationStatus.value = "characters-ready";
   }
 
   function setScript(script: GameMasterScript) {

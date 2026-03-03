@@ -53,8 +53,8 @@ describe("useCampaign", () => {
     await generateCharacters(1, ["cyberpunk"]);
 
     expect(store.characters).toEqual([mockCharacter]);
-    expect(store.generationStatus).toBe("generating-script");
-    expect(store.isLoading).toBe(true);
+    expect(store.generationStatus).toBe("characters-ready");
+    expect(store.isLoading).toBe(false);
   });
 
   it("generates script and completes the campaign", async () => {
