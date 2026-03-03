@@ -24,7 +24,7 @@ Phase 6 creates the full UI layer: a 4-step wizard and the individual display co
 | ---- | ------------------ | ------------------------------------------------------------------------- |
 | 1    | `PlayerCountInput` | Pick player count (1–6)                                                   |
 | 2    | `SettingForm`      | Pick genres (checkboxes grouped by category); at least 1 required         |
-| 3    | `CharacterGrid`    | Generate characters on entry; display cards; re-roll individual character  |
+| 3    | `CharacterGrid`    | Generate characters on entry; display cards; re-roll individual character |
 | 4    | `GmScript`         | Generate script on entry; display full campaign results                   |
 
 `WizardStepper` orchestrates step navigation, triggers generation at the right moments, and shows loading/error states.
@@ -68,6 +68,7 @@ Returns: CharacterSheet (single object, not array)
 ```
 
 Implementation follows the same pattern as `characters.post.ts`:
+
 1. Validate body with `rerollRequestSchema`
 2. Call `generateCharacterTemplate(archetype, suit)`
 3. `buildCharacterPrompt({ template, setting, language })`
@@ -91,7 +92,7 @@ Expose it in the store's return object.
 ### `app/composables/useCampaign.ts` — add `rerollCharacter`
 
 ```ts
-async function rerollCharacter(index: number): Promise<void>
+async function rerollCharacter(index: number): Promise<void>;
 ```
 
 1. Read `store.characters[index]` → get `archetype`, `suit`
@@ -252,16 +253,19 @@ All section headings use `t("ui.script.<key>")`.
 - Uses `useCampaign()` for `generateCharacters`, `generateScript`
 
 **Step indicator:**
+
 - A horizontal row of 4 steps (number + label from `t("ui.wizard.step<N>Title")`)
 - Active step highlighted, completed steps marked
 
 **Step rendering:**
+
 - Step 1: `<PlayerCountInput v-model="playerCount" />`
 - Step 2: `<SettingForm v-model="selectedGenres" />`
 - Step 3: `<CharacterGrid />`
 - Step 4: `<GmScript />`
 
 **Navigation logic:**
+
 - Step 1 → 2: always allowed (Next button)
 - Step 2 → 3: requires `selectedGenres.length > 0`; on transition, calls `generateCharacters(playerCount, selectedGenres)`. Characters generate in the background while the user sees step 3 with a loading state
 - Step 3 → 4: requires `store.characters.length > 0` and `!store.isLoading`; on transition, calls `generateScript(selectedGenres)`. Script generates while user sees step 4 with a loading state
@@ -269,27 +273,28 @@ All section headings use `t("ui.script.<key>")`.
 - Navigation buttons disabled while `store.isLoading`
 
 **Error handling:**
+
 - `UAlert` shown when `store.errorMessage` is set, with `t("ui.status.error")` title and `store.errorMessage` as description
 
 ---
 
 ## Files to create / modify
 
-| File                                                 | Ticket  | Action     |
-| ---------------------------------------------------- | ------- | ---------- |
-| `server/services/rpg/characterRandomizer.ts`         | —       | **Modify** — add `generateCharacterTemplate()`, refactor shared logic |
-| `server/utils/validate.ts`                           | —       | **Modify** — add `rerollRequestSchema` |
-| `server/api/campaign/characters/reroll.post.ts`      | —       | **Create** |
-| `app/stores/campaign.ts`                             | —       | **Modify** — add `replaceCharacter()` |
-| `app/composables/useCampaign.ts`                     | —       | **Modify** — add `rerollCharacter()` |
-| `app/i18n/locales/en.json`                           | —       | **Modify** — add `ui.*` keys |
-| `app/i18n/locales/it.json`                           | —       | **Modify** — add `ui.*` keys |
-| `app/components/PlayerCountInput.vue`                | CAM-17  | **Create** |
-| `app/components/SettingForm.vue`                     | CAM-18  | **Create** |
-| `app/components/WizardStepper.vue`                   | CAM-19  | **Create** |
-| `app/components/CharacterSheet.vue`                  | CAM-20  | **Create** |
-| `app/components/CharacterGrid.vue`                   | CAM-21  | **Create** |
-| `app/components/GmScript.vue`                        | CAM-22  | **Create** |
+| File                                            | Ticket | Action                                                                |
+| ----------------------------------------------- | ------ | --------------------------------------------------------------------- |
+| `server/services/rpg/characterRandomizer.ts`    | —      | **Modify** — add `generateCharacterTemplate()`, refactor shared logic |
+| `server/utils/validate.ts`                      | —      | **Modify** — add `rerollRequestSchema`                                |
+| `server/api/campaign/characters/reroll.post.ts` | —      | **Create**                                                            |
+| `app/stores/campaign.ts`                        | —      | **Modify** — add `replaceCharacter()`                                 |
+| `app/composables/useCampaign.ts`                | —      | **Modify** — add `rerollCharacter()`                                  |
+| `app/i18n/locales/en.json`                      | —      | **Modify** — add `ui.*` keys                                          |
+| `app/i18n/locales/it.json`                      | —      | **Modify** — add `ui.*` keys                                          |
+| `app/components/PlayerCountInput.vue`           | CAM-17 | **Create**                                                            |
+| `app/components/SettingForm.vue`                | CAM-18 | **Create**                                                            |
+| `app/components/WizardStepper.vue`              | CAM-19 | **Create**                                                            |
+| `app/components/CharacterSheet.vue`             | CAM-20 | **Create**                                                            |
+| `app/components/CharacterGrid.vue`              | CAM-21 | **Create**                                                            |
+| `app/components/GmScript.vue`                   | CAM-22 | **Create**                                                            |
 
 ---
 
