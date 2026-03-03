@@ -1,7 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-21",
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n", "@pinia/nuxt", "@nuxt/test-utils/module"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/ui",
+    "@nuxtjs/i18n",
+    "@pinia/nuxt",
+    "@nuxt/test-utils/module",
+  ],
   runtimeConfig: {
     ai: {
       provider: "",
@@ -31,4 +37,8 @@ export default defineNuxtConfig({
   eslint: {
     /* Your ESLint options here */
   },
+  // Server test files on the routes are automatically
+  // picked up as actual routes, causing a server error.
+  // We exclude them from the build process to prevent this.
+  ignore: ["**/*.test.ts", "**/*.spec.ts"],
 });
