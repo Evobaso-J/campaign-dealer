@@ -1,2 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* ──────────────────────────────────────────────
+   Tailwind v4 theme tokens
+   ────────────────────────────────────────────── */
+
+@theme {
+  /* Pixel font */
+  --font-pixel: "Press Start 2P", cursive;
+
+  /* Active palette — references CSS custom properties swapped per genre */
+  --color-gb-bg: var(--gb-bg);
+  --color-gb-shadow: var(--gb-shadow);
+  --color-gb-mid: var(--gb-mid);
+  --color-gb-highlight: var(--gb-highlight);
+
+  /* Error palette (fixed across all genres) */
+  --color-gb-error-bg: #100005;
+  --color-gb-error-shadow: #3d0010;
+  --color-gb-error-mid: #8b0020;
+  --color-gb-error-highlight: #e84a4a;
+}
+
+/* ──────────────────────────────────────────────
+   Default palette (fantasy / Dark Fantasy)
+   ────────────────────────────────────────────── */
+
+:root {
+  --gb-bg: #0d0010;
+  --gb-shadow: #3b1f52;
+  --gb-mid: #7d5a8a;
+  --gb-highlight: #d4b8e0;
+}
+
+/* ──────────────────────────────────────────────
+   Genre palette switchers — apply on a parent
+   element to theme all descendants.
+   Keys match GenreGroup from shared/types/campaign.ts
+   ────────────────────────────────────────────── */
+
+/* fantasy — Dark Fantasy / Gothic Horror */
+.genre-fantasy {
+  --gb-bg: #0d0010;
+  --gb-shadow: #3b1f52;
+  --gb-mid: #7d5a8a;
+  --gb-highlight: #d4b8e0;
+}
+
+/* scifi — Cyberpunk / Sci-Fi */
+.genre-scifi {
+  --gb-bg: #001214;
+  --gb-shadow: #0d3b42;
+  --gb-mid: #1fa8b5;
+  --gb-highlight: #7ffffa;
+}
+
+/* horror — Horror / Cosmic Horror */
+.genre-horror {
+  --gb-bg: #100005;
+  --gb-shadow: #3d0010;
+  --gb-mid: #8b0020;
+  --gb-highlight: #a8e84a;
+}
+
+/* modern — Urban Noir */
+.genre-modern {
+  --gb-bg: #08080f;
+  --gb-shadow: #2a2a3d;
+  --gb-mid: #6b6b8a;
+  --gb-highlight: #e0e0ff;
+}
+
+/* cultural — Weird West / Wuxia */
+.genre-cultural {
+  --gb-bg: #100a00;
+  --gb-shadow: #3d1a00;
+  --gb-mid: #8b4020;
+  --gb-highlight: #e8c87a;
+}
+
+/* aesthetic — Steampunk / Dieselpunk */
+.genre-aesthetic {
+  --gb-bg: #0f0c00;
+  --gb-shadow: #3d2e00;
+  --gb-mid: #8b6914;
+  --gb-highlight: #e8c44a;
+}
+
+/* ──────────────────────────────────────────────
+   Base layer
+   ────────────────────────────────────────────── */
+
+@layer base {
+  body {
+    font-family: var(--font-pixel);
+    background-color: var(--gb-bg);
+    color: var(--gb-highlight);
+    image-rendering: pixelated;
+  }
+}
+
+/* ──────────────────────────────────────────────
+   Utility classes
+   ────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Hard pixel border — 2px solid using the shadow shade */
+  .pixel-border {
+    border: 2px solid var(--gb-shadow);
+  }
+
+  /* Thicker variant */
+  .pixel-border-thick {
+    border: 4px solid var(--gb-shadow);
+  }
+
+  /* Offset pixel shadow — no blur, block shadow in shadow color */
+  .pixel-shadow {
+    box-shadow: 4px 4px 0 var(--gb-shadow);
+  }
+
+  /* CRT scanline overlay — apply on a full-viewport wrapper */
+  .crt-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+  }
+
+  /* CRT vignette — subtle darkening at screen edges */
+  .crt-vignette {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 60%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+  }
+}
