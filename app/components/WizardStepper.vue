@@ -101,7 +101,7 @@ function isActive(key: StepKey) {
           class="w-14 h-5"
           :class="{
             'bg-primary': isActive(key),
-            'bg-neutral-500': isCompleted(key),
+            'bg-primary-600': isCompleted(key),
             'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"
         />
