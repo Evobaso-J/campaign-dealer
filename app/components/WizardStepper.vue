@@ -5,6 +5,9 @@ import type { Genre, GenreGroup } from "~~/shared/types/campaign";
 const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
+const tileTransition = useTemplateRef<{
+  transition: (swapContent: () => void) => Promise<void>;
+}>("tileTransition");
 
 const stepKeys = ["playerCount", "setting", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
@@ -59,26 +62,26 @@ function prevStepKey(): StepKey {
 
 async function goNext() {
   if (!canGoNext.value) return;
+  const nextStep = nextStepKey();
 
-  if (currentStep.value === "setting") {
-    currentStep.value = nextStepKey();
+  await tileTransition.value?.transition(() => {
+    currentStep.value = nextStep;
+  });
+
+  if (nextStep === "characters") {
     await generateCharacters(playerCount.value, selectedGenres.value);
-    return;
-  }
-
-  if (currentStep.value === "characters") {
-    currentStep.value = nextStepKey();
+  } else if (nextStep === "script") {
     await generateScript(selectedGenres.value);
-    return;
   }
-
-  currentStep.value = nextStepKey();
 }
 
-function goBack() {
-  if (!isFirstStep.value) {
-    currentStep.value = prevStepKey();
-  }
+async function goBack() {
+  if (isFirstStep.value) return;
+  const prevStep = prevStepKey();
+
+  await tileTransition.value?.transition(() => {
+    currentStep.value = prevStep;
+  });
 }
 
 function isCompleted(key: StepKey) {
@@ -92,6 +95,8 @@ function isActive(key: StepKey) {
 
 <template>
   <div class="space-y-6">
+    <TileTransition ref="tileTransition" />
+
     <!-- Step indicator -->
     <div class="flex items-center gap-2">
       <template v-for="(key, i) in stepKeys" :key="key">

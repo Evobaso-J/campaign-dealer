@@ -90,6 +90,28 @@
 }
 
 /* ──────────────────────────────────────────────
+   Tile transition keyframes
+   ────────────────────────────────────────────── */
+
+@keyframes tile-cover {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes tile-uncover {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* ──────────────────────────────────────────────
    Base layer
    ────────────────────────────────────────────── */
 
