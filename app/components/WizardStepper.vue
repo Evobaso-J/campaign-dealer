@@ -34,6 +34,12 @@ const canGoNext = computed(() => {
   return !isLastStep.value;
 });
 
+const nextButtonLabel = computed(() => {
+  if (currentStep.value === "setting") return t("ui.wizard.generate");
+  if (currentStep.value === "characters") return t("ui.wizard.generateScript");
+  return t("ui.wizard.next");
+});
+
 function toggleGenre(genre: Genre, checked: boolean) {
   if (checked) {
     selectedGenres.value.push(genre);
@@ -224,13 +230,7 @@ function isActive(key: StepKey) {
         :loading="store.isLoading"
         @click="goNext"
       >
-        {{
-          currentStep === "setting"
-            ? t("ui.wizard.generate")
-            : currentStep === "characters"
-              ? t("ui.wizard.generateScript")
-              : t("ui.wizard.next")
-        }}
+        {{ nextButtonLabel }}
       </UButton>
     </div>
   </div>
