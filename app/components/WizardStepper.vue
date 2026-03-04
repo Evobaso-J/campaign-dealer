@@ -6,23 +6,32 @@ const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
 
-const currentStep = ref(1);
+const stepKeys = ["playerCount", "setting", "characters", "script"] as const;
+type StepKey = (typeof stepKeys)[number];
+
+const steps: Record<StepKey, { titleKey: string }> = {
+  playerCount: { titleKey: "ui.wizard.step1Title" },
+  setting: { titleKey: "ui.wizard.step2Title" },
+  characters: { titleKey: "ui.wizard.step3Title" },
+  script: { titleKey: "ui.wizard.step4Title" },
+};
+
+const currentStep = ref<StepKey>("playerCount");
 const playerCount = ref(2);
 const selectedGenres = ref<Genre[]>([]);
 
-const stepTitles = computed(() => [
-  t("ui.wizard.step1Title"),
-  t("ui.wizard.step2Title"),
-  t("ui.wizard.step3Title"),
-  t("ui.wizard.step4Title"),
-]);
+const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
+const isFirstStep = computed(() => currentStepIndex.value === 0);
+const isLastStep = computed(
+  () => currentStepIndex.value === stepKeys.length - 1,
+);
 
 const canGoNext = computed(() => {
   if (store.isLoading) return false;
-  if (currentStep.value === 2) return selectedGenres.value.length > 0;
-  if (currentStep.value === 3)
+  if (currentStep.value === "setting") return selectedGenres.value.length > 0;
+  if (currentStep.value === "characters")
     return store.characters.length > 0 && !store.isLoading;
-  return currentStep.value < 4;
+  return !isLastStep.value;
 });
 
 function toggleGenre(genre: Genre, checked: boolean) {
@@ -34,28 +43,44 @@ function toggleGenre(genre: Genre, checked: boolean) {
   }
 }
 
+function nextStepKey(): StepKey {
+  return stepKeys[currentStepIndex.value + 1]!;
+}
+
+function prevStepKey(): StepKey {
+  return stepKeys[currentStepIndex.value - 1]!;
+}
+
 async function goNext() {
   if (!canGoNext.value) return;
 
-  if (currentStep.value === 2) {
-    currentStep.value = 3;
+  if (currentStep.value === "setting") {
+    currentStep.value = nextStepKey();
     await generateCharacters(playerCount.value, selectedGenres.value);
     return;
   }
 
-  if (currentStep.value === 3) {
-    currentStep.value = 4;
+  if (currentStep.value === "characters") {
+    currentStep.value = nextStepKey();
     await generateScript(selectedGenres.value);
     return;
   }
 
-  currentStep.value++;
+  currentStep.value = nextStepKey();
 }
 
 function goBack() {
-  if (currentStep.value > 1) {
-    currentStep.value--;
+  if (!isFirstStep.value) {
+    currentStep.value = prevStepKey();
   }
+}
+
+function isCompleted(key: StepKey) {
+  return stepKeys.indexOf(key) < currentStepIndex.value;
+}
+
+function isActive(key: StepKey) {
+  return key === currentStep.value;
 }
 </script>
 
@@ -63,13 +88,13 @@ function goBack() {
   <div class="space-y-6">
     <!-- Step indicator -->
     <div class="flex items-center gap-2">
-      <template v-for="(title, i) in stepTitles" :key="i">
+      <template v-for="(key, i) in stepKeys" :key="key">
         <div
           class="flex items-center gap-1.5 text-sm"
           :class="
-            currentStep === i + 1
+            isActive(key)
               ? 'text-primary font-semibold'
-              : currentStep > i + 1
+              : isCompleted(key)
                 ? 'text-neutral-500'
                 : 'text-neutral-400'
           "
@@ -77,24 +102,24 @@ function goBack() {
           <div
             class="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0"
             :class="
-              currentStep > i + 1
+              isCompleted(key)
                 ? 'bg-primary/10 text-primary'
-                : currentStep === i + 1
+                : isActive(key)
                   ? 'bg-primary text-white'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
             "
           >
             <UIcon
-              v-if="currentStep > i + 1"
+              v-if="isCompleted(key)"
               name="i-lucide-check"
               class="size-3.5"
             />
             <span v-else>{{ i + 1 }}</span>
           </div>
-          <span class="hidden sm:inline">{{ title }}</span>
+          <span class="hidden sm:inline">{{ t(steps[key].titleKey) }}</span>
         </div>
         <div
-          v-if="i < stepTitles.length - 1"
+          v-if="i < stepKeys.length - 1"
           class="flex-1 h-px bg-neutral-200 dark:bg-neutral-700"
         />
       </template>
@@ -111,8 +136,8 @@ function goBack() {
 
     <!-- Step content -->
     <div>
-      <!-- Step 1: Player count (inline placeholder for PlayerCountInput) -->
-      <div v-if="currentStep === 1">
+      <!-- Player count (inline placeholder for PlayerCountInput) -->
+      <div v-if="currentStep === 'playerCount'">
         <UFormField :label="t('ui.playerCount.label')">
           <UInputNumber v-model="playerCount" :min="1" :max="6" class="w-32" />
           <template #hint>
@@ -121,8 +146,8 @@ function goBack() {
         </UFormField>
       </div>
 
-      <!-- Step 2: Setting (inline placeholder for SettingForm) -->
-      <div v-else-if="currentStep === 2" class="space-y-4">
+      <!-- Setting (inline placeholder for SettingForm) -->
+      <div v-else-if="currentStep === 'setting'" class="space-y-4">
         <p class="text-sm font-medium">{{ t("ui.setting.label") }}</p>
         <div
           v-for="(genres, group) in GenreGroups"
@@ -147,8 +172,8 @@ function goBack() {
         </div>
       </div>
 
-      <!-- Step 3: Characters (placeholder for CharacterGrid) -->
-      <div v-else-if="currentStep === 3" class="space-y-4">
+      <!-- Characters (placeholder for CharacterGrid) -->
+      <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-characters'"
           class="flex items-center gap-2 text-neutral-500"
@@ -165,8 +190,8 @@ function goBack() {
         </p>
       </div>
 
-      <!-- Step 4: GM Script (placeholder for GmScript) -->
-      <div v-else-if="currentStep === 4" class="space-y-4">
+      <!-- GM Script (placeholder for GmScript) -->
+      <div v-else-if="currentStep === 'script'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-script'"
           class="flex items-center gap-2 text-neutral-500"
@@ -186,7 +211,7 @@ function goBack() {
     <!-- Navigation buttons -->
     <div class="flex items-center justify-between">
       <UButton
-        v-if="currentStep > 1"
+        v-if="!isFirstStep"
         variant="outline"
         color="neutral"
         :disabled="store.isLoading"
@@ -197,15 +222,15 @@ function goBack() {
       <div v-else />
 
       <UButton
-        v-if="currentStep < 4"
+        v-if="!isLastStep"
         :disabled="!canGoNext"
         :loading="store.isLoading"
         @click="goNext"
       >
         {{
-          currentStep === 2
+          currentStep === "setting"
             ? t("ui.wizard.generate")
-            : currentStep === 3
+            : currentStep === "characters"
               ? t("ui.wizard.generateScript")
               : t("ui.wizard.next")
         }}
