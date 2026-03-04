@@ -91,23 +91,20 @@ function isActive(key: StepKey) {
       <template v-for="(key, i) in stepKeys" :key="key">
         <div
           class="flex items-center gap-1.5 text-sm"
-          :class="
-            isActive(key)
-              ? 'text-primary font-semibold'
-              : isCompleted(key)
-                ? 'text-neutral-500'
-                : 'text-neutral-400'
-          "
+          :class="{
+            'text-primary font-semibold': isActive(key),
+            'text-neutral-500': isCompleted(key),
+            'text-neutral-400': !isActive(key) && !isCompleted(key),
+          }"
         >
           <div
             class="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0"
-            :class="
-              isCompleted(key)
-                ? 'bg-primary/10 text-primary'
-                : isActive(key)
-                  ? 'bg-primary text-white'
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
-            "
+            :class="{
+              'bg-primary/10 text-primary': isCompleted(key),
+              'bg-primary text-white': isActive(key),
+              'bg-neutral-100 dark:bg-neutral-800 text-neutral-400':
+                !isActive(key) && !isCompleted(key),
+            }"
           >
             <UIcon
               v-if="isCompleted(key)"
