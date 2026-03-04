@@ -99,15 +99,18 @@ function isActive(key: StepKey) {
     <!-- Step indicator -->
     <div class="space-y-4">
       <div class="flex items-center justify-center gap-2">
-        <div
+        <button
           v-for="key in stepKeys"
           :key="key"
           class="w-14 h-5"
           :class="{
             'bg-primary': isActive(key),
-            'bg-primary-600': !isActive(key) && isCompleted(key),
+            'bg-primary-600 cursor-pointer hover:bg-primary-500':
+              !isActive(key) && isCompleted(key),
             'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"
+          :disabled="!isCompleted(key) || isActive(key)"
+          @click="currentStep = key"
         />
       </div>
       <p class="text-center text-primary text-xs tracking-widest uppercase">
