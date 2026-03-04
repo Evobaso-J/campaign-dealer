@@ -1,4 +1,37 @@
 {
+  "ui": {
+    "wizard": {
+      "step1Title": "How many players?",
+      "step2Title": "Choose your setting",
+      "step3Title": "Your characters",
+      "step4Title": "Campaign script",
+      "next": "Next",
+      "back": "Back",
+      "generate": "Generate Characters",
+      "generateScript": "Generate Script",
+      "reroll": "Re-roll",
+      "reset": "Start Over"
+    },
+    "playerCount": {
+      "label": "Number of players",
+      "hint": "1 to 6 players"
+    },
+    "setting": {
+      "label": "Select genres",
+      "groups": {
+        "fantasy": "Fantasy",
+        "scifi": "Sci-Fi",
+        "horror": "Horror",
+        "modern": "Modern",
+        "cultural": "Cultural",
+        "aesthetic": "Aesthetic"
+      }
+    },
+    "status": {
+      "generating": "Generating...",
+      "error": "Something went wrong"
+    }
+  },
   "skills": {
     "jack": {
       "suit": {

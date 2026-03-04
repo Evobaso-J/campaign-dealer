@@ -1,4 +1,37 @@
 {
+  "ui": {
+    "wizard": {
+      "step1Title": "Quanti giocatori?",
+      "step2Title": "Scegli l'ambientazione",
+      "step3Title": "I tuoi personaggi",
+      "step4Title": "Copione della campagna",
+      "next": "Avanti",
+      "back": "Indietro",
+      "generate": "Genera Personaggi",
+      "generateScript": "Genera Copione",
+      "reroll": "Rigenera",
+      "reset": "Ricomincia"
+    },
+    "playerCount": {
+      "label": "Numero di giocatori",
+      "hint": "Da 1 a 6 giocatori"
+    },
+    "setting": {
+      "label": "Seleziona i generi",
+      "groups": {
+        "fantasy": "Fantasy",
+        "scifi": "Fantascienza",
+        "horror": "Horror",
+        "modern": "Moderno",
+        "cultural": "Culturale",
+        "aesthetic": "Estetico"
+      }
+    },
+    "status": {
+      "generating": "Generazione in corso...",
+      "error": "Qualcosa è andato storto"
+    }
+  },
   "skills": {
     "jack": {
       "suit": {
