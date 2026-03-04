@@ -20,8 +20,15 @@ const props = withDefaults(
   },
 );
 
-const { phase, coverDelays, uncoverDelays, tileDuration, cols, rows, transition } =
-  useTileTransition(props);
+const {
+  phase,
+  coverDelays,
+  uncoverDelays,
+  tileDuration,
+  cols,
+  rows,
+  transition,
+} = useTileTransition(props);
 
 const isActive = computed(() => phase.value !== "idle");
 
