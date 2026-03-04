@@ -34,9 +34,14 @@ const canGoNext = computed(() => {
   return !isLastStep.value;
 });
 
+const hasCharacters = computed(() => store.characters.length > 0);
+const hasScript = computed(() => store.gmScript !== undefined);
+
 const nextButtonLabel = computed(() => {
-  if (currentStep.value === "setting") return t("ui.wizard.generate");
-  if (currentStep.value === "characters") return t("ui.wizard.generateScript");
+  if (currentStep.value === "setting" && !hasCharacters.value)
+    return t("ui.wizard.generate");
+  if (currentStep.value === "characters" && !hasScript.value)
+    return t("ui.wizard.generateScript");
   return t("ui.wizard.next");
 });
 
@@ -60,16 +65,12 @@ function prevStepKey(): StepKey {
 async function goNext() {
   if (!canGoNext.value) return;
 
-  if (currentStep.value === "setting") {
-    currentStep.value = nextStepKey();
+  if (currentStep.value === "setting" && !hasCharacters.value) {
     await generateCharacters(playerCount.value, selectedGenres.value);
-    return;
   }
 
-  if (currentStep.value === "characters") {
-    currentStep.value = nextStepKey();
+  if (currentStep.value === "characters" && !hasScript.value) {
     await generateScript(selectedGenres.value);
-    return;
   }
 
   currentStep.value = nextStepKey();
@@ -82,6 +83,9 @@ function goBack() {
 }
 
 function isCompleted(key: StepKey) {
+  if (key === "setting") return selectedGenres.value.length > 0;
+  if (key === "characters") return hasCharacters.value;
+  if (key === "script") return hasScript.value;
   return stepKeys.indexOf(key) < currentStepIndex.value;
 }
 
@@ -101,7 +105,7 @@ function isActive(key: StepKey) {
           class="w-14 h-5"
           :class="{
             'bg-primary': isActive(key),
-            'bg-primary-600': isCompleted(key),
+            'bg-primary-600': !isActive(key) && isCompleted(key),
             'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"
         />
