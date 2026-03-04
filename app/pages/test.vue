@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GenreGroups } from "~~/shared/types/campaign";
+import { GenreGroups, getGenreGroup } from "~~/shared/types/campaign";
 import type { Genre, TargetArchetype } from "~~/shared/types/campaign";
 
 const targetArchetypes: TargetArchetype[] = ["king", "queen", "jack"];
@@ -13,11 +13,23 @@ const playerCount = ref(2);
 const selectedGenres = ref<Genre[]>(["cyberpunk"]);
 
 const allGenres = Object.values(GenreGroups).flat() as Genre[];
+
+// Sync selected genres to the store so the genre theme updates immediately.
+watch(
+  selectedGenres,
+  (genres) => {
+    store.campaignSetting = [...genres];
+  },
+  { deep: true, immediate: true },
+);
+
+// Set initial theme based on the default selected genre.
+store.activeTheme = getGenreGroup(selectedGenres.value[0]!);
 </script>
 
 <template>
   <div class="p-8 max-w-4xl mx-auto space-y-6">
-    <h1 class="text-2xl font-bold font-mono">useCampaign — Dev Test Page</h1>
+    <h1 class="text-2xl font-bold">useCampaign — Dev Test Page</h1>
 
     <!-- Shared inputs -->
     <UCard>
@@ -40,8 +52,11 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
               :label="genre"
               @update:model-value="
                 (checked) => {
-                  if (checked) selectedGenres.push(genre);
-                  else selectedGenres.splice(selectedGenres.indexOf(genre), 1);
+                  if (checked) {
+                    selectedGenres.push(genre);
+                    store.activeTheme = getGenreGroup(genre);
+                  } else
+                    selectedGenres.splice(selectedGenres.indexOf(genre), 1);
                 }
               "
             />
@@ -104,7 +119,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                   }}</span>
                   <span
                     v-if="char.characterIdentity.pronouns"
-                    class="text-sm text-neutral-500 ml-2"
+                    class="text-sm text-muted ml-2"
                     >({{ char.characterIdentity.pronouns }})</span
                   >
                 </div>
@@ -122,7 +137,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
             <div class="space-y-3 text-sm">
               <p
                 v-if="char.characterIdentity.concept"
-                class="italic text-neutral-600 dark:text-neutral-400"
+                class="italic text-toned"
               >
                 {{ char.characterIdentity.concept }}
               </p>
@@ -168,7 +183,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                   <li v-for="(skill, j) in char.archetypeSkills" :key="j">
                     <span class="font-medium">{{ t(skill.name) }}</span> —
                     {{ t(skill.description) }}
-                    <span v-if="skill.uses" class="text-neutral-400 ml-1"
+                    <span v-if="skill.uses" class="text-muted ml-1"
                       >({{ skill.uses.usesLeft }}/{{
                         skill.uses.maxUses
                       }})</span
@@ -189,7 +204,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
       </template>
 
       <div class="space-y-4">
-        <p class="text-sm text-neutral-500">
+        <p class="text-sm text-muted">
           Uses characters from step 1. Generate those first.
         </p>
 
@@ -206,11 +221,11 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-anchor" class="text-neutral-500" />
+                <UIcon name="i-lucide-anchor" class="text-muted" />
                 <h3 class="font-semibold">Hook</h3>
               </div>
             </template>
-            <p class="italic text-neutral-700 dark:text-neutral-300">
+            <p class="italic text-toned">
               {{ store.gmScript.hook }}
             </p>
           </UCard>
@@ -219,7 +234,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-zap" class="text-neutral-500" />
+                <UIcon name="i-lucide-zap" class="text-muted" />
                 <h3 class="font-semibold">Central Tension</h3>
               </div>
             </template>
@@ -230,7 +245,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-book-open" class="text-neutral-500" />
+                <UIcon name="i-lucide-book-open" class="text-muted" />
                 <h3 class="font-semibold">Plot</h3>
               </div>
             </template>
@@ -241,7 +256,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-crosshair" class="text-neutral-500" />
+                <UIcon name="i-lucide-crosshair" class="text-muted" />
                 <h3 class="font-semibold">Antagonist Targets</h3>
               </div>
             </template>
@@ -258,7 +273,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                     <p class="font-medium">
                       {{ store.gmScript.targets[arch].name }}
                     </p>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                    <p class="text-sm text-toned">
                       {{ store.gmScript.targets[arch].description }}
                     </p>
                     <UBadge
@@ -283,7 +298,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-film" class="text-neutral-500" />
+                <UIcon name="i-lucide-film" class="text-muted" />
                 <h3 class="font-semibold">Scenes</h3>
                 <UBadge color="neutral" variant="subtle" size="sm">{{
                   store.gmScript.scenes.length
@@ -296,10 +311,9 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                 :key="i"
                 class="flex gap-3"
               >
-                <span
-                  class="text-neutral-400 font-mono text-sm shrink-0 pt-px"
-                  >{{ String(i + 1).padStart(2, "0") }}</span
-                >
+                <span class="text-muted text-sm shrink-0 pt-px">{{
+                  String(i + 1).padStart(2, "0")
+                }}</span>
                 <p class="text-sm">{{ scene }}</p>
               </li>
             </ol>
@@ -309,7 +323,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-shield-off" class="text-neutral-500" />
+                <UIcon name="i-lucide-shield-off" class="text-muted" />
                 <h3 class="font-semibold">Weak Points</h3>
                 <UBadge color="neutral" variant="subtle" size="sm">{{
                   store.gmScript.weakPoints.length
@@ -320,14 +334,14 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
               <div
                 v-for="(wp, i) in store.gmScript.weakPoints"
                 :key="i"
-                class="flex gap-2 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
+                class="flex gap-2 p-2 bg-elevated/50"
               >
-                <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5"
+                <span class="text-muted text-xs shrink-0 pt-0.5"
                   >{{ i + 1 }}.</span
                 >
                 <div class="min-w-0">
                   <p class="text-sm font-medium">{{ wp.name }}</p>
-                  <p class="text-xs text-neutral-500 dark:text-neutral-400">
+                  <p class="text-xs text-muted">
                     {{ wp.role }}
                   </p>
                 </div>

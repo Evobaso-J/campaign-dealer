@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
-import type { Genre } from "~~/shared/types/campaign";
+import type { Genre, GenreGroup } from "~~/shared/types/campaign";
 
 const { t } = useI18n();
 const store = useCampaignStore();
@@ -40,14 +40,24 @@ const nextButtonLabel = computed(() => {
   return t("ui.wizard.next");
 });
 
-function toggleGenre(genre: Genre, checked: boolean) {
+function toggleGenre(genre: Genre, group: GenreGroup, checked: boolean) {
   if (checked) {
     selectedGenres.value.push(genre);
+    store.activeTheme = group;
   } else {
     const idx = selectedGenres.value.indexOf(genre);
     if (idx !== -1) selectedGenres.value.splice(idx, 1);
   }
 }
+
+// Sync selected genres to the store so the genre theme updates immediately.
+watch(
+  selectedGenres,
+  (genres) => {
+    store.campaignSetting = [...genres];
+  },
+  { deep: true },
+);
 
 function nextStepKey(): StepKey {
   return stepKeys[currentStepIndex.value + 1]!;
@@ -102,7 +112,7 @@ function isActive(key: StepKey) {
           :class="{
             'bg-primary': isActive(key),
             'bg-primary-600': isCompleted(key),
-            'bg-neutral-800': !isActive(key) && !isCompleted(key),
+            'bg-elevated': !isActive(key) && !isCompleted(key),
           }"
         />
       </div>
@@ -140,7 +150,7 @@ function isActive(key: StepKey) {
           :key="group"
           class="space-y-2"
         >
-          <p class="text-xs font-semibold uppercase text-neutral-500">
+          <p class="text-xs font-semibold uppercase text-muted">
             {{ t(`ui.setting.groups.${group}`) }}
           </p>
           <div class="flex flex-wrap gap-3">
@@ -151,7 +161,7 @@ function isActive(key: StepKey) {
               :label="genre"
               @update:model-value="
                 (checked: boolean | 'indeterminate') =>
-                  toggleGenre(genre, checked === true)
+                  toggleGenre(genre, group, checked === true)
               "
             />
           </div>
@@ -162,14 +172,14 @@ function isActive(key: StepKey) {
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-characters'"
-          class="flex items-center gap-2 text-neutral-500"
+          class="flex items-center gap-2 text-muted"
         >
           <UIcon name="i-lucide-loader-circle" class="animate-spin" />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
         <p
           v-else-if="store.characters.length"
-          class="text-neutral-500 italic p-4 border border-dashed rounded-lg text-center"
+          class="text-muted italic p-4 border border-dashed rounded-lg text-center"
         >
           [CharacterGrid placeholder — {{ store.characters.length }} characters
           generated]
@@ -180,14 +190,14 @@ function isActive(key: StepKey) {
       <div v-else-if="currentStep === 'script'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-script'"
-          class="flex items-center gap-2 text-neutral-500"
+          class="flex items-center gap-2 text-muted"
         >
           <UIcon name="i-lucide-loader-circle" class="animate-spin" />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
         <p
           v-else-if="store.gmScript"
-          class="text-neutral-500 italic p-4 border border-dashed rounded-lg text-center"
+          class="text-muted italic p-4 border border-dashed rounded-lg text-center"
         >
           [GmScript placeholder — campaign script generated]
         </p>

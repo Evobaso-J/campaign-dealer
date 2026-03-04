@@ -1,9 +1,13 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: "neutral",
-      neutral: "slate",
-      error: "red",
+      primary: "gb",
+      secondary: "gb",
+      success: "gb",
+      info: "gb",
+      warning: "gb-error",
+      error: "gb-error",
+      neutral: "gb",
     },
   },
 });

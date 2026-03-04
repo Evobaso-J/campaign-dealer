@@ -58,6 +58,16 @@ export const GenreGroups = {
 export type GenreGroup = keyof typeof GenreGroups;
 export type Genre = (typeof GenreGroups)[GenreGroup][number];
 
+/** Returns the GenreGroup a given Genre belongs to. */
+export function getGenreGroup(genre: Genre): GenreGroup {
+  for (const [group, genres] of Object.entries(GenreGroups)) {
+    if ((genres as readonly string[]).includes(genre)) {
+      return group as GenreGroup;
+    }
+  }
+  return "fantasy";
+}
+
 export type GameMasterScript = {
   hook: GeneratedText;
   /** One antagonist Target per archetype (king, queen, jack). */
