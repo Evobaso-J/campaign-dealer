@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
-import type { Genre, GenreGroup } from "~~/shared/types/campaign";
+import type { Genre } from "~~/shared/types/campaign";
 
 const { t } = useI18n();
 const store = useCampaignStore();
@@ -93,39 +93,22 @@ function isActive(key: StepKey) {
 <template>
   <div class="space-y-6">
     <!-- Step indicator -->
-    <div class="flex items-center gap-2">
-      <template v-for="(key, i) in stepKeys" :key="key">
+    <div class="space-y-4">
+      <div class="flex items-center justify-center gap-2">
         <div
-          class="flex items-center gap-1.5 text-sm"
+          v-for="key in stepKeys"
+          :key="key"
+          class="w-14 h-5"
           :class="{
-            'text-primary font-semibold': isActive(key),
-            'text-neutral-500': isCompleted(key),
-            'text-neutral-400': !isActive(key) && !isCompleted(key),
+            'bg-primary': isActive(key),
+            'bg-neutral-500': isCompleted(key),
+            'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"
-        >
-          <div
-            class="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0"
-            :class="{
-              'bg-primary/10 text-primary': isCompleted(key),
-              'bg-primary text-white': isActive(key),
-              'bg-neutral-100 dark:bg-neutral-800 text-neutral-400':
-                !isActive(key) && !isCompleted(key),
-            }"
-          >
-            <UIcon
-              v-if="isCompleted(key)"
-              name="i-lucide-check"
-              class="size-3.5"
-            />
-            <span v-else>{{ i + 1 }}</span>
-          </div>
-          <span class="hidden sm:inline">{{ t(steps[key].titleKey) }}</span>
-        </div>
-        <div
-          v-if="i < stepKeys.length - 1"
-          class="flex-1 h-px bg-neutral-200 dark:bg-neutral-700"
         />
-      </template>
+      </div>
+      <p class="text-center text-primary text-xs tracking-widest uppercase">
+        [ {{ t(steps[currentStep].titleKey).toUpperCase() }} ]
+      </p>
     </div>
 
     <!-- Error alert -->
@@ -158,7 +141,7 @@ function isActive(key: StepKey) {
           class="space-y-2"
         >
           <p class="text-xs font-semibold uppercase text-neutral-500">
-            {{ t(`ui.setting.groups.${group as GenreGroup}`) }}
+            {{ t(`ui.setting.groups.${group}`) }}
           </p>
           <div class="flex flex-wrap gap-3">
             <UCheckbox
