@@ -53,4 +53,11 @@ export default defineNuxtConfig({
      * @default `['stores']`
      */
   },
+  app: {
+    head: {
+      bodyAttrs: {
+        class: "font-mono",
+      },
+    },
+  },
 });
