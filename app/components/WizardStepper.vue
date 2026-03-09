@@ -115,15 +115,17 @@ function isActive(key: StepKey) {
               !isActive(key) && isCompleted(key),
             'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"
+          :aria-label="t(steps[key].titleKey)"
+          :aria-current="isActive(key) ? 'step' : undefined"
           :disabled="!isCompleted(key) || isActive(key)"
           @click="currentStep = key"
         />
       </div>
-      <p class="text-center">
+      <h2 class="text-center">
         <span class="section-header text-xs tracking-widest">
           {{ t(steps[currentStep].titleKey).toUpperCase() }}
         </span>
-      </p>
+      </h2>
     </div>
 
     <!-- Error alert -->
@@ -172,9 +174,14 @@ function isActive(key: StepKey) {
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-characters'"
+          role="status"
           class="terminal-panel flex items-center gap-2 text-neutral-500"
         >
-          <UIcon name="i-lucide-loader-circle" class="animate-spin" />
+          <UIcon
+            aria-hidden="true"
+            name="i-lucide-loader-circle"
+            class="animate-spin"
+          />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
         <div
@@ -193,9 +200,14 @@ function isActive(key: StepKey) {
       <div v-else-if="currentStep === 'script'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-script'"
+          role="status"
           class="terminal-panel flex items-center gap-2 text-neutral-500"
         >
-          <UIcon name="i-lucide-loader-circle" class="animate-spin" />
+          <UIcon
+            aria-hidden="true"
+            name="i-lucide-loader-circle"
+            class="animate-spin"
+          />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
         <div v-else-if="store.gmScript" class="terminal-panel text-center">

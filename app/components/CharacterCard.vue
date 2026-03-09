@@ -18,6 +18,12 @@ const suitIcons: Record<string, string> = {
 
 <template>
   <div
+    role="img"
+    :aria-label="
+      card
+        ? t('ui.selector.archetype.' + card.archetype) + ' of ' + card.suit
+        : t('ui.selector.readyToJoin')
+    "
     class="relative w-28 aspect-5/7 flex flex-col items-center justify-center text-center transition-all duration-200"
     :class="
       card
@@ -28,6 +34,7 @@ const suitIcons: Record<string, string> = {
     <!-- Filled card -->
     <template v-if="card">
       <div
+        aria-hidden="true"
         class="absolute top-1 left-1.5 flex flex-col items-center leading-none"
       >
         <span class="text-xs font-pixel font-bold">
@@ -37,9 +44,11 @@ const suitIcons: Record<string, string> = {
       </div>
       <NuxtImg
         :src="`/cards/${card.archetype}_${card.suit}.svg`"
+        :alt="''"
         class="w-full object-cover"
       />
       <div
+        aria-hidden="true"
         class="absolute bottom-0 left-0 right-0 mx-1 mb-1 px-1.5 py-1 flex items-center justify-center bg-primary-400/90 border border-primary-700 h-1/4"
       >
         <span
@@ -52,11 +61,12 @@ const suitIcons: Record<string, string> = {
 
     <template v-else>
       <div
+        aria-hidden="true"
         class="absolute inset-1 border border-dashed border-primary-700 flex flex-col items-center justify-center gap-2"
       >
         <UIcon name="i-lucide-plus" class="text-primary-400 text-xl" />
         <span
-          class="text-[0.4rem] text-primary-400 tracking-widest font-pixel animate-[blinker_1s_step-end_infinite]"
+          class="text-[0.4rem] text-primary-400 tracking-widest font-pixel animate-[blinker_1s_step-end_infinite] motion-reduce:animate-none"
         >
           {{ t("ui.selector.readyToJoin") }}
         </span>

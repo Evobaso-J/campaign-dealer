@@ -111,10 +111,11 @@ const orderedCards = computed(() => {
         {{ t("ui.selector.selectFighter").toUpperCase() }}
       </span>
 
-      <div class="overflow-y-auto max-h-80 space-y-1">
+      <div role="list" class="overflow-y-auto max-h-80 space-y-1">
         <button
           v-for="combo in combinations"
           :key="comboKey(combo.archetype, combo.suit)"
+          role="listitem"
           class="w-full flex items-center gap-2 px-2 py-1.5 text-left transition-colors"
           :class="{
             'bg-primary-300/20 pixel-border': selected.has(
@@ -126,6 +127,8 @@ const orderedCards = computed(() => {
             'hover:bg-primary-400/10 cursor-pointer':
               canSelect || selected.has(comboKey(combo.archetype, combo.suit)),
           }"
+          :aria-label="`${t(`ui.selector.archetype.${combo.archetype}`)} of ${combo.suit}`"
+          :aria-pressed="selected.has(comboKey(combo.archetype, combo.suit))"
           :disabled="
             !canSelect && !selected.has(comboKey(combo.archetype, combo.suit))
           "
@@ -137,8 +140,9 @@ const orderedCards = computed(() => {
             )
           "
         >
-          <!-- Mini card icon -->
+          <!-- Mini card icon (decorative, described by aria-label) -->
           <span
+            aria-hidden="true"
             class="w-7 h-9 pixel-border flex flex-col items-center justify-center text-[0.5rem] leading-tight shrink-0"
             :class="
               selected.has(comboKey(combo.archetype, combo.suit))
@@ -152,7 +156,10 @@ const orderedCards = computed(() => {
             <span>{{ suitIcons[combo.suit] }}</span>
           </span>
 
-          <span class="text-xs uppercase tracking-wider truncate">
+          <span
+            aria-hidden="true"
+            class="text-xs uppercase tracking-wider truncate"
+          >
             {{ t(`ui.selector.archetype.${combo.archetype}`) }}
             {{ suitIcons[combo.suit] }}
           </span>
@@ -180,7 +187,11 @@ const orderedCards = computed(() => {
 
       <!-- Bottom bar: stats + actions -->
       <div class="flex items-center justify-between flex-wrap gap-2">
-        <span class="text-xs text-primary-800 tracking-wider font-pixel">
+        <span
+          aria-live="polite"
+          aria-atomic="true"
+          class="text-xs text-primary-800 tracking-wider font-pixel"
+        >
           {{ t("ui.selector.lineUp").toUpperCase() }}: {{ partySize }} /
           {{ MAX_PARTY }}
           {{ t("ui.selector.fighter").toUpperCase() }}
