@@ -111,16 +111,6 @@
    ────────────────────────────────────────────── */
 
 @layer utilities {
-  /* Hard pixel border — 2px solid using the shadow shade */
-  .pixel-border {
-    border: 2px solid var(--ui-color-primary-800);
-  }
-
-  /* Thicker variant */
-  .pixel-border-thick {
-    border: 4px solid var(--ui-color-primary-800);
-  }
-
   /* Offset pixel shadow — no blur, block shadow in shadow color */
   .pixel-shadow {
     box-shadow: 4px 4px 0 var(--ui-color-primary-800);
