@@ -171,7 +171,7 @@ const orderedCards = computed(() => {
     >
       <!-- Arena area -->
       <div
-        class="border-2 border-primary-900 bg-primary-500/10 p-4 min-h-52 flex items-center justify-center [background-image:linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] [background-size:20px_20px]"
+        class="border-2 border-primary-900 bg-primary-500/10 p-4 min-h-52 flex items-center justify-center [background-image:linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] [bg-size:20px_20px]"
       >
         <div class="flex flex-wrap justify-center gap-4">
           <CharacterCard
@@ -192,7 +192,7 @@ const orderedCards = computed(() => {
         >
           {{ t("ui.selector.lineUp").toUpperCase() }}: {{ partySize }} /
           {{ MAX_PARTY }}
-          {{ t("ui.selector.fighter").toUpperCase() }}
+          {{ t("ui.selector.characters").toUpperCase() }}
         </span>
 
         <div class="flex items-center gap-2">
