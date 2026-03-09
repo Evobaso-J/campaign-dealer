@@ -6,12 +6,12 @@ import {
   type ArchetypeCharacterization,
   type SuitCharacterization,
 } from "~~/server/data/houseDoesntWin/characterTemplates";
-import { ValidationError, ok, err, type Result } from "~~/shared/types/errors";
 import {
   CharacterArchetype,
   type CharacterSheet,
   CharacterSuit,
-} from "~~/shared/types/character";
+} from "../types/character";
+import { ValidationError, ok, err, type Result } from "../types/errors";
 
 export type CharacterTemplate = Omit<CharacterSheet, "characterIdentity"> & {
   suitCharacterization: SuitCharacterization;
