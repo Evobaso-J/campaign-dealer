@@ -1,7 +1,7 @@
 {
   "ui": {
     "wizard": {
-      "step1Title": "How many players?",
+      "step1Title": "Deploy your party tokens",
       "step2Title": "Choose your setting",
       "step3Title": "Your characters",
       "step4Title": "Campaign script",
@@ -25,6 +25,28 @@
         "modern": "Modern",
         "cultural": "Cultural",
         "aesthetic": "Aesthetic"
+      }
+    },
+    "selector": {
+      "title": "Select Characters",
+      "drawRandom": "Draw Random",
+      "lockParty": "Lock Party",
+      "empty": "EMPTY",
+      "readyToJoin": "READY TO JOIN",
+      "selectFighter": "Select Fighter",
+      "lineUp": "Line-up",
+      "fighter": "Fighters",
+      "loadOut": "Load Out",
+      "characters": "Characters",
+      "archetype": {
+        "king": "King",
+        "queen": "Queen",
+        "jack": "Jack"
+      },
+      "suit": {
+        "hearts": "Hearts",
+        "clubs": "Clubs",
+        "spades": "Spades"
       }
     },
     "status": {

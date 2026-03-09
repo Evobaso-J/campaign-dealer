@@ -1,7 +1,7 @@
 {
   "ui": {
     "wizard": {
-      "step1Title": "Quanti giocatori?",
+      "step1Title": "Schiera la tua squadra",
       "step2Title": "Scegli l'ambientazione",
       "step3Title": "I tuoi personaggi",
       "step4Title": "Copione della campagna",
@@ -25,6 +25,28 @@
         "modern": "Moderno",
         "cultural": "Culturale",
         "aesthetic": "Estetico"
+      }
+    },
+    "selector": {
+      "title": "Seleziona Personaggi",
+      "drawRandom": "Pesca Casuale",
+      "lockParty": "Blocca Squadra",
+      "empty": "VUOTO",
+      "readyToJoin": "PRONTO A UNIRSI",
+      "selectFighter": "Scegli Combattente",
+      "lineUp": "Formazione",
+      "fighter": "Combattenti",
+      "loadOut": "Equipaggiamento",
+      "characters": "Personaggi",
+      "archetype": {
+        "king": "Re",
+        "queen": "Regina",
+        "jack": "Fante"
+      },
+      "suit": {
+        "hearts": "Cuori",
+        "clubs": "Fiori",
+        "spades": "Picche"
       }
     },
     "status": {
