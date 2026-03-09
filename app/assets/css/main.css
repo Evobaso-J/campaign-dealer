@@ -160,23 +160,24 @@
   }
 
   /* Dither patterns — 1-bit checkerboard fills at 3 scales */
+  /* Control color via --dither-color (falls back to primary-400) */
   .dither-sm {
     background: repeating-conic-gradient(
-        var(--ui-color-primary-400) 0% 25%,
+        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
         #000 0% 50%
       )
       50% / 2px 2px;
   }
   .dither-md {
     background: repeating-conic-gradient(
-        var(--ui-color-primary-400) 0% 25%,
+        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
         #000 0% 50%
       )
       50% / 4px 4px;
   }
   .dither-lg {
     background: repeating-conic-gradient(
-        var(--ui-color-primary-400) 0% 25%,
+        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
         #000 0% 50%
       )
       50% / 8px 8px;
