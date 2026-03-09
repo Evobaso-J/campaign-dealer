@@ -38,7 +38,7 @@ const { t } = useI18n();
       </div>
       <NuxtImg
         :src="`/cards/${card.archetype}_${card.suit}.svg`"
-        :alt="''"
+        :alt="`${t(`ui.selector.archetype.${card.archetype}`)}-${t(`ui.selector.suit.${card.suit}`)}`"
         class="w-full object-cover"
       />
       <div
