@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
 import type { Genre } from "~~/shared/types/campaign";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
 
-const stepKeys = ["playerCount", "setting", "characters", "script"] as const;
+const stepKeys = ["party", "setting", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
 
 const steps: Record<StepKey, { titleKey: string }> = {
-  playerCount: { titleKey: "ui.wizard.step1Title" },
+  party: { titleKey: "ui.wizard.step1Title" },
   setting: { titleKey: "ui.wizard.step2Title" },
   characters: { titleKey: "ui.wizard.step3Title" },
   script: { titleKey: "ui.wizard.step4Title" },
 };
 
-const currentStep = ref<StepKey>("playerCount");
-const playerCount = ref(2);
+const currentStep = ref<StepKey>("party");
+const selectedTemplates = ref<CharacterTemplate[]>([]);
 const selectedGenres = ref<Genre[]>([]);
 
 const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
@@ -28,6 +29,8 @@ const isLastStep = computed(
 
 const canGoNext = computed(() => {
   if (store.isLoading) return false;
+  if (currentStep.value === "party")
+    return selectedTemplates.value.length > 0;
   if (currentStep.value === "setting") return selectedGenres.value.length > 0;
   if (currentStep.value === "characters")
     return store.characters.length > 0 && !store.isLoading;
@@ -66,7 +69,7 @@ async function goNext() {
   if (!canGoNext.value) return;
 
   if (currentStep.value === "setting" && !hasCharacters.value) {
-    await generateCharacters(playerCount.value, selectedGenres.value);
+    await generateCharacters(selectedTemplates.value.length, selectedGenres.value);
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {
@@ -83,6 +86,7 @@ function goBack() {
 }
 
 function isCompleted(key: StepKey) {
+  if (key === "party") return selectedTemplates.value.length > 0;
   if (key === "setting") return selectedGenres.value.length > 0;
   if (key === "characters") return hasCharacters.value;
   if (key === "script") return hasScript.value;
@@ -131,14 +135,9 @@ function isActive(key: StepKey) {
 
     <!-- Step content -->
     <div>
-      <!-- Player count (inline placeholder for PlayerCountInput) -->
-      <div v-if="currentStep === 'playerCount'">
-        <UFormField :label="t('ui.playerCount.label')">
-          <UInputNumber v-model="playerCount" :min="1" :max="6" class="w-32" />
-          <template #hint>
-            {{ t("ui.playerCount.hint") }}
-          </template>
-        </UFormField>
+      <!-- Character selector -->
+      <div v-if="currentStep === 'party'">
+        <CharacterSelector v-model="selectedTemplates" />
       </div>
 
       <!-- Setting (inline placeholder for SettingForm) -->
