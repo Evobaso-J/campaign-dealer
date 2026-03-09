@@ -29,8 +29,7 @@ const isLastStep = computed(
 
 const canGoNext = computed(() => {
   if (store.isLoading) return false;
-  if (currentStep.value === "party")
-    return selectedTemplates.value.length > 0;
+  if (currentStep.value === "party") return selectedTemplates.value.length > 0;
   if (currentStep.value === "setting") return selectedGenres.value.length > 0;
   if (currentStep.value === "characters")
     return store.characters.length > 0 && !store.isLoading;
@@ -69,7 +68,10 @@ async function goNext() {
   if (!canGoNext.value) return;
 
   if (currentStep.value === "setting" && !hasCharacters.value) {
-    await generateCharacters(selectedTemplates.value.length, selectedGenres.value);
+    await generateCharacters(
+      selectedTemplates.value.length,
+      selectedGenres.value,
+    );
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {
