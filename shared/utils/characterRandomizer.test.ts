@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   generateCharacter,
   generateRandomDistinctCharacters,
-} from "~~/server/services/rpg/characterRandomizer";
+} from "~~/shared/utils/characterRandomizer";
 import {
   archetypeCharacterizations,
   archetypeSkills,

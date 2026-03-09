@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 import { characterIdentitySchema } from "~~/server/utils/validate";
 import { LocaleNames, type Genre, type Locale } from "~~/shared/types/campaign";
 import type { AIPrompt } from "../types";

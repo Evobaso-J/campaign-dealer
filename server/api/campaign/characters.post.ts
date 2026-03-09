@@ -3,7 +3,7 @@ import "~~/server/services/ai/anthropic";
 import "~~/server/services/ai/ollama";
 import { getAIProvider } from "~~/server/services/ai/index";
 import { buildCharacterPrompt } from "~~/server/services/ai/prompts/character";
-import { generateRandomDistinctCharacters } from "~~/server/services/rpg/characterRandomizer";
+import { generateRandomDistinctCharacters } from "~~/shared/utils/characterRandomizer";
 import { ValidationError } from "~~/shared/types/errors";
 import {
   withAIProvider,

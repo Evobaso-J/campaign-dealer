@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
-import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
-import type {
-  ArchetypeCharacterization,
-  SuitCharacterization,
-} from "~~/server/data/houseDoesntWin/characterTemplates";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 import {
   AIProviderError,
   ValidationError,
@@ -30,7 +26,7 @@ vi.mock("~~/server/services/ai/prompts/character", () => ({
 }));
 
 const mockGenerate = vi.fn();
-vi.mock("~~/server/services/rpg/characterRandomizer", () => ({
+vi.mock("~~/shared/utils/characterRandomizer", () => ({
   generateRandomDistinctCharacters: (...args: unknown[]) =>
     mockGenerate(...args),
 }));
@@ -60,8 +56,10 @@ const fakeTemplate = (
       description: "skill.king.1.desc" as I18nKey,
     },
   ],
-  suitCharacterization: "Hearts are empathetic." as SuitCharacterization,
-  archetypeCharacterization: "The King rules." as ArchetypeCharacterization,
+  suitCharacterization:
+    "Hearts characters know that the right word, spoken at the right moment,\nis worth more than any weapon. They read people like cards, weave charm and\ncunning into something sharper than steel, and always seem to know exactly\nwhat someone needs to hear. If you like a Character who wins before the fight\neven starts — through persuasion, wit, and an eye for what others miss —\nthen Hearts is your suit.",
+  archetypeCharacterization:
+    "The King has a plan for every contingency, an escape route for every\nunexpected turn, and the ability to bend the rules to his advantage. He knows\nthat timing is everything. If you like a Character who always has an ace up\nhis sleeve and as many allies as enemies, then the King is the Archetype for you.",
   ...overrides,
 });
 

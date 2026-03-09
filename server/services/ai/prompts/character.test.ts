@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { CharacterTemplate } from "~~/server/services/rpg/characterRandomizer";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 import type { Genre } from "~~/shared/types/campaign";
 import type { I18nKey } from "~~/shared/types/utils";
 import { buildCharacterPrompt } from "./character";

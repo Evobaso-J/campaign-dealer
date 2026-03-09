@@ -17,7 +17,7 @@ export default defineConfig({
         },
         test: {
           name: "unit",
-          include: ["app/**/*.{test,spec}.ts"],
+          include: ["app/**/*.{test,spec}.ts", "shared/**/*.{test,spec}.ts"],
           exclude: ["app/**/*.nuxt.{test,spec}.ts"],
           environment: "node",
         },
