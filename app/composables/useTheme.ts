@@ -1,12 +1,14 @@
 export const GENRE_THEMES = {
-  terminal: { primary: "green", neutral: "slate" },
-  fantasy: { primary: "violet", neutral: "slate" },
-  scifi: { primary: "cyan", neutral: "slate" },
-  horror: { primary: "red", neutral: "zinc" },
-  modern: { primary: "indigo", neutral: "gray" },
-  cultural: { primary: "amber", neutral: "stone" },
-  aesthetic: { primary: "yellow", neutral: "stone" },
-} as const;
+  terminal: { primary: "terminal", neutral: "slate" },
+  fantasy: { primary: "fantasy", neutral: "slate" },
+  scifi: { primary: "scifi", neutral: "slate" },
+  horror: { primary: "horror", neutral: "zinc" },
+  modern: { primary: "modern", neutral: "gray" },
+  cultural: { primary: "cultural", neutral: "stone" },
+} as const satisfies Record<
+  GenreGroup | "terminal",
+  { primary: string; neutral: string }
+>;
 
 export type ThemePreset = keyof typeof GENRE_THEMES;
 

@@ -29,7 +29,7 @@ const makeTemplate = (
     ...overrides,
   }) as CharacterTemplate;
 
-const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
+const SETTING: Genre[] = ["cyberpunk", "darkFantasy"];
 
 const defaults = () => ({
   template: makeTemplate(),
@@ -143,7 +143,7 @@ describe("buildCharacterPrompt", () => {
     it("includes all genre names from the setting", () => {
       const { user } = buildCharacterPrompt(defaults());
       expect(user).toContain("cyberpunk");
-      expect(user).toContain("conspiracyThriller");
+      expect(user).toContain("darkFantasy");
     });
 
     it("reflects different template values", () => {

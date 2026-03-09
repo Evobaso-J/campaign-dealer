@@ -3,7 +3,7 @@ import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { GENRE_THEMES, useTheme, type ThemePreset } from "./useTheme";
 
 const mockAppConfig = {
-  ui: { colors: { primary: "green", neutral: "slate", error: "red" } },
+  ui: { colors: { primary: "terminal", neutral: "slate", error: "red" } },
 };
 
 mockNuxtImport("useAppConfig", () =>
@@ -22,7 +22,7 @@ describe("useTheme", () => {
 
     applyPreset("horror");
 
-    expect(mockAppConfig.ui.colors.primary).toBe("red");
+    expect(mockAppConfig.ui.colors.primary).toBe("horror");
     expect(mockAppConfig.ui.colors.neutral).toBe("zinc");
   });
 
@@ -39,7 +39,7 @@ describe("useTheme", () => {
 
     currentPreset.value = "fantasy";
 
-    expect(mockAppConfig.ui.colors.primary).toBe("violet");
+    expect(mockAppConfig.ui.colors.primary).toBe("fantasy");
     expect(mockAppConfig.ui.colors.neutral).toBe("slate");
   });
 
@@ -56,7 +56,7 @@ describe("useTheme", () => {
     const { applyPreset, reset } = useTheme();
 
     applyPreset("cultural");
-    expect(mockAppConfig.ui.colors.primary).toBe("amber");
+    expect(mockAppConfig.ui.colors.primary).toBe("cultural");
 
     reset();
 
