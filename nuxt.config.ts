@@ -53,6 +53,7 @@ export default defineNuxtConfig({
      * @default `['stores']`
      */
   },
+  colorMode: "light",
   app: {
     head: {
       bodyAttrs: {

@@ -7,7 +7,7 @@ export default defineAppConfig({
     },
     button: {
       slots: {
-        base: "rounded-none uppercase cursor-pointer",
+        base: "rounded-none uppercase cursor-pointer pixel-border",
       },
     },
     badge: {
