@@ -35,13 +35,12 @@ const suitIcons: Record<string, string> = {
         </span>
         <UIcon :name="suitIcons[card.suit]!" class="text-sm" />
       </div>
-      <!-- Image area -->
       <NuxtImg
         :src="`/cards/${card.archetype}_${card.suit}.svg`"
         class="w-full object-cover"
       />
       <div
-        class="absolute bottom-0 left-0 right-0 mx-1 mb-1 px-1.5 py-1 flex items-center justify-center bg-primary-500/40 border border-primary-700 h-1/4"
+        class="absolute bottom-0 left-0 right-0 mx-1 mb-1 px-1.5 py-1 flex items-center justify-center bg-primary-400/90 border border-primary-700 h-1/4"
       >
         <span
           class="text-[0.45rem] leading-tight font-pixel text-primary-900 text-center italic"
