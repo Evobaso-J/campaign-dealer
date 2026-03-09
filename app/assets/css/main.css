@@ -107,8 +107,8 @@
 @layer base {
   body {
     font-family: var(--font-pixel);
-    background-color: var(--ui-color-primary-950);
-    color: var(--ui-color-primary-400);
+    background-color: var(--ui-color-primary-500);
+    color: var(--ui-color-primary-800);
     image-rendering: pixelated;
   }
 }
