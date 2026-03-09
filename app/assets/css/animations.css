@@ -8,6 +8,18 @@
   }
 }
 
+/* Blink animation for empty card slots */
+@keyframes blinker {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Subtle opacity flicker simulating phosphor refresh */
 @keyframes crt-flicker {
   0%,

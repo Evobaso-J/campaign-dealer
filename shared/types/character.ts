@@ -9,6 +9,11 @@ export const CharacterArchetype = {
 export type CharacterArchetype =
   (typeof CharacterArchetype)[keyof typeof CharacterArchetype];
 
+export const archetypeInitials: Record<CharacterArchetype, string> = {
+  king: "K",
+  queen: "Q",
+  jack: "J",
+};
 /**
  * Diamonds excluded.
  * In "The house doesn't always win", diamonds are the bad guys,
