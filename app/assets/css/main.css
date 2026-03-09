@@ -117,6 +117,12 @@
    Utility classes
    ────────────────────────────────────────────── */
 
+/* ──────────────────────────────────────────────
+   Semantic opacity reference (Tailwind built-ins)
+   - Subtitle / secondary text: opacity-80
+   - Footer / very muted text:  opacity-50
+   ────────────────────────────────────────────── */
+
 @layer utilities {
   /* Hard pixel border — 2px solid using the shadow shade */
   .pixel-border {
@@ -164,6 +170,53 @@
       transparent
     );
     animation: crt-scan 6s linear infinite;
+  }
+
+  /* Dither patterns — 1-bit checkerboard fills at 3 scales */
+  .dither-sm {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 2px 2px;
+  }
+  .dither-md {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 4px 4px;
+  }
+  .dither-lg {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 8px 8px;
+  }
+
+  /* Terminal panel — CRT-aesthetic card container */
+  .terminal-panel {
+    border: 1px solid var(--ui-color-primary-400);
+    padding: 20px;
+    background: color-mix(in srgb, var(--ui-color-primary-400) 5%, transparent);
+  }
+
+  /* CRT badge — inverted inline label */
+  .crt-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    background: var(--ui-color-primary-400);
+    color: var(--ui-color-primary-950);
+  }
+
+  /* Section header — bordered inline-block label */
+  .section-header {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid var(--ui-color-primary-400);
+    text-transform: uppercase;
   }
 
   .crt-vignette {

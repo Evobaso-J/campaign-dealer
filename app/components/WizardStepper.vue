@@ -102,7 +102,7 @@ function isActive(key: StepKey) {
         <button
           v-for="key in stepKeys"
           :key="key"
-          class="w-14 h-5"
+          class="w-14 h-5 pixel-border"
           :class="{
             'bg-primary': isActive(key),
             'bg-primary-600 cursor-pointer hover:bg-primary-500':
@@ -113,8 +113,10 @@ function isActive(key: StepKey) {
           @click="currentStep = key"
         />
       </div>
-      <p class="text-center text-primary text-xs tracking-widest uppercase">
-        [ {{ t(steps[currentStep].titleKey).toUpperCase() }} ]
+      <p class="text-center">
+        <span class="section-header text-xs tracking-widest">
+          {{ t(steps[currentStep].titleKey).toUpperCase() }}
+        </span>
       </p>
     </div>
 
@@ -147,9 +149,9 @@ function isActive(key: StepKey) {
           :key="group"
           class="space-y-2"
         >
-          <p class="text-xs font-semibold uppercase text-neutral-500">
+          <span class="section-header text-xs text-neutral-500">
             {{ t(`ui.setting.groups.${group}`) }}
-          </p>
+          </span>
           <div class="flex flex-wrap gap-3">
             <UCheckbox
               v-for="genre in genres"
@@ -169,35 +171,38 @@ function isActive(key: StepKey) {
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-characters'"
-          class="flex items-center gap-2 text-neutral-500"
+          class="terminal-panel flex items-center gap-2 text-neutral-500"
         >
           <UIcon name="i-lucide-loader-circle" class="animate-spin" />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
-        <p
+        <div
           v-else-if="store.characters.length"
-          class="text-neutral-500 italic p-4 border border-dashed rounded-lg text-center"
+          class="terminal-panel text-center"
         >
-          [CharacterGrid placeholder — {{ store.characters.length }} characters
-          generated]
-        </p>
+          <span class="crt-badge mb-2">SYS_LOG</span>
+          <p class="text-neutral-500 text-xs leading-relaxed mt-2">
+            [CharacterGrid placeholder —
+            {{ store.characters.length }} characters generated]
+          </p>
+        </div>
       </div>
 
       <!-- GM Script (placeholder for GmScript) -->
       <div v-else-if="currentStep === 'script'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-script'"
-          class="flex items-center gap-2 text-neutral-500"
+          class="terminal-panel flex items-center gap-2 text-neutral-500"
         >
           <UIcon name="i-lucide-loader-circle" class="animate-spin" />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
-        <p
-          v-else-if="store.gmScript"
-          class="text-neutral-500 italic p-4 border border-dashed rounded-lg text-center"
-        >
-          [GmScript placeholder — campaign script generated]
-        </p>
+        <div v-else-if="store.gmScript" class="terminal-panel text-center">
+          <span class="crt-badge mb-2">SYS_LOG</span>
+          <p class="text-neutral-500 text-xs leading-relaxed mt-2">
+            [GmScript placeholder — campaign script generated]
+          </p>
+        </div>
       </div>
     </div>
 

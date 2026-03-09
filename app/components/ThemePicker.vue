@@ -16,7 +16,7 @@ const presets = Object.keys(GENRE_THEMES) as ThemePreset[];
         class="size-5 rounded-sm pixel-border transition-opacity cursor-pointer"
         :class="[
           currentPreset === preset
-            ? 'opacity-100 ring-1 ring-offset-1 ring-offset-(--ui-color-primary-950) ring-(--ui-color-primary-400)'
+            ? 'opacity-100 ring-1 ring-offset-1 ring-offset-primary-950 ring-primary-400'
             : 'opacity-50 hover:opacity-80',
         ]"
         :style="{
