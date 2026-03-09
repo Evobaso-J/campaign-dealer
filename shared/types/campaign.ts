@@ -20,38 +20,34 @@ export interface TargetEnemy {
 
 export const GenreGroups = {
   fantasy: [
-    "highFantasy", // https://en.wikipedia.org/wiki/High_fantasy
-    "darkFantasy", // https://en.wikipedia.org/wiki/Dark_fantasy
-    "swordAndSorcery", // https://en.wikipedia.org/wiki/Sword_and_sorcery
-    "mythicFantasy", // https://en.wikipedia.org/wiki/Mythic_fiction
+    "highFantasy", // Heroic, magic-heavy, epic stakes (D&D/Pathfinder)
+    "darkFantasy", // Gritty, lethal, morally grey (Witcher/Dark Souls)
+    "swordAndSorcery", // Low-magic, pulp action, personal survival (Conan)
+    "mythicFantasy", // Gods, demigods, and legendary trials (Percy Jackson/Hades)
   ],
   scifi: [
-    "scienceFantasy", // https://en.wikipedia.org/wiki/Science_fantasy
-    "cyberpunk", // https://en.wikipedia.org/wiki/Cyberpunk
-    "spaceOpera", // https://en.wikipedia.org/wiki/Space_opera
-    "postApocalyptic", // https://en.wikipedia.org/wiki/Post-apocalyptic_fiction
+    "cyberpunk", // Dystopian tech, hacking, urban rebellion (Cyberpunk/Shadowrun)
+    "spaceOpera", // Galactic empires, aliens, starships (Star Wars/Mass Effect)
+    "hardScifi", // Realistic tech, physics-based survival (The Expanse)
+    "postApocalyptic", // Ruined worlds, scavenging, rebuilding (Fallout/Mad Max)
   ],
   horror: [
-    "gothicHorror", // https://en.wikipedia.org/wiki/Gothic_fiction
-    "cosmicHorror", // https://en.wikipedia.org/wiki/Lovecraftian_horror
-    "survivalHorror", // https://en.wikipedia.org/wiki/Survival_horror
+    "cosmicHorror", // Sanity-draining eldritch gods (Call of Cthulhu)
+    "gothicHorror", // Cursed castles, vampires, Victorian dread (Ravenloft)
+    "survivalHorror", // Resource management, claustrophobia (Resident Evil/Alien)
+    "folkHorror", // Isolated cults, ancient superstitions (The Wicker Man/Midsommar)
   ],
   modern: [
-    "urbanFantasy", // https://en.wikipedia.org/wiki/Urban_fantasy
-    "superhero", // https://en.wikipedia.org/wiki/Superhero_fiction
-    "alternateHistory", // https://en.wikipedia.org/wiki/Alternate_history
-    "conspiracyThriller", // https://en.wikipedia.org/wiki/Conspiracy_fiction
+    "urbanFantasy", // Hidden magic in modern cities (World of Darkness/Dresden)
+    "superhero", // Vigilantes, superpowers, and secret identities (Mutants & Masterminds)
+    "conspiracy", // Espionage, X-Files, government secrets (Delta Green)
+    "weirdWest", // Six-shooters, occultism, and frontier grit (Deadlands)
   ],
   cultural: [
-    "wuxia", // https://en.wikipedia.org/wiki/Wuxia
-    "isekai", // https://en.wikipedia.org/wiki/Isekai
-    "weirdWest", // https://en.wikipedia.org/wiki/Weird_West
-  ],
-  aesthetic: [
-    "steampunk", // https://en.wikipedia.org/wiki/Steampunk
-    "dieselpunk", // https://en.wikipedia.org/wiki/Dieselpunk
-    "biopunk", // https://en.wikipedia.org/wiki/Biopunk
-    "clockpunk", // https://en.wikipedia.org/wiki/Cyberpunk_derivatives#Clockpunk
+    "wuxia", // Martial arts mastery, honor, and Chi (Crouching Tiger)
+    "isekai", // Portal fantasy, fish-out-of-water (Trapped in a game/world)
+    "chanbara", // Samurai drama, ronin, and feudal politics
+    "steampunk", // Industrial revolution + magic/tech (Replaces 'Aesthetic')
   ],
 } as const;
 

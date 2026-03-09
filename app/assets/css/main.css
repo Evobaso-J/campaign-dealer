@@ -6,88 +6,98 @@
 
 /* ──────────────────────────────────────────────
    Tailwind v4 theme tokens
+   `static` ensures CSS custom properties are always emitted,
+   even when no utility class references them directly.
+   Without it, the Nuxt UI colors plugin's
+   var(--color-{name}-{shade}) references resolve to nothing.
    ────────────────────────────────────────────── */
 
-@theme {
+@theme static {
   /* Pixel font */
   --font-pixel: "Press Start 2P", cursive;
 
-  /* Active palette — references CSS custom properties swapped per genre */
-  --color-gb-bg: var(--gb-bg);
-  --color-gb-shadow: var(--gb-shadow);
-  --color-gb-mid: var(--gb-mid);
-  --color-gb-highlight: var(--gb-highlight);
-
   /* Error palette (fixed across all genres) */
-  --color-gb-error-bg: #100005;
-  --color-gb-error-shadow: #3d0010;
-  --color-gb-error-mid: #8b0020;
-  --color-gb-error-highlight: #e84a4a;
-}
+  --color-crt-error-bg: #100005;
+  --color-crt-error-shadow: #3d0010;
+  --color-crt-error-mid: #8b0020;
+  --color-crt-error-highlight: #e84a4a;
+  /* ── Terminal (Phosphor Green) ── */
+  --color-terminal-50: #f0ffe0;
+  --color-terminal-100: #d9ff99;
+  --color-terminal-200: #bbee44;
+  --color-terminal-300: #ccff00; /* highlight */
+  --color-terminal-400: #b8e600;
+  --color-terminal-500: #88aa00; /* mid */
+  --color-terminal-600: #667700;
+  --color-terminal-700: #225500;
+  --color-terminal-800: #004400; /* shadow */
+  --color-terminal-900: #002200;
+  --color-terminal-950: #050505; /* bg */
 
-/* ──────────────────────────────────────────────
-   Default palette (fantasy / Dark Fantasy)
-   ────────────────────────────────────────────── */
+  /* ── Fantasy (Forest Green) ── */
+  --color-fantasy-50: #e8fdf0;
+  --color-fantasy-100: #b8f5d2;
+  --color-fantasy-200: #86eeaf;
+  --color-fantasy-300: #5ee898;
+  --color-fantasy-400: #4ade80; /* highlight */
+  --color-fantasy-500: #2f8c54; /* mid */
+  --color-fantasy-600: #256e42;
+  --color-fantasy-700: #1e5c36;
+  --color-fantasy-800: #1a4d2e; /* shadow */
+  --color-fantasy-900: #123520;
+  --color-fantasy-950: #0b2013; /* bg */
 
-:root {
-  --gb-bg: #0d0010;
-  --gb-shadow: #3b1f52;
-  --gb-mid: #7d5a8a;
-  --gb-highlight: #d4b8e0;
-}
+  /* ── Sci-Fi (Cyber Cyan) ── */
+  --color-scifi-50: #e4fbff;
+  --color-scifi-100: #b0f2fc;
+  --color-scifi-200: #70e5f6;
+  --color-scifi-300: #40d8f0;
+  --color-scifi-400: #20d3ee; /* highlight */
+  --color-scifi-500: #178fa1; /* mid */
+  --color-scifi-600: #12707e;
+  --color-scifi-700: #0d5e6a;
+  --color-scifi-800: #0e4e58; /* shadow */
+  --color-scifi-900: #0a353d;
+  --color-scifi-950: #062024; /* bg */
 
-/* ──────────────────────────────────────────────
-   Genre palette switchers — apply on a parent
-   element to theme all descendants.
-   Keys match GenreGroup from shared/types/campaign.ts
-   ────────────────────────────────────────────── */
+  /* ── Horror (Crimson Dread) ── */
+  --color-horror-50: #fff0f2;
+  --color-horror-100: #ffc8cf;
+  --color-horror-200: #f99aaa;
+  --color-horror-300: #f76e82;
+  --color-horror-400: #f43e5c; /* highlight */
+  --color-horror-500: #a82a3f; /* mid */
+  --color-horror-600: #852232;
+  --color-horror-700: #6e1c2a;
+  --color-horror-800: #5c1723; /* shadow */
+  --color-horror-900: #3e0f18;
+  --color-horror-950: #24090e; /* bg */
 
-/* fantasy — Dark Fantasy / Gothic Horror */
-.genre-fantasy {
-  --gb-bg: #0d0010;
-  --gb-shadow: #3b1f52;
-  --gb-mid: #7d5a8a;
-  --gb-highlight: #d4b8e0;
-}
+  /* ── Modern (Tactical Grey) ── */
+  --color-modern-50: #f0f0f6;
+  --color-modern-100: #d4d4e0;
+  --color-modern-200: #b8b8cc;
+  --color-modern-300: #a6a6c2;
+  --color-modern-400: #9494b8; /* highlight */
+  --color-modern-500: #686881; /* mid */
+  --color-modern-600: #55556a;
+  --color-modern-700: #48485a;
+  --color-modern-800: #3c3c4b; /* shadow */
+  --color-modern-900: #282834;
+  --color-modern-950: #16161c; /* bg */
 
-/* scifi — Cyberpunk / Sci-Fi */
-.genre-scifi {
-  --gb-bg: #001214;
-  --gb-shadow: #0d3b42;
-  --gb-mid: #1fa8b5;
-  --gb-highlight: #7ffffa;
-}
-
-/* horror — Horror / Cosmic Horror */
-.genre-horror {
-  --gb-bg: #100005;
-  --gb-shadow: #3d0010;
-  --gb-mid: #8b0020;
-  --gb-highlight: #a8e84a;
-}
-
-/* modern — Urban Noir */
-.genre-modern {
-  --gb-bg: #08080f;
-  --gb-shadow: #2a2a3d;
-  --gb-mid: #6b6b8a;
-  --gb-highlight: #e0e0ff;
-}
-
-/* cultural — Weird West / Wuxia */
-.genre-cultural {
-  --gb-bg: #100a00;
-  --gb-shadow: #3d1a00;
-  --gb-mid: #8b4020;
-  --gb-highlight: #e8c87a;
-}
-
-/* aesthetic — Steampunk / Dieselpunk */
-.genre-aesthetic {
-  --gb-bg: #0f0c00;
-  --gb-shadow: #3d2e00;
-  --gb-mid: #8b6914;
-  --gb-highlight: #e8c44a;
+  /* ── Cultural (Imperial Gold) ── */
+  --color-cultural-50: #fff8e0;
+  --color-cultural-100: #fce9a8;
+  --color-cultural-200: #fad560;
+  --color-cultural-300: #f9c940;
+  --color-cultural-400: #f9bd24; /* highlight */
+  --color-cultural-500: #b2881a; /* mid */
+  --color-cultural-600: #8c6c12;
+  --color-cultural-700: #7a5c0e;
+  --color-cultural-800: #6b520a; /* shadow */
+  --color-cultural-900: #4a3807;
+  --color-cultural-950: #261d05; /* bg */
 }
 
 /* ──────────────────────────────────────────────
@@ -97,8 +107,8 @@
 @layer base {
   body {
     font-family: var(--font-pixel);
-    background-color: var(--gb-bg);
-    color: var(--gb-highlight);
+    background-color: var(--ui-color-primary-500);
+    color: var(--ui-color-primary-800);
     image-rendering: pixelated;
   }
 }
@@ -107,20 +117,26 @@
    Utility classes
    ────────────────────────────────────────────── */
 
+/* ──────────────────────────────────────────────
+   Semantic opacity reference (Tailwind built-ins)
+   - Subtitle / secondary text: opacity-80
+   - Footer / very muted text:  opacity-50
+   ────────────────────────────────────────────── */
+
 @layer utilities {
   /* Hard pixel border — 2px solid using the shadow shade */
   .pixel-border {
-    border: 2px solid var(--gb-shadow);
+    border: 2px solid var(--ui-color-primary-800);
   }
 
   /* Thicker variant */
   .pixel-border-thick {
-    border: 4px solid var(--gb-shadow);
+    border: 4px solid var(--ui-color-primary-800);
   }
 
   /* Offset pixel shadow — no blur, block shadow in shadow color */
   .pixel-shadow {
-    box-shadow: 4px 4px 0 var(--gb-shadow);
+    box-shadow: 4px 4px 0 var(--ui-color-primary-800);
   }
 
   .crt-overlay {
@@ -154,6 +170,53 @@
       transparent
     );
     animation: crt-scan 6s linear infinite;
+  }
+
+  /* Dither patterns — 1-bit checkerboard fills at 3 scales */
+  .dither-sm {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 2px 2px;
+  }
+  .dither-md {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 4px 4px;
+  }
+  .dither-lg {
+    background: repeating-conic-gradient(
+        var(--ui-color-primary-400) 0% 25%,
+        #000 0% 50%
+      )
+      50% / 8px 8px;
+  }
+
+  /* Terminal panel — CRT-aesthetic card container */
+  .terminal-panel {
+    border: 1px solid var(--ui-color-primary-400);
+    padding: 20px;
+    background: color-mix(in srgb, var(--ui-color-primary-400) 5%, transparent);
+  }
+
+  /* CRT badge — inverted inline label */
+  .crt-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    background: var(--ui-color-primary-400);
+    color: var(--ui-color-primary-950);
+  }
+
+  /* Section header — bordered inline-block label */
+  .section-header {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid var(--ui-color-primary-400);
+    text-transform: uppercase;
   }
 
   .crt-vignette {

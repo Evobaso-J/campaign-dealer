@@ -30,7 +30,7 @@ const makeCharacter = (overrides?: Partial<CharacterSheet>): CharacterSheet =>
     ...overrides,
   }) as CharacterSheet;
 
-const SETTING: Genre[] = ["cyberpunk", "conspiracyThriller"];
+const SETTING: Genre[] = ["cyberpunk", "darkFantasy"];
 
 const defaults = () => ({
   characters: [makeCharacter()],
@@ -180,7 +180,7 @@ describe("buildScriptPrompt", () => {
     it("includes all genre names from the setting", () => {
       const { user } = buildScriptPrompt(defaults());
       expect(user).toContain("cyberpunk");
-      expect(user).toContain("conspiracyThriller");
+      expect(user).toContain("darkFantasy");
     });
 
     it("includes all characters when multiple are provided", () => {
