@@ -9,8 +9,8 @@ Phase 6 creates the full UI layer: a 4-step wizard and the individual display co
 ## What you have coming in (Phase 5 output)
 
 - Pinia store (`app/stores/campaign.ts`) with state, actions (`setInput`, `setCharacters`, `setScript`, `setError`, `reset`), and getters (`isLoading`, `hasResult`, `campaign`)
-- `useCampaign` composable (`app/composables/useCampaign.ts`) exposing `generateCharacters(playerCount, setting)` and `generateScript(setting)` — two separate sequential calls
-- `POST /api/campaign/characters` — accepts `{ playerCount, setting, language }`, returns `CharacterSheet[]`
+- `useCampaign` composable (`app/composables/useCampaign.ts`) exposing `generateCharacters(templates, setting)` and `generateScript(setting)` — two separate sequential calls
+- `POST /api/campaign/characters` — accepts `{ templates: CharacterTemplate[], setting, language }`, returns `CharacterSheet[]`
 - `POST /api/campaign/script` — accepts `{ characters, setting, language }`, returns `GameMasterScript`
 - NuxtUI 4.4.0 + TailwindCSS 4.2.1 fully configured
 - i18n with `en` and `it` locales (currently only `skills.*` keys)
@@ -20,12 +20,12 @@ Phase 6 creates the full UI layer: a 4-step wizard and the individual display co
 
 ## Wizard flow
 
-| Step | Component          | What happens                                                              |
-| ---- | ------------------ | ------------------------------------------------------------------------- |
-| 1    | `PlayerCountInput` | Pick player count (1–6)                                                   |
-| 2    | `SettingForm`      | Pick genres (checkboxes grouped by category); at least 1 required         |
-| 3    | `CharacterGrid`    | Generate characters on entry; display cards; re-roll individual character |
-| 4    | `GmScript`         | Generate script on entry; display full campaign results                   |
+| Step | Component           | What happens                                                                 |
+| ---- | ------------------- | ---------------------------------------------------------------------------- |
+| 1    | `CharacterSelector` | Select party of up to 4 characters (archetype+suit combos); randomize option |
+| 2    | `SettingForm`       | Pick genres (checkboxes grouped by category); at least 1 required            |
+| 3    | `CharacterGrid`     | Generate characters on entry; display cards; re-roll individual character    |
+| 4    | `GmScript`          | Generate script on entry; display full campaign results                      |
 
 `WizardStepper` orchestrates step navigation, triggers generation at the right moments, and shows loading/error states.
 
@@ -35,7 +35,7 @@ Phase 6 creates the full UI layer: a 4-step wizard and the individual display co
 
 The existing bulk endpoint (`POST /api/campaign/characters`) picks random archetype+suit combos. Re-rolling a single character needs to regenerate a **specific** archetype+suit with a fresh AI identity.
 
-### New function in `server/services/rpg/characterRandomizer.ts`
+### New functions in `shared/utils/characterRandomizer.ts`
 
 ```ts
 export const generateCharacterTemplate = (
@@ -48,7 +48,26 @@ Same logic as `generateCharacter()` but deterministic — uses the provided arch
 
 Refactor: extract the shared body of `generateCharacter()` and `generateCharacterTemplate()` into a common internal helper to avoid duplication.
 
-### New validation schema in `server/utils/validate.ts`
+```ts
+/** Returns all 9 archetype-suit combinations. */
+export const allCombinations = (): Array<{ archetype: CharacterArchetype; suit: CharacterSuit }> => { ... }
+```
+
+`allCombinations()` enumerates the 3×3 grid. Both `allCombinations` and `generateCharacterTemplate` are pure functions importable from the client (used by `CharacterSelector`).
+
+### Updated validation schema in `server/utils/validate.ts`
+
+Update `charactersRequestSchema` to accept `templates` instead of `playerCount`:
+
+```ts
+export const charactersRequestSchema = z.object({
+  templates: z.array(characterTemplateSchema).min(1).max(4),
+  setting: settingSchema,
+  language: z.enum(Locales),
+});
+```
+
+Add `rerollRequestSchema`:
 
 ```ts
 export const rerollRequestSchema = z.object({
@@ -67,7 +86,9 @@ Body: { archetype, suit, setting, language }
 Returns: CharacterSheet (single object, not array)
 ```
 
-Implementation follows the same pattern as `characters.post.ts`:
+Update `characters.post.ts`: the endpoint no longer calls `generateRandomDistinctCharacters()`. Instead it receives `templates` from the client and uses them directly for AI identity generation.
+
+The re-roll endpoint implementation follows the same pattern as `characters.post.ts`:
 
 1. Validate body with `rerollRequestSchema`
 2. Call `generateCharacterTemplate(archetype, suit)`
@@ -79,7 +100,16 @@ Implementation follows the same pattern as `characters.post.ts`:
 
 ## Store & composable changes
 
-### `app/stores/campaign.ts` — add `replaceCharacter`
+### `app/stores/campaign.ts` — update `setInput`, add `replaceCharacter`
+
+```ts
+function setInput(templates: CharacterTemplate[], setting: Genre[]) {
+  playerCount.value = templates.length;
+  campaignSetting.value = setting;
+}
+```
+
+The store keeps `playerCount` as a derived value (`templates.length`) for any code that still reads it. Add a new `selectedTemplates: ref<CharacterTemplate[]>([])` state field to hold the client-chosen templates (needed by re-roll to know the original archetype+suit).
 
 ```ts
 function replaceCharacter(index: number, sheet: CharacterSheet) {
@@ -87,9 +117,23 @@ function replaceCharacter(index: number, sheet: CharacterSheet) {
 }
 ```
 
-Expose it in the store's return object.
+Expose both in the store's return object.
 
-### `app/composables/useCampaign.ts` — add `rerollCharacter`
+### `app/composables/useCampaign.ts` — update `generateCharacters`, add `rerollCharacter`
+
+The `generateCharacters` signature changes to accept templates instead of a player count:
+
+```ts
+async function generateCharacters(
+  templates: CharacterTemplate[],
+  setting: Genre[],
+): Promise<void>;
+```
+
+1. `store.setInput(templates, setting)`
+2. `$fetch<CharacterSheet[]>("/api/campaign/characters", { method: "POST", body: { templates, setting, language: locale } })`
+3. On success: `store.setCharacters(result)`
+4. On error: `store.setError(message)`
 
 ```ts
 async function rerollCharacter(index: number): Promise<void>;
@@ -102,7 +146,7 @@ async function rerollCharacter(index: number): Promise<void>;
 
 This function does **not** change `generationStatus` — the wizard stays on step 3.
 
-Return `rerollCharacter` from the composable alongside `generateCharacters` and `generateScript`.
+Return `generateCharacters`, `rerollCharacter`, and `generateScript` from the composable.
 
 ---
 
@@ -114,7 +158,7 @@ Return `rerollCharacter` from the composable alongside `generateCharacters` and 
 {
   "ui": {
     "wizard": {
-      "step1Title": "How many players?",
+      "step1Title": "Deploy your party tokens",
       "step2Title": "Choose your setting",
       "step3Title": "Your characters",
       "step4Title": "Campaign script",
@@ -125,9 +169,23 @@ Return `rerollCharacter` from the composable alongside `generateCharacters` and 
       "reroll": "Re-roll",
       "reset": "Start Over"
     },
-    "playerCount": {
-      "label": "Number of players",
-      "hint": "1 to 6 players"
+    "selector": {
+      "title": "Select Character",
+      "drawRandom": "Draw Random",
+      "lockParty": "Lock Party",
+      "empty": "EMPTY",
+      "loadOut": "LOAD OUT",
+      "characters": "CHARACTERS",
+      "archetype": {
+        "king": "King",
+        "queen": "Queen",
+        "jack": "Jack"
+      },
+      "suit": {
+        "hearts": "Hearts",
+        "clubs": "Clubs",
+        "spades": "Spades"
+      }
     },
     "setting": {
       "label": "Select genres",
@@ -168,16 +226,121 @@ Italian translations follow the same structure with appropriate translations.
 
 ---
 
-## CAM-17 — `PlayerCountInput.vue`
+## CAM-17 — `CharacterSelector.vue`
 
-**File:** `app/components/PlayerCountInput.vue`
+**File:** `app/components/CharacterSelector.vue`
 
-- Props: `modelValue: number`
-- Emits: `update:modelValue`
-- Template:
-  - `UFormField` with `t("ui.playerCount.label")` as label
-  - `UInputNumber` bound to `modelValue`, min=1, max=6
-  - Hint text: `t("ui.playerCount.hint")`
+The user assembles a party of 1–4 characters by choosing archetype+suit combinations. Skills are randomized client-side on selection. The output is an array of `CharacterTemplate` objects that the wizard passes forward.
+
+### Props / Emits
+
+- Props: `modelValue: CharacterTemplate[]`
+- Emits: `update:modelValue` (emitted when the user clicks "Lock Party")
+
+### Internal state
+
+```ts
+const MAX_PARTY = 4;
+
+// All 9 possible characters (3 archetypes × 3 suits), generated once via allCombinations()
+const allCharacters: Array<{
+  archetype: CharacterArchetype;
+  suit: CharacterSuit;
+}>;
+
+// Set of selected combo keys, e.g. "jack-hearts"
+const selected = ref<Set<string>>(new Set());
+
+// Map from combo key to its generated CharacterTemplate (skills randomized on selection)
+const templates = ref<Map<string, CharacterTemplate>>(new Map());
+```
+
+- `partySize: computed` — `selected.value.size`
+- `canSelect: computed` — `selected.value.size < MAX_PARTY`
+- `canLock: computed` — `selected.value.size >= 1`
+- `comboKey(archetype, suit)` — helper returning `"${archetype}-${suit}"`
+
+### Selection behavior
+
+Clicking an unselected character **toggles it on** (if `canSelect`). Clicking a selected character **toggles it off**. When a character is toggled on, `generateCharacterTemplate(archetype, suit)` is called immediately and stored in `templates` — this randomizes which archetype skill they get. Toggling off removes the entry from both `selected` and `templates`.
+
+Since the list is fixed (all 9 combos are always visible), **no two characters can be the same by construction** — each combo appears exactly once.
+
+### Template layout
+
+Two-panel layout on `md+`, stacked on mobile:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  SELECT CHARACTER                           PART ACTIVE │
+│                                                         │
+│  ┌─ Left panel ──────────┐  ┌─ Right panel ────────────┐│
+│  │                        │  │                          ││
+│  │  ♥ HEARTS              │  │  ┌──────┐  ┌──────┐     ││
+│  │  [x] Jack ♥            │  │  │Card 1│  │Card 2│     ││
+│  │  [ ] Queen ♥           │  │  └──────┘  └──────┘     ││
+│  │  [ ] King ♥            │  │  ┌──────┐  ┌──────┐     ││
+│  │                        │  │  │Card 3│  │Card 4│     ││
+│  │  ♣ CLUBS               │  │  └──────┘  └──────┘     ││
+│  │  [ ] Jack ♣            │  │                          ││
+│  │  [x] Queen ♣           │  │                          ││
+│  │  [ ] King ♣            │  │                          ││
+│  │                        │  │                          ││
+│  │  ♠ SPADES              │  │                          ││
+│  │  [ ] Jack ♠            │  │                          ││
+│  │  [ ] Queen ♠           │  │                          ││
+│  │  [x] King ♠            │  │                          ││
+│  │                        │  │                          ││
+│  └────────────────────────┘  └──────────────────────────┘│
+│                                                          │
+│  LOAD OUT: 6  |  # CHARACTERS: 3                         │
+│                                                          │
+│            [🎲 DRAW RANDOM]       [🔒 LOCK PARTY]        │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Left panel — Character list
+
+The 9 characters are grouped by suit (hearts, clubs, spades). Each group has:
+
+- A suit heading: `t("ui.selector.suit.<suit>")` with suit icon
+- 3 rows, one per archetype (jack, queen, king)
+
+Each row renders:
+
+- `UCheckbox` — `:model-value="selected.has(key)"`, disabled when `!canSelect && !selected.has(key)` (i.e., party is full and this character isn't already selected)
+- Label: `t("ui.selector.archetype.<archetype>")` + suit icon
+- When checked, the row gets a subtle highlight (`terminal-panel` background)
+
+### Right panel — Card previews
+
+A `grid-cols-2 gap-2` grid showing 4 card slots (always 4, regardless of selection count). Each card is a `div` with `pixel-border` styling:
+
+- **Empty slot:** dashed border, muted text `t("ui.selector.empty")`
+- **Filled slot:** shows archetype badge (`crt-badge`), suit icon, and the randomized archetype skill name via `t(template.archetypeSkills[0].name)`
+
+Cards are populated in selection order (first selected = card 1, etc.).
+
+### Stats bar
+
+A horizontal row below the grid:
+
+- `t("ui.selector.loadOut")`: X — sum of all skills across selected characters (each contributes 1 suit skill + 1 archetype skill = 2)
+- `t("ui.selector.characters")`: Y — `partySize`
+
+Uses `crt-badge` styling for the numbers.
+
+### Action buttons
+
+- **DRAW RANDOM** (`UButton` variant `outline`) — `t("ui.selector.drawRandom")`
+  - Disabled when `!canSelect` (party is full)
+  - Picks **one** random character from the unselected pool and toggles it on (generating its template with randomized skills)
+  - Pressing multiple times adds one more random character each time, up to `MAX_PARTY`
+
+- **LOCK PARTY** (`UButton` variant `solid`, primary) — `t("ui.selector.lockParty")`
+  - Disabled unless `canLock` is true
+  - Collects templates for all selected characters (in selection order)
+  - Emits `update:modelValue` with the `CharacterTemplate[]` array
 
 ---
 
@@ -247,7 +410,7 @@ All section headings use `t("ui.script.<key>")`.
 
 - Internal state:
   - `currentStep: ref(1)` — 1 through 4
-  - `playerCount: ref(2)`
+  - `selectedTemplates: ref<CharacterTemplate[]>([])`
   - `selectedGenres: ref<Genre[]>([])`
 - Reads store for status/error display
 - Uses `useCampaign()` for `generateCharacters`, `generateScript`
@@ -259,15 +422,15 @@ All section headings use `t("ui.script.<key>")`.
 
 **Step rendering:**
 
-- Step 1: `<PlayerCountInput v-model="playerCount" />`
+- Step 1: `<CharacterSelector v-model="selectedTemplates" />`
 - Step 2: `<SettingForm v-model="selectedGenres" />`
 - Step 3: `<CharacterGrid />`
 - Step 4: `<GmScript />`
 
 **Navigation logic:**
 
-- Step 1 → 2: always allowed (Next button)
-- Step 2 → 3: requires `selectedGenres.length > 0`; on transition, calls `generateCharacters(playerCount, selectedGenres)`. Characters generate in the background while the user sees step 3 with a loading state
+- Step 1 → 2: requires `selectedTemplates.length > 0` (party must be locked)
+- Step 2 → 3: requires `selectedGenres.length > 0`; on transition, calls `generateCharacters(selectedTemplates, selectedGenres)`. Characters generate in the background while the user sees step 3 with a loading state
 - Step 3 → 4: requires `store.characters.length > 0` and `!store.isLoading`; on transition, calls `generateScript(selectedGenres)`. Script generates while user sees step 4 with a loading state
 - Back button goes to previous step (always enabled on steps 2–4)
 - Navigation buttons disabled while `store.isLoading`
@@ -280,28 +443,29 @@ All section headings use `t("ui.script.<key>")`.
 
 ## Files to create / modify
 
-| File                                            | Ticket | Action                                                                |
-| ----------------------------------------------- | ------ | --------------------------------------------------------------------- |
-| `server/services/rpg/characterRandomizer.ts`    | —      | **Modify** — add `generateCharacterTemplate()`, refactor shared logic |
-| `server/utils/validate.ts`                      | —      | **Modify** — add `rerollRequestSchema`                                |
-| `server/api/campaign/characters/reroll.post.ts` | —      | **Create**                                                            |
-| `app/stores/campaign.ts`                        | —      | **Modify** — add `replaceCharacter()`                                 |
-| `app/composables/useCampaign.ts`                | —      | **Modify** — add `rerollCharacter()`                                  |
-| `app/i18n/locales/en.json`                      | —      | **Modify** — add `ui.*` keys                                          |
-| `app/i18n/locales/it.json`                      | —      | **Modify** — add `ui.*` keys                                          |
-| `app/components/PlayerCountInput.vue`           | CAM-17 | **Create**                                                            |
-| `app/components/SettingForm.vue`                | CAM-18 | **Create**                                                            |
-| `app/components/WizardStepper.vue`              | CAM-19 | **Create**                                                            |
-| `app/components/CharacterSheet.vue`             | CAM-20 | **Create**                                                            |
-| `app/components/CharacterGrid.vue`              | CAM-21 | **Create**                                                            |
-| `app/components/GmScript.vue`                   | CAM-22 | **Create**                                                            |
+| File                                            | Ticket | Action                                                                                                      |
+| ----------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------- |
+| `shared/utils/characterRandomizer.ts`           | CAM-17 | **Modify** — add `generateCharacterTemplate()`, `allCombinations()`                                         |
+| `server/utils/validate.ts`                      | —      | **Modify** — update `charactersRequestSchema` (templates instead of playerCount), add `rerollRequestSchema` |
+| `server/api/campaign/characters.post.ts`        | —      | **Modify** — use provided `templates` instead of `generateRandomDistinctCharacters()`                       |
+| `server/api/campaign/characters/reroll.post.ts` | —      | **Create**                                                                                                  |
+| `app/stores/campaign.ts`                        | —      | **Modify** — update `setInput()` to accept templates, add `replaceCharacter()`                              |
+| `app/composables/useCampaign.ts`                | —      | **Modify** — update `generateCharacters()` signature, add `rerollCharacter()`                               |
+| `i18n/locales/en.json`                          | —      | **Modify** — add `ui.selector.*` keys, update `ui.wizard.step1Title`                                        |
+| `i18n/locales/it.json`                          | —      | **Modify** — add `ui.selector.*` keys, update `ui.wizard.step1Title`                                        |
+| `app/components/CharacterSelector.vue`          | CAM-17 | **Create**                                                                                                  |
+| `app/components/SettingForm.vue`                | CAM-18 | **Create**                                                                                                  |
+| `app/components/WizardStepper.vue`              | CAM-19 | **Modify** — replace `playerCount` with `selectedTemplates`, render `CharacterSelector`                     |
+| `app/components/CharacterSheet.vue`             | CAM-20 | **Create**                                                                                                  |
+| `app/components/CharacterGrid.vue`              | CAM-21 | **Create**                                                                                                  |
+| `app/components/GmScript.vue`                   | CAM-22 | **Create**                                                                                                  |
 
 ---
 
 ## Exit criteria
 
 1. Starting the dev server (`pnpm dev`) and opening the app shows the 4-step wizard
-2. Step 1: player count input works, Next advances to step 2
+2. Step 1: character selector lets users pick up to 4 unique archetype+suit combos; "Randomize Party" fills all 4 slots; skills are randomized on selection; "Lock Party" advances to step 2; no two characters can share the same archetype+suit
 3. Step 2: genre checkboxes are grouped by category with translated group headings, at least 1 genre required to proceed
 4. Step 2 → 3 transition: triggers character generation; step 3 shows loading state then renders character cards
 5. Step 3: each character card shows name, pronouns, concept, weapon/instrument, skills with i18n translations; re-roll button regenerates a single character without touching the others
