@@ -21,12 +21,6 @@ defineProps<{
   modelValue: CharacterTemplate[];
 }>();
 
-const suitIcons: Record<string, string> = {
-  hearts: "\u2665",
-  clubs: "\u2663",
-  spades: "\u2660",
-};
-
 const cardRotations = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
 
 const combinations = allCombinations();
@@ -153,15 +147,19 @@ const orderedCards = computed(() => {
             <span class="font-pixel">{{
               archetypeInitials[combo.archetype]
             }}</span>
-            <span>{{ suitIcons[combo.suit] }}</span>
+            <span>
+              <UIcon :name="suitIcons[combo.suit]!" />
+            </span>
           </span>
 
           <span
             aria-hidden="true"
-            class="text-xs uppercase tracking-wider truncate"
+            class="flex items-center gap-1 text-xs uppercase tracking-wider min-w-0"
           >
-            {{ t(`ui.selector.archetype.${combo.archetype}`) }}
-            {{ suitIcons[combo.suit] }}
+            <span class="truncate">{{
+              t(`ui.selector.archetype.${combo.archetype}`)
+            }}</span>
+            <UIcon :name="suitIcons[combo.suit]!" class="shrink-0" />
           </span>
         </button>
       </div>

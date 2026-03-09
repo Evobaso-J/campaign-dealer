@@ -8,12 +8,6 @@ defineProps<{
 }>();
 
 const { t } = useI18n();
-
-const suitIcons: Record<string, string> = {
-  hearts: "i-mdi-cards-heart",
-  clubs: "i-mdi-cards-club",
-  spades: "i-mdi-cards-spade",
-};
 </script>
 
 <template>
