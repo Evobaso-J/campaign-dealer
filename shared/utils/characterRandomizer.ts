@@ -51,6 +51,38 @@ const getSuitModifiers = (suit: CharacterSuit): CharacterSheet["modifiers"] => {
   return modifiers;
 };
 
+export const allCombinations = (): {
+  archetype: CharacterArchetype;
+  suit: CharacterSuit;
+}[] => {
+  const suits = Object.values(CharacterSuit);
+  const archetypes = Object.values(CharacterArchetype);
+  return archetypes.flatMap((archetype) =>
+    suits.map((suit) => ({ archetype, suit })),
+  );
+};
+
+export const generateCharacterTemplate = (
+  archetype: CharacterArchetype,
+  suit: CharacterSuit,
+): CharacterTemplate => {
+  const suitSkill = suitSkills[archetype][suit];
+  const suitCharacterization = suitCharacterizations[suit];
+  const randomArchetypeSkill = getRandomElement(archetypeSkills[archetype]);
+  const archetypeCharacterization = archetypeCharacterizations[archetype];
+
+  return {
+    suit,
+    archetype,
+    damage: { hearts: false, clubs: false, spades: false },
+    modifiers: getSuitModifiers(suit),
+    suitSkill,
+    suitCharacterization,
+    archetypeSkills: [randomArchetypeSkill],
+    archetypeCharacterization,
+  };
+};
+
 export const generateCharacter = (): CharacterTemplate => {
   const suits = Object.values(CharacterSuit);
   const archetypes = Object.values(CharacterArchetype);

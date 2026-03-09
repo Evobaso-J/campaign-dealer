@@ -4,7 +4,10 @@ import {
   generateCharacterTemplate,
   type CharacterTemplate,
 } from "~~/shared/utils/characterRandomizer";
-import type { CharacterArchetype } from "~~/shared/types/character";
+import {
+  archetypeInitials,
+  type CharacterArchetype,
+} from "~~/shared/types/character";
 
 const MAX_PARTY = 4;
 
@@ -22,12 +25,6 @@ const suitIcons: Record<string, string> = {
   hearts: "\u2665",
   clubs: "\u2663",
   spades: "\u2660",
-};
-
-const archetypeInitials: Record<string, string> = {
-  king: "K",
-  queen: "Q",
-  jack: "J",
 };
 
 const cardRotations = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
