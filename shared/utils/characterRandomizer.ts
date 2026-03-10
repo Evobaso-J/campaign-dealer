@@ -51,7 +51,7 @@ const getSuitModifiers = (suit: CharacterSuit): CharacterSheet["modifiers"] => {
   return modifiers;
 };
 
-export const allCombinations = (): {
+export const buildAllCharacterCombinations = (): {
   archetype: CharacterArchetype;
   suit: CharacterSuit;
 }[] => {

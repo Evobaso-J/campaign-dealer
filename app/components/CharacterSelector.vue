@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import {
-  allCombinations,
+  buildAllCharacterCombinations,
   generateCharacterTemplate,
   type CharacterTemplate,
 } from "~~/shared/utils/characterRandomizer";
-import {
-  archetypeInitials,
-  type CharacterArchetype,
-} from "~~/shared/types/character";
+import type { CharacterArchetype } from "~~/shared/types/character";
 
 const MAX_PARTY = 4;
 
@@ -23,7 +20,7 @@ defineProps<{
 
 const cardRotations = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
 
-const combinations = allCombinations();
+const combinations = buildAllCharacterCombinations();
 
 const selected = ref<Set<string>>(new Set());
 const templates = ref<Map<string, CharacterTemplate>>(new Map());
@@ -31,7 +28,6 @@ const selectionOrder = ref<string[]>([]);
 
 const partySize = computed(() => selected.value.size);
 const canSelect = computed(() => partySize.value < MAX_PARTY);
-const canLock = computed(() => partySize.value > 0);
 
 function comboKey(archetype: CharacterArchetype, suit: string): string {
   return `${archetype}-${suit}`;
@@ -66,23 +62,21 @@ function toggleCombo(
   selected.value = newSelected;
   templates.value = newTemplates;
   selectionOrder.value = newOrder;
+
+  const ordered = newOrder
+    .map((k) => newTemplates.get(k))
+    .filter((t): t is CharacterTemplate => t !== undefined);
+  emit("update:modelValue", ordered);
 }
 
-function drawRandom() {
+const drawRandom = () => {
   const unselected = combinations.filter(
     (c) => !selected.value.has(comboKey(c.archetype, c.suit)),
   );
   if (unselected.length === 0 || !canSelect.value) return;
   const pick = unselected[Math.floor(Math.random() * unselected.length)]!;
   toggleCombo(pick.archetype, pick.suit, true);
-}
-
-function lockParty() {
-  const ordered = selectionOrder.value
-    .map((key) => templates.value.get(key))
-    .filter((t): t is CharacterTemplate => t !== undefined);
-  emit("update:modelValue", ordered);
-}
+};
 
 const orderedCards = computed(() => {
   const cards: (CharacterTemplate | null)[] = [];
@@ -97,81 +91,20 @@ const orderedCards = computed(() => {
 
 <template>
   <div class="flex flex-col lg:flex-row gap-4">
-    <!-- Left panel: flat character list -->
-    <div
-      class="lg:w-1/4 w-full pixel-border-thick pixel-shadow bg-primary-400/10 p-3 flex flex-col"
-    >
-      <span class="section-header text-xs mb-3 font-pixel">
-        {{ t("ui.selector.selectFighter").toUpperCase() }}
-      </span>
-
-      <div role="list" class="overflow-y-auto max-h-80 space-y-1">
-        <button
-          v-for="combo in combinations"
-          :key="comboKey(combo.archetype, combo.suit)"
-          role="listitem"
-          class="w-full flex items-center gap-2 px-2 py-1.5 text-left transition-colors"
-          :class="{
-            'bg-primary-300/20 pixel-border': selected.has(
-              comboKey(combo.archetype, combo.suit),
-            ),
-            'opacity-50 cursor-not-allowed':
-              !canSelect &&
-              !selected.has(comboKey(combo.archetype, combo.suit)),
-            'hover:bg-primary-400/10 cursor-pointer':
-              canSelect || selected.has(comboKey(combo.archetype, combo.suit)),
-          }"
-          :aria-label="`${t(`ui.selector.archetype.${combo.archetype}`)} of ${combo.suit}`"
-          :aria-pressed="selected.has(comboKey(combo.archetype, combo.suit))"
-          :disabled="
-            !canSelect && !selected.has(comboKey(combo.archetype, combo.suit))
-          "
-          @click="
-            toggleCombo(
-              combo.archetype,
-              combo.suit,
-              !selected.has(comboKey(combo.archetype, combo.suit)),
-            )
-          "
-        >
-          <!-- Mini card icon (decorative, described by aria-label) -->
-          <span
-            aria-hidden="true"
-            class="w-7 h-9 pixel-border flex flex-col items-center justify-center text-[0.5rem] leading-tight shrink-0"
-            :class="
-              selected.has(comboKey(combo.archetype, combo.suit))
-                ? 'bg-primary-400/30'
-                : 'bg-primary-950/40'
-            "
-          >
-            <span class="font-pixel">{{
-              archetypeInitials[combo.archetype]
-            }}</span>
-            <span>
-              <UIcon :name="suitIcons[combo.suit]!" />
-            </span>
-          </span>
-
-          <span
-            aria-hidden="true"
-            class="flex items-center gap-1 text-xs uppercase tracking-wider min-w-0"
-          >
-            <span class="truncate">{{
-              t(`ui.selector.archetype.${combo.archetype}`)
-            }}</span>
-            <UIcon :name="suitIcons[combo.suit]!" class="shrink-0" />
-          </span>
-        </button>
-      </div>
-    </div>
+    <CharacterSelectorList
+      :combinations="combinations"
+      :selected="selected"
+      :can-select="canSelect"
+      @toggle="toggleCombo"
+    />
 
     <!-- Right panel: card arena -->
     <div
-      class="lg:w-3/4 w-full pixel-border-thick pixel-shadow bg-primary-400/10 p-3 flex flex-col gap-3"
+      class="lg:w-3/4 w-full pixel-border-thick pixel-shadow bg-primary-400/10 p-3 flex flex-col gap-3 self-start"
     >
       <!-- Arena area -->
       <div
-        class="border-2 border-primary-900 bg-primary-500/10 p-4 min-h-52 flex items-center justify-center [background-image:linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] [bg-size:20px_20px]"
+        class="border-2 border-primary-900 bg-primary-500/10 p-4 flex items-center justify-center bg-[linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] bg-size-[20px_20px]"
       >
         <div class="flex flex-wrap justify-center gap-4">
           <CharacterCard
@@ -188,11 +121,14 @@ const orderedCards = computed(() => {
         <span
           aria-live="polite"
           aria-atomic="true"
-          class="text-xs text-primary-800 tracking-wider font-pixel"
+          class="text-xs text-primary-800 tracking-wider"
         >
-          {{ t("ui.selector.lineUp").toUpperCase() }}: {{ partySize }} /
-          {{ MAX_PARTY }}
-          {{ t("ui.selector.characters").toUpperCase() }}
+          {{
+            t("ui.selector.lineUpCount", {
+              partySize,
+              maxParty: MAX_PARTY,
+            }).toUpperCase()
+          }}
         </span>
 
         <div class="flex items-center gap-2">
@@ -204,9 +140,6 @@ const orderedCards = computed(() => {
             @click="drawRandom"
           >
             {{ t("ui.selector.drawRandom") }}
-          </UButton>
-          <UButton size="xs" :disabled="!canLock" @click="lockParty">
-            {{ t("ui.selector.lockParty") }}
           </UButton>
         </div>
       </div>
