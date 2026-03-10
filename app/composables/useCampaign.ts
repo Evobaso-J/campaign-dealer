@@ -1,12 +1,14 @@
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
+
 export function useCampaign() {
   const campaign = useCampaignStore();
 
   async function generateCharacters(
-    playerCount: number,
+    templates: CharacterTemplate[],
     setting: Genre[],
   ): Promise<void> {
     campaign.reset();
-    campaign.setInput(playerCount, setting);
+    campaign.setInput(setting);
     campaign.generationStatus = "generating-characters";
 
     const {
@@ -18,7 +20,7 @@ export function useCampaign() {
         "/api/campaign/characters",
         {
           method: "POST",
-          body: { playerCount, setting, language: unref(locale) },
+          body: { templates, setting, language: unref(locale) },
         },
       );
       campaign.setCharacters(characters);

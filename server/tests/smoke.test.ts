@@ -10,6 +10,7 @@ import {
   type Genre,
 } from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
+import { generateCharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 /**
  * E2E smoke test — exercises the full campaign generation pipeline via HTTP:
@@ -59,7 +60,11 @@ const modelName =
 const apiKey = process.env.NUXT_AI_API_KEY || dotenv.NUXT_AI_API_KEY;
 
 const SETTING: Genre[] = pickRandomSettings(2);
-const CHARACTER_COUNT = 3;
+const TEMPLATES = [
+  generateCharacterTemplate("king", "hearts"),
+  generateCharacterTemplate("queen", "clubs"),
+  generateCharacterTemplate("jack", "spades"),
+];
 const LANGUAGE: Locale = "en" as const;
 
 const hasCredentials =
@@ -115,12 +120,12 @@ describe.skipIf(!hasCredentials)(
       log(`  Setting: ${SETTING.join(", ")}`);
 
       // Step 1: Generate characters via API
-      log(`\n  POST /api/campaign/characters (${CHARACTER_COUNT} players)…`);
+      log(`\n  POST /api/campaign/characters (${TEMPLATES.length} templates)…`);
       const charStart = Date.now();
       characterSheets = await $fetch("/api/campaign/characters", {
         method: "POST",
         body: {
-          playerCount: CHARACTER_COUNT,
+          templates: TEMPLATES,
           setting: SETTING,
           language: LANGUAGE,
         },
@@ -278,7 +283,7 @@ describe.skipIf(!hasCredentials)(
     });
 
     it("returns the correct number of character sheets", () => {
-      expect(characterSheets).toHaveLength(CHARACTER_COUNT);
+      expect(characterSheets).toHaveLength(TEMPLATES.length);
     });
 
     it("each character sheet has required fields and a valid identity", () => {
@@ -294,7 +299,7 @@ describe.skipIf(!hasCredentials)(
 
     it("character sheets are distinct (unique archetype-suit combos)", () => {
       const keys = characterSheets.map((s) => `${s.archetype}-${s.suit}`);
-      expect(new Set(keys).size).toBe(CHARACTER_COUNT);
+      expect(new Set(keys).size).toBe(TEMPLATES.length);
     });
 
     it("GM script has a hook", () => {

@@ -43,10 +43,9 @@ describe("campaign store", () => {
   });
 
   describe("setInput", () => {
-    it("writes playerCount and campaignSetting", () => {
+    it("writes campaignSetting", () => {
       const store = useCampaignStore();
-      store.setInput(4, ["cyberpunk", "postApocalyptic"] as Genre[]);
-      expect(store.playerCount).toBe(4);
+      store.setInput(["cyberpunk", "postApocalyptic"] as Genre[]);
       expect(store.campaignSetting).toEqual(["cyberpunk", "postApocalyptic"]);
     });
   });
@@ -81,13 +80,12 @@ describe("campaign store", () => {
   describe("reset", () => {
     it("returns all state to initial values from done state", () => {
       const store = useCampaignStore();
-      store.setInput(3, ["cyberpunk"] as Genre[]);
+      store.setInput(["cyberpunk"] as Genre[]);
       store.setCharacters([mockCharacter]);
       store.setScript(mockScript);
 
       store.reset();
 
-      expect(store.playerCount).toBe(0);
       expect(store.campaignSetting).toEqual([]);
       expect(store.characters).toEqual([]);
       expect(store.gmScript).toBeUndefined();
@@ -180,7 +178,7 @@ describe("campaign store", () => {
 
     it("returns a Campaign object when done", () => {
       const store = useCampaignStore();
-      store.setInput(2, ["cyberpunk"] as Genre[]);
+      store.setInput(["cyberpunk"] as Genre[]);
       store.setCharacters([mockCharacter]);
       store.setScript(mockScript);
 

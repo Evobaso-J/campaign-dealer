@@ -3,7 +3,6 @@ import "~~/server/services/ai/anthropic";
 import "~~/server/services/ai/ollama";
 import { getAIProvider } from "~~/server/services/ai/index";
 import { buildCharacterPrompt } from "~~/server/services/ai/prompts/character";
-import { generateRandomDistinctCharacters } from "~~/shared/utils/characterRandomizer";
 import { ValidationError } from "~~/shared/types/errors";
 import {
   withAIProvider,
@@ -23,16 +22,13 @@ export default defineEventHandler(async (event): Promise<CharacterSheet[]> => {
     toHttpError(new ValidationError("Validation failed", parsed.error.issues));
   }
 
-  const { playerCount, setting, language } = parsed.data;
-
-  const templates = generateRandomDistinctCharacters(playerCount);
-  if (!templates.ok) toHttpError(templates.error);
+  const { templates, setting, language } = parsed.data;
 
   const provider = getAIProvider();
   if (!provider.ok) toHttpError(provider.error);
 
   return Promise.all(
-    templates.value.map(async (template) => {
+    templates.map(async (template) => {
       const prompt = buildCharacterPrompt({ template, setting, language });
       const result = await withAIProvider(() =>
         provider.value.complete(prompt),

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
 import type { Genre, TargetArchetype } from "~~/shared/types/campaign";
+import { generateCharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 const targetArchetypes: TargetArchetype[] = ["king", "queen", "jack"];
 
@@ -9,8 +10,13 @@ const store = useCampaignStore();
 const { t } = useI18n();
 
 // --- Shared inputs ---
-const playerCount = ref(2);
 const selectedGenres = ref<Genre[]>(["cyberpunk"]);
+
+// Pre-populate with some templates for dev testing
+const devTemplates = [
+  generateCharacterTemplate("king", "hearts"),
+  generateCharacterTemplate("queen", "clubs"),
+];
 
 const allGenres = Object.values(GenreGroups).flat() as Genre[];
 </script>
@@ -26,10 +32,6 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
       </template>
 
       <div class="space-y-4">
-        <UFormField label="Player count">
-          <UInputNumber v-model="playerCount" :min="1" :max="6" class="w-32" />
-        </UFormField>
-
         <div>
           <p class="text-sm font-medium mb-2">Genres</p>
           <div class="flex flex-wrap gap-3">
@@ -89,7 +91,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
         <UButton
           :loading="store.generationStatus === 'generating-characters'"
           :disabled="store.isLoading"
-          @click="generateCharacters(playerCount, selectedGenres)"
+          @click="generateCharacters(devTemplates, selectedGenres)"
         >
           Generate Characters
         </UButton>

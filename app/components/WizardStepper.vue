@@ -65,10 +65,7 @@ async function goNext() {
   if (!canGoNext.value) return;
 
   if (currentStep.value === "setting" && !hasCharacters.value) {
-    await generateCharacters(
-      store.selectedTemplates.length,
-      store.campaignSetting,
-    );
+    await generateCharacters(store.selectedTemplates, store.campaignSetting);
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {

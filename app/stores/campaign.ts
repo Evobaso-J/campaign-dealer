@@ -15,7 +15,6 @@ type GenerationStatus =
   | "error";
 
 export const useCampaignStore = defineStore("campaign", () => {
-  const playerCount = ref(0);
   const selectedTemplates = ref<CharacterTemplate[]>([]);
   const campaignSetting = ref<Genre[]>([]);
   const characters = ref<CharacterSheet[]>([]);
@@ -47,8 +46,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   // --- Actions ---
 
-  function setInput(count: number, setting: Genre[]) {
-    playerCount.value = count;
+  function setInput(setting: Genre[]) {
     campaignSetting.value = setting;
   }
 
@@ -68,7 +66,6 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   function reset() {
-    playerCount.value = 0;
     selectedTemplates.value = [];
     campaignSetting.value = [];
     characters.value = [];
@@ -78,7 +75,6 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   return {
-    playerCount,
     selectedTemplates,
     campaignSetting,
     characters,

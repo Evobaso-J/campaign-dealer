@@ -2,11 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 import {
-  AIProviderError,
-  ValidationError,
-  ok,
-  err,
-} from "~~/shared/types/errors";
+  suitCharacterizations,
+  archetypeCharacterizations,
+} from "~~/server/data/houseDoesntWin/characterTemplates";
+import { AIProviderError, ok, err } from "~~/shared/types/errors";
 
 import { getAIProvider } from "~~/server/services/ai/index";
 import handler from "~~/server/api/campaign/characters.post";
@@ -23,12 +22,6 @@ vi.mock("~~/server/services/ai/index", () => ({
 
 vi.mock("~~/server/services/ai/prompts/character", () => ({
   buildCharacterPrompt: vi.fn(() => ({ system: "sys", user: "usr" })),
-}));
-
-const mockGenerate = vi.fn();
-vi.mock("~~/shared/utils/characterRandomizer", () => ({
-  generateRandomDistinctCharacters: (...args: unknown[]) =>
-    mockGenerate(...args),
 }));
 
 const mockReadBody = vi.hoisted(() => vi.fn());
@@ -56,10 +49,8 @@ const fakeTemplate = (
       description: "skill.king.1.desc" as I18nKey,
     },
   ],
-  suitCharacterization:
-    "Hearts characters know that the right word, spoken at the right moment,\nis worth more than any weapon. They read people like cards, weave charm and\ncunning into something sharper than steel, and always seem to know exactly\nwhat someone needs to hear. If you like a Character who wins before the fight\neven starts — through persuasion, wit, and an eye for what others miss —\nthen Hearts is your suit.",
-  archetypeCharacterization:
-    "The King has a plan for every contingency, an escape route for every\nunexpected turn, and the ability to bend the rules to his advantage. He knows\nthat timing is everything. If you like a Character who always has an ace up\nhis sleeve and as many allies as enemies, then the King is the Archetype for you.",
+  suitCharacterization: suitCharacterizations.hearts,
+  archetypeCharacterization: archetypeCharacterizations.king,
   ...overrides,
 });
 
@@ -99,7 +90,7 @@ beforeEach(() => {
 
 describe("POST /api/campaign/characters", () => {
   describe("request validation (422)", () => {
-    it("throws 422 when playerCount is missing", async () => {
+    it("throws 422 when templates is missing", async () => {
       mockReadBody.mockResolvedValue({
         setting: ["cyberpunk"],
         language: "en",
@@ -110,9 +101,9 @@ describe("POST /api/campaign/characters", () => {
       });
     });
 
-    it("throws 422 when playerCount is 0", async () => {
+    it("throws 422 when templates is empty", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 0,
+        templates: [],
         setting: ["cyberpunk"],
         language: "en",
       });
@@ -122,9 +113,27 @@ describe("POST /api/campaign/characters", () => {
       });
     });
 
-    it("throws 422 when playerCount exceeds max", async () => {
+    it("throws 422 when templates exceeds max (4)", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 10,
+        templates: [
+          fakeTemplate({ archetype: "king", suit: "hearts" }),
+          fakeTemplate({ archetype: "queen", suit: "hearts" }),
+          fakeTemplate({ archetype: "jack", suit: "hearts" }),
+          fakeTemplate({ archetype: "king", suit: "clubs" }),
+          fakeTemplate({ archetype: "queen", suit: "clubs" }),
+        ],
+        setting: ["cyberpunk"],
+        language: "en",
+      });
+      await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
+        expectError(e, 422);
+        return true;
+      });
+    });
+
+    it("throws 422 when templates contain duplicate archetype-suit pairs", async () => {
+      mockReadBody.mockResolvedValue({
+        templates: [fakeTemplate(), fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
@@ -136,7 +145,7 @@ describe("POST /api/campaign/characters", () => {
 
     it("throws 422 when setting is empty", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 3,
+        templates: [fakeTemplate()],
         setting: [],
         language: "en",
       });
@@ -148,7 +157,7 @@ describe("POST /api/campaign/characters", () => {
 
     it("throws 422 when language is missing", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 3,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
       });
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
@@ -159,7 +168,7 @@ describe("POST /api/campaign/characters", () => {
 
     it("includes Zod issues in error data", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 0,
+        templates: [],
         setting: [],
         language: "en",
       });
@@ -173,32 +182,13 @@ describe("POST /api/campaign/characters", () => {
     });
   });
 
-  describe("randomizer failure (422)", () => {
-    it("throws 422 when randomizer returns error", async () => {
-      mockReadBody.mockResolvedValue({
-        playerCount: 3,
-        setting: ["cyberpunk"],
-        language: "en",
-      });
-      mockGenerate.mockReturnValue(
-        err(new ValidationError("Cannot generate 10 distinct characters")),
-      );
-
-      await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
-        expectError(e, 422);
-        return true;
-      });
-    });
-  });
-
   describe("AI provider failure (502)", () => {
     it("throws 502 when getAIProvider returns error", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       vi.mocked(getAIProvider).mockReturnValue(
         err(new AIProviderError("AI provider is not configured")),
       );
@@ -211,11 +201,10 @@ describe("POST /api/campaign/characters", () => {
 
     it("throws 502 when provider.complete rejects", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockRejectedValue(new Error("network error"));
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
@@ -231,11 +220,10 @@ describe("POST /api/campaign/characters", () => {
         .spyOn(console, "error")
         .mockImplementation(() => {});
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: "I cannot generate characters" as GeneratedText,
       });
@@ -250,11 +238,10 @@ describe("POST /api/campaign/characters", () => {
     it("throws 502 when AI JSON is missing required name field", async () => {
       vi.spyOn(console, "error").mockImplementation(() => {});
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({ pronouns: "they/them" }) as GeneratedText,
       });
@@ -268,11 +255,10 @@ describe("POST /api/campaign/characters", () => {
     it("throws 502 when weapon is malformed", async () => {
       vi.spyOn(console, "error").mockImplementation(() => {});
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({
           name: "Alice",
@@ -288,13 +274,12 @@ describe("POST /api/campaign/characters", () => {
   });
 
   describe("happy path", () => {
-    it("returns CharacterSheet[] for a single player", async () => {
+    it("returns CharacterSheet[] for a single template", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -305,13 +290,12 @@ describe("POST /api/campaign/characters", () => {
     });
 
     it("merges template fields into the returned CharacterSheet", async () => {
+      const template = fakeTemplate();
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [template],
         setting: ["cyberpunk"],
         language: "en",
       });
-      const template = fakeTemplate();
-      mockGenerate.mockReturnValue(ok([template]));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -326,18 +310,17 @@ describe("POST /api/campaign/characters", () => {
       expect(sheet.archetypeSkills).toEqual(template.archetypeSkills);
     });
 
-    it("runs AI completions in parallel for multiple players", async () => {
+    it("runs AI completions in parallel for multiple templates", async () => {
       const templates = [
         fakeTemplate({ archetype: "king" as const, suit: "hearts" as const }),
         fakeTemplate({ archetype: "queen" as const, suit: "clubs" as const }),
         fakeTemplate({ archetype: "jack" as const, suit: "spades" as const }),
       ];
       mockReadBody.mockResolvedValue({
-        playerCount: 3,
+        templates,
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok(templates));
       mockComplete.mockResolvedValue({
         text: validIdentityJson as GeneratedText,
       });
@@ -349,11 +332,10 @@ describe("POST /api/campaign/characters", () => {
 
     it("accepts minimal identity with only name", async () => {
       mockReadBody.mockResolvedValue({
-        playerCount: 1,
+        templates: [fakeTemplate()],
         setting: ["cyberpunk"],
         language: "en",
       });
-      mockGenerate.mockReturnValue(ok([fakeTemplate()]));
       mockComplete.mockResolvedValue({
         text: JSON.stringify({ name: "Solo" }) as GeneratedText,
       });

@@ -11,7 +11,6 @@ import {
   type CharacterSheet,
   CharacterSuit,
 } from "../types/character";
-import { ValidationError, ok, err, type Result } from "../types/errors";
 
 export type CharacterTemplate = Omit<CharacterSheet, "characterIdentity"> & {
   suitCharacterization: SuitCharacterization;
@@ -81,63 +80,4 @@ export const generateCharacterTemplate = (
     archetypeSkills: [randomArchetypeSkill],
     archetypeCharacterization,
   };
-};
-
-export const generateCharacter = (): CharacterTemplate => {
-  const suits = Object.values(CharacterSuit);
-  const archetypes = Object.values(CharacterArchetype);
-
-  const randomSuit = getRandomElement(suits);
-  const randomArchetype = getRandomElement(archetypes);
-
-  const suitSkill = suitSkills[randomArchetype][randomSuit];
-  const suitCharacterization = suitCharacterizations[randomSuit];
-
-  const randomArchetypeSkill = getRandomElement(
-    archetypeSkills[randomArchetype],
-  );
-  const archetypeCharacterization = archetypeCharacterizations[randomArchetype];
-
-  return {
-    suit: randomSuit,
-    archetype: randomArchetype,
-    damage: {
-      hearts: false,
-      clubs: false,
-      spades: false,
-    },
-    modifiers: getSuitModifiers(randomSuit),
-    suitSkill,
-    suitCharacterization,
-    archetypeSkills: [randomArchetypeSkill],
-    archetypeCharacterization,
-  };
-};
-
-export const generateRandomDistinctCharacters = (
-  count: number,
-): Result<CharacterTemplate[], ValidationError> => {
-  const suits = Object.values(CharacterSuit);
-  const archetypes = Object.values(CharacterArchetype);
-  const maxDistinct = suits.length * archetypes.length;
-  if (count > maxDistinct) {
-    return err(
-      new ValidationError(
-        `Cannot generate ${count} distinct characters: only ${maxDistinct} unique archetype-suit combinations exist.`,
-      ),
-    );
-  }
-
-  const generatedCharacters = new Map<
-    `${CharacterArchetype}-${CharacterSuit}`,
-    CharacterTemplate
-  >();
-  while (generatedCharacters.size < count) {
-    const newCharacter = generateCharacter();
-    const key = `${newCharacter.archetype}-${newCharacter.suit}` as const;
-    if (!generatedCharacters.has(key)) {
-      generatedCharacters.set(key, newCharacter);
-    }
-  }
-  return ok(Array.from(generatedCharacters.values()));
 };
