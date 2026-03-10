@@ -5,51 +5,76 @@ import {
   scriptRequestSchema,
 } from "./validate";
 
+const validTemplate = {
+  archetype: "king",
+  suit: "hearts",
+  damage: { hearts: false, clubs: false, spades: false },
+  modifiers: { hearts: -1, clubs: 1, spades: 0 },
+  suitSkill: {
+    name: "skill.king.hearts",
+    description: "skill.king.hearts.desc",
+  },
+  archetypeSkills: [{ name: "skill.king.1", description: "skill.king.1.desc" }],
+  suitCharacterization: "Hearts description",
+  archetypeCharacterization: "King description",
+};
+
 describe("charactersRequestSchema", () => {
   it("accepts valid input", () => {
     const result = charactersRequestSchema.parse({
-      playerCount: 3,
+      templates: [validTemplate],
       setting: ["cyberpunk"],
       language: "en",
     });
-    expect(result.playerCount).toBe(3);
+    expect(result.templates).toHaveLength(1);
     expect(result.setting).toEqual(["cyberpunk"]);
     expect(result.language).toBe("en");
   });
 
-  it("accepts max playerCount of 9", () => {
+  it("accepts max 4 templates", () => {
     const result = charactersRequestSchema.parse({
-      playerCount: 9,
+      templates: [
+        validTemplate,
+        { ...validTemplate, archetype: "queen" },
+        { ...validTemplate, archetype: "jack" },
+        { ...validTemplate, suit: "clubs" },
+      ],
       setting: ["highFantasy", "darkFantasy"],
       language: "it",
     });
-    expect(result.playerCount).toBe(9);
+    expect(result.templates).toHaveLength(4);
   });
 
-  it("rejects playerCount < 1", () => {
+  it("rejects empty templates array", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 0,
+        templates: [],
         setting: ["cyberpunk"],
         language: "en",
       }),
     ).toThrow();
   });
 
-  it("rejects playerCount > 9", () => {
+  it("rejects more than 4 templates", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 10,
+        templates: [
+          validTemplate,
+          { ...validTemplate, archetype: "queen" },
+          { ...validTemplate, archetype: "jack" },
+          { ...validTemplate, suit: "clubs" },
+          { ...validTemplate, suit: "clubs", archetype: "queen" },
+        ],
         setting: ["cyberpunk"],
         language: "en",
       }),
     ).toThrow();
   });
 
-  it("rejects non-integer playerCount", () => {
+  it("rejects duplicate archetype-suit pairs", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 2.5,
+        templates: [validTemplate, validTemplate],
         setting: ["cyberpunk"],
         language: "en",
       }),
@@ -59,7 +84,7 @@ describe("charactersRequestSchema", () => {
   it("rejects empty setting array", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 3,
+        templates: [validTemplate],
         setting: [],
         language: "en",
       }),
@@ -69,7 +94,7 @@ describe("charactersRequestSchema", () => {
   it("rejects invalid genre", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 3,
+        templates: [validTemplate],
         setting: ["notAGenre"],
         language: "en",
       }),
@@ -78,14 +103,17 @@ describe("charactersRequestSchema", () => {
 
   it("rejects missing language", () => {
     expect(() =>
-      charactersRequestSchema.parse({ playerCount: 3, setting: ["cyberpunk"] }),
+      charactersRequestSchema.parse({
+        templates: [validTemplate],
+        setting: ["cyberpunk"],
+      }),
     ).toThrow();
   });
 
   it("rejects invalid language", () => {
     expect(() =>
       charactersRequestSchema.parse({
-        playerCount: 3,
+        templates: [validTemplate],
         setting: ["cyberpunk"],
         language: "fr",
       }),

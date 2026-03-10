@@ -9,6 +9,11 @@ export const CharacterArchetype = {
 export type CharacterArchetype =
   (typeof CharacterArchetype)[keyof typeof CharacterArchetype];
 
+export const archetypeInitials: Record<CharacterArchetype, string> = {
+  king: "K",
+  queen: "Q",
+  jack: "J",
+};
 /**
  * Diamonds excluded.
  * In "The house doesn't always win", diamonds are the bad guys,
@@ -21,6 +26,11 @@ export const CharacterSuit = {
 } as const;
 
 export type CharacterSuit = (typeof CharacterSuit)[keyof typeof CharacterSuit];
+
+export type CharacterCombo = {
+  archetype: CharacterArchetype;
+  suit: CharacterSuit;
+};
 type StatModifier = -2 | -1 | 0 | 1 | 2;
 
 interface CharacterItem {

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@pinia/nuxt",
     "@nuxt/test-utils/module",
+    "@nuxt/image",
   ],
   runtimeConfig: {
     ai: {
@@ -57,7 +58,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       bodyAttrs: {
-        class: "font-mono",
+        class: "font-pixel",
       },
     },
   },

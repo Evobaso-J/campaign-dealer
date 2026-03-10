@@ -1,8 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { registerEndpoint } from "@nuxt/test-utils/runtime";
 import type { CharacterSheet } from "~~/shared/types/character";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 import type { GameMasterScript } from "~~/shared/types/campaign";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
+import {
+  suitCharacterizations,
+  archetypeCharacterizations,
+} from "~~/server/data/houseDoesntWin/characterTemplates";
 
 // --- Fixtures ---
 
@@ -36,6 +41,20 @@ const mockScript: GameMasterScript = {
   plot: gt("The plot"),
 };
 
+const mockTemplate: CharacterTemplate = {
+  archetype: "king",
+  suit: "hearts",
+  damage: { hearts: false, clubs: false, spades: false },
+  modifiers: { hearts: 0, clubs: 0, spades: 0 },
+  suitSkill: {
+    name: "skill.hearts.king.name" as I18nKey,
+    description: "skill.hearts.king.desc" as I18nKey,
+  },
+  archetypeSkills: [],
+  suitCharacterization: suitCharacterizations.hearts,
+  archetypeCharacterization: archetypeCharacterizations.king,
+};
+
 // --- Tests ---
 
 describe("useCampaign", () => {
@@ -50,7 +69,7 @@ describe("useCampaign", () => {
 
     expect(store.generationStatus).toBe("idle");
 
-    await generateCharacters(1, ["cyberpunk"]);
+    await generateCharacters([mockTemplate], ["cyberpunk"]);
 
     expect(store.characters).toEqual([mockCharacter]);
     expect(store.generationStatus).toBe("characters-ready");
@@ -70,8 +89,8 @@ describe("useCampaign", () => {
     const { generateCharacters, generateScript } = useCampaign();
     const store = useCampaignStore();
 
-    await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateCharacters([mockTemplate], ["cyberpunk"]);
+    await generateScript();
 
     expect(store.generationStatus).toBe("done");
     expect(store.characters).toEqual([mockCharacter]);
@@ -94,7 +113,7 @@ describe("useCampaign", () => {
     const { generateCharacters } = useCampaign();
     const store = useCampaignStore();
 
-    await generateCharacters(99, ["cyberpunk"]);
+    await generateCharacters([mockTemplate], ["cyberpunk"]);
 
     expect(store.generationStatus).toBe("error");
     expect(store.errorMessage).toBeTruthy();
@@ -119,8 +138,8 @@ describe("useCampaign", () => {
     const { generateCharacters, generateScript } = useCampaign();
     const store = useCampaignStore();
 
-    await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateCharacters([mockTemplate], ["cyberpunk"]);
+    await generateScript();
 
     expect(store.generationStatus).toBe("error");
     expect(store.errorMessage).toBeTruthy();
@@ -132,7 +151,7 @@ describe("useCampaign", () => {
     const store = useCampaignStore();
     store.reset();
 
-    await expect(generateScript(["cyberpunk"])).rejects.toThrow();
+    await expect(generateScript()).rejects.toThrow();
   });
 
   it("resets store back to idle", async () => {
@@ -148,8 +167,8 @@ describe("useCampaign", () => {
     const { generateCharacters, generateScript } = useCampaign();
     const store = useCampaignStore();
 
-    await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateCharacters([mockTemplate], ["cyberpunk"]);
+    await generateScript();
     expect(store.hasResult).toBe(true);
 
     store.reset();

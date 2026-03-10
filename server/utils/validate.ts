@@ -12,6 +12,11 @@ import {
   CharacterSuit,
   type CharacterSheet,
 } from "~~/shared/types/character";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
+import type {
+  SuitCharacterization,
+  ArchetypeCharacterization,
+} from "~~/server/data/houseDoesntWin/characterTemplates";
 import type { GeneratedText, I18nKey } from "~~/shared/types/utils";
 
 const allGenres = Object.values(GenreGroups).flat();
@@ -68,17 +73,42 @@ const characterSheetSchema: z.ZodType<CharacterSheet> = z.object({
   modifiers: suitRecord(statModifierSchema),
   suitSkill: characterSkillSchema,
   characterIdentity: characterIdentitySchema,
-  archetypeSkills: z.array(characterSkillSchema),
+  archetypeSkills: z.array(characterSkillSchema).min(1),
 });
 
 const settingSchema = z.array(genreSchema).min(1);
 
+const characterTemplateSchema = z.object({
+  archetype: z.enum(archetypes),
+  suit: z.enum(suits),
+  damage: suitRecord(z.boolean()),
+  modifiers: suitRecord(statModifierSchema),
+  suitSkill: characterSkillSchema,
+  archetypeSkills: z.array(characterSkillSchema).min(1),
+  suitCharacterization: z.custom<SuitCharacterization>(
+    (val) => typeof val === "string",
+  ),
+  archetypeCharacterization: z.custom<ArchetypeCharacterization>(
+    (val) => typeof val === "string",
+  ),
+});
+
 export const charactersRequestSchema: z.ZodType<{
-  playerCount: number;
+  templates: CharacterTemplate[];
   setting: Genre[];
   language: Locale;
 }> = z.object({
-  playerCount: z.int().min(1).max(9),
+  templates: z
+    .array(characterTemplateSchema)
+    .min(1)
+    .max(4)
+    .refine(
+      (templates) => {
+        const keys = templates.map((t) => `${t.archetype}-${t.suit}`);
+        return new Set(keys).size === keys.length;
+      },
+      { message: "Duplicate archetype-suit pairs are not allowed" },
+    ),
   setting: settingSchema,
   language: z.enum(Locales),
 });

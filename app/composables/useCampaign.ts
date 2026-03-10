@@ -1,13 +1,16 @@
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
+
 export function useCampaign() {
-  const store = useCampaignStore();
+  const campaign = useCampaignStore();
 
   async function generateCharacters(
-    playerCount: number,
+    templates: CharacterTemplate[],
     setting: Genre[],
   ): Promise<void> {
-    store.reset();
-    store.setInput(playerCount, setting);
-    store.generationStatus = "generating-characters";
+    campaign.reset();
+    campaign.selectedTemplates = templates;
+    campaign.setGenres(setting);
+    campaign.generationStatus = "generating-characters";
 
     const {
       $i18n: { locale },
@@ -18,25 +21,28 @@ export function useCampaign() {
         "/api/campaign/characters",
         {
           method: "POST",
-          body: { playerCount, setting, language: unref(locale) },
+          body: { templates, setting, language: unref(locale) },
         },
       );
-      store.setCharacters(characters);
+      campaign.setCharacters(characters);
     } catch (err: unknown) {
       let error = err;
       if (!(error instanceof Error) || !(error instanceof AppError)) {
         error = new AppError("An unexpected error occurred", 500);
       }
-      store.setError((error as AppError).message);
+      campaign.setError((error as AppError).message);
     }
   }
 
-  async function generateScript(setting: Genre[]): Promise<void> {
-    if (!store.characters.length) {
+  async function generateScript(): Promise<void> {
+    if (!campaign.characters.length) {
       throw new AppError("No characters to generate a script for", 400);
     }
+    if (!campaign.campaignSetting.length) {
+      throw new AppError("No campaign setting provided", 400);
+    }
 
-    store.generationStatus = "generating-script";
+    campaign.generationStatus = "generating-script";
 
     const {
       $i18n: { locale },
@@ -46,18 +52,18 @@ export function useCampaign() {
       const script = await $fetch<GameMasterScript>("/api/campaign/script", {
         method: "POST",
         body: {
-          characters: store.characters,
-          setting,
+          characters: campaign.characters,
+          setting: campaign.campaignSetting,
           language: unref(locale),
         },
       });
-      store.setScript(script);
+      campaign.setScript(script);
     } catch (err: unknown) {
       let error = err;
       if (!(error instanceof Error) || !(error instanceof AppError)) {
         error = new AppError("An unexpected error occurred", 500);
       }
-      store.setError((error as AppError).message);
+      campaign.setError((error as AppError).message);
     }
   }
 

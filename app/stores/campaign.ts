@@ -4,6 +4,7 @@ import type {
   GameMasterScript,
 } from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 type GenerationStatus =
   | "idle"
@@ -14,14 +15,12 @@ type GenerationStatus =
   | "error";
 
 export const useCampaignStore = defineStore("campaign", () => {
-  const playerCount = ref(0);
+  const selectedTemplates = ref<CharacterTemplate[]>([]);
   const campaignSetting = ref<Genre[]>([]);
   const characters = ref<CharacterSheet[]>([]);
   const gmScript = ref<GameMasterScript | undefined>();
   const generationStatus = ref<GenerationStatus>("idle");
   const errorMessage = ref<string | undefined>();
-
-  // --- Getters ---
 
   const isLoading = computed(
     () =>
@@ -43,39 +42,36 @@ export const useCampaignStore = defineStore("campaign", () => {
     };
   });
 
-  // --- Actions ---
-
-  function setInput(count: number, setting: Genre[]) {
-    playerCount.value = count;
+  const setGenres = (setting: Genre[]) => {
     campaignSetting.value = setting;
-  }
+  };
 
-  function setCharacters(sheets: CharacterSheet[]) {
+  const setCharacters = (sheets: CharacterSheet[]) => {
     characters.value = sheets;
     generationStatus.value = "characters-ready";
-  }
+  };
 
-  function setScript(script: GameMasterScript) {
+  const setScript = (script: GameMasterScript) => {
     gmScript.value = script;
     generationStatus.value = "done";
-  }
+  };
 
-  function setError(message: string) {
+  const setError = (message: string) => {
     errorMessage.value = message;
     generationStatus.value = "error";
-  }
+  };
 
-  function reset() {
-    playerCount.value = 0;
+  const reset = () => {
+    selectedTemplates.value = [];
     campaignSetting.value = [];
     characters.value = [];
     gmScript.value = undefined;
     generationStatus.value = "idle";
     errorMessage.value = undefined;
-  }
+  };
 
   return {
-    playerCount,
+    selectedTemplates,
     campaignSetting,
     characters,
     gmScript,
@@ -84,7 +80,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     isLoading,
     hasResult,
     campaign,
-    setInput,
+    setGenres,
     setCharacters,
     setScript,
     setError,
