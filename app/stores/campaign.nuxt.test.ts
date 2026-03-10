@@ -42,10 +42,10 @@ describe("campaign store", () => {
     useCampaignStore().reset();
   });
 
-  describe("setInput", () => {
+  describe("setG.setGenres", () => {
     it("writes campaignSetting", () => {
       const store = useCampaignStore();
-      store.setInput(["cyberpunk", "postApocalyptic"] as Genre[]);
+      store.setGenres(["cyberpunk", "postApocalyptic"] as Genre[]);
       expect(store.campaignSetting).toEqual(["cyberpunk", "postApocalyptic"]);
     });
   });
@@ -80,7 +80,7 @@ describe("campaign store", () => {
   describe("reset", () => {
     it("returns all state to initial values from done state", () => {
       const store = useCampaignStore();
-      store.setInput(["cyberpunk"] as Genre[]);
+      store.setGenres(["cyberpunk"] as Genre[]);
       store.setCharacters([mockCharacter]);
       store.setScript(mockScript);
 
@@ -178,7 +178,7 @@ describe("campaign store", () => {
 
     it("returns a Campaign object when done", () => {
       const store = useCampaignStore();
-      store.setInput(["cyberpunk"] as Genre[]);
+      store.setGenres(["cyberpunk"] as Genre[]);
       store.setCharacters([mockCharacter]);
       store.setScript(mockScript);
 

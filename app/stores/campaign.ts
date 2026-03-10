@@ -22,8 +22,6 @@ export const useCampaignStore = defineStore("campaign", () => {
   const generationStatus = ref<GenerationStatus>("idle");
   const errorMessage = ref<string | undefined>();
 
-  // --- Getters ---
-
   const isLoading = computed(
     () =>
       generationStatus.value === "generating-characters" ||
@@ -44,35 +42,33 @@ export const useCampaignStore = defineStore("campaign", () => {
     };
   });
 
-  // --- Actions ---
-
-  function setInput(setting: Genre[]) {
+  const setGenres = (setting: Genre[]) => {
     campaignSetting.value = setting;
-  }
+  };
 
-  function setCharacters(sheets: CharacterSheet[]) {
+  const setCharacters = (sheets: CharacterSheet[]) => {
     characters.value = sheets;
     generationStatus.value = "characters-ready";
-  }
+  };
 
-  function setScript(script: GameMasterScript) {
+  const setScript = (script: GameMasterScript) => {
     gmScript.value = script;
     generationStatus.value = "done";
-  }
+  };
 
-  function setError(message: string) {
+  const setError = (message: string) => {
     errorMessage.value = message;
     generationStatus.value = "error";
-  }
+  };
 
-  function reset() {
+  const reset = () => {
     selectedTemplates.value = [];
     campaignSetting.value = [];
     characters.value = [];
     gmScript.value = undefined;
     generationStatus.value = "idle";
     errorMessage.value = undefined;
-  }
+  };
 
   return {
     selectedTemplates,
@@ -84,7 +80,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     isLoading,
     hasResult,
     campaign,
-    setInput,
+    setGenres,
     setCharacters,
     setScript,
     setError,

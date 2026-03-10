@@ -9,7 +9,7 @@ export function useCampaign() {
   ): Promise<void> {
     campaign.reset();
     campaign.selectedTemplates = templates;
-    campaign.setInput(setting);
+    campaign.setGenres(setting);
     campaign.generationStatus = "generating-characters";
 
     const {
