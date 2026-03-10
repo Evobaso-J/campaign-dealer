@@ -4,6 +4,7 @@ import {
   type CharacterArchetype,
   type CharacterSuit,
 } from "~~/shared/types/character";
+import { suitIcons } from "~/utils/suitIcons";
 
 const { t } = useI18n();
 
@@ -21,24 +22,34 @@ const emit = defineEmits<{
   ];
 }>();
 
-function comboKey(archetype: CharacterArchetype, suit: CharacterSuit): string {
-  return `${archetype}-${suit}`;
-}
+const enrichedCombinations = computed(() =>
+  props.combinations.map((combo) => {
+    const key = `${combo.archetype}-${combo.suit}`;
+    const isSelected = props.selected.has(key);
+    return { ...combo, key, isSelected };
+  }),
+);
 
-function comboClasses(archetype: CharacterArchetype, suit: CharacterSuit) {
-  const key = comboKey(archetype, suit);
-  const isSelected = props.selected.has(key);
+function comboClasses(isSelected: boolean) {
   if (isSelected)
     return "bg-primary-400 border-2 border-primary-900 cursor-pointer";
   if (!props.canSelect)
     return "bg-primary-500 border-2 border-primary-700 opacity-50 cursor-not-allowed";
-  return "bg-primary-500 border-2 border-primary-700 hover:bg-primary-400 cursor-pointer";
+  return "bg-primary-500 border-2 border-primary-700 hover:bg-primary-400/40 cursor-pointer";
+}
+
+function handleToggle(
+  archetype: CharacterArchetype,
+  suit: CharacterSuit,
+  isSelected: boolean,
+) {
+  emit("toggle", archetype, suit, !isSelected);
 }
 </script>
 
 <template>
   <div
-    class="lg:w-1/4 w-full pixel-border-thick pixel-shadow bg-primary-400/50 p-3 flex flex-col"
+    class="lg:w-1/4 w-full pixel-border-thick pixel-shadow bg-primary-400/40 p-3 flex flex-col"
   >
     <span
       class="text-xs mb-3 pb-2 border-b-2 border-primary-900 text-primary-900"
@@ -48,29 +59,19 @@ function comboClasses(archetype: CharacterArchetype, suit: CharacterSuit) {
 
     <div role="list" class="overflow-y-auto max-h-80 space-y-1">
       <button
-        v-for="combo in combinations"
-        :key="comboKey(combo.archetype, combo.suit)"
+        v-for="combo in enrichedCombinations"
+        :key="combo.key"
         role="listitem"
         class="w-full flex items-center gap-2 px-2 py-1.5 text-left transition-colors text-primary-900"
-        :class="comboClasses(combo.archetype, combo.suit)"
+        :class="comboClasses(combo.isSelected)"
         :aria-label="`${t(`ui.selector.archetype.${combo.archetype}`)}-${t(`ui.selector.suit.${combo.suit}`)}`"
-        :aria-pressed="selected.has(comboKey(combo.archetype, combo.suit))"
-        :disabled="
-          !canSelect && !selected.has(comboKey(combo.archetype, combo.suit))
-        "
-        @click="
-          emit(
-            'toggle',
-            combo.archetype,
-            combo.suit,
-            !selected.has(comboKey(combo.archetype, combo.suit)),
-          )
-        "
+        :aria-pressed="combo.isSelected"
+        :disabled="!canSelect && !combo.isSelected"
+        @click="handleToggle(combo.archetype, combo.suit, combo.isSelected)"
       >
-        <!-- Mini card icon (decorative, described by aria-label) -->
         <span
           aria-hidden="true"
-          class="w-7 h-9 pixel-border flex flex-col items-center justify-center text-[0.5rem] leading-tight shrink-0 bg-primary-500/50"
+          class="w-7 h-9 pixel-border flex flex-col items-center justify-center text-[0.5rem] leading-tight shrink-0 bg-primary-400/50"
         >
           <span>{{ archetypeInitials[combo.archetype] }}</span>
           <span>
