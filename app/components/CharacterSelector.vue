@@ -4,10 +4,7 @@ import {
   generateCharacterTemplate,
   type CharacterTemplate,
 } from "~~/shared/utils/characterRandomizer";
-import type {
-  CharacterArchetype,
-  CharacterSuit,
-} from "~~/shared/types/character";
+import type { CharacterCombo } from "~~/shared/types/character";
 
 const MAX_PARTY = 4;
 
@@ -25,82 +22,61 @@ const cardRotations = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
 
 const combinations = buildAllCharacterCombinations();
 
-const comboKey = (archetype: CharacterArchetype, suit: CharacterSuit): string =>
-  `${archetype}-${suit}`;
+const isSameCombo = (a: CharacterCombo, b: CharacterCombo) =>
+  a.archetype === b.archetype && a.suit === b.suit;
 
-const selected = ref<Set<string>>(new Set());
-const templates = ref<Map<string, CharacterTemplate>>(new Map());
-const selectionOrder = ref<string[]>([]);
+const selectedTemplates = ref<CharacterTemplate[]>([]);
 
 watch(
   () => props.modelValue,
   (value) => {
     if (value.length > 0) {
-      selected.value = new Set(value.map((t) => comboKey(t.archetype, t.suit)));
-      templates.value = new Map(
-        value.map((t) => [comboKey(t.archetype, t.suit), t]),
-      );
-      selectionOrder.value = value.map((t) => comboKey(t.archetype, t.suit));
+      selectedTemplates.value = [...value];
+    } else {
+      selectedTemplates.value = [];
     }
   },
-  { immediate: true, once: true },
+  { immediate: true },
 );
 
-const partySize = computed(() => selected.value.size);
+const partySize = computed(() => selectedTemplates.value.length);
 const isSelectable = computed(() => partySize.value < MAX_PARTY);
 
-const emitOrderedTemplates = () => {
-  const ordered = selectionOrder.value
-    .map((k) => templates.value.get(k))
-    .filter((tmpl): tmpl is CharacterTemplate => tmpl !== undefined);
-  emit("update:modelValue", ordered);
-};
-
-const selectCard = (
-  key: string,
-  archetype: CharacterArchetype,
-  suit: CharacterSuit,
-) => {
+const selectCard = (combo: CharacterCombo) => {
   if (!isSelectable.value) return;
-  const template = generateCharacterTemplate(archetype, suit);
-  selected.value.add(key);
-  templates.value.set(key, template);
-  selectionOrder.value.push(key);
+  selectedTemplates.value = [
+    ...selectedTemplates.value,
+    generateCharacterTemplate(combo.archetype, combo.suit),
+  ];
 };
 
-const deselectCard = (key: string) => {
-  selected.value.delete(key);
-  templates.value.delete(key);
-  const idx = selectionOrder.value.indexOf(key);
-  if (idx !== -1) selectionOrder.value.splice(idx, 1);
+const deselectCard = (combo: CharacterCombo) => {
+  selectedTemplates.value = selectedTemplates.value.filter(
+    (t) => !isSameCombo(t, combo),
+  );
 };
 
-const toggleCard = (
-  archetype: CharacterArchetype,
-  suit: CharacterSuit,
-  checked: boolean,
-) => {
-  const key = comboKey(archetype, suit);
-  if (checked) selectCard(key, archetype, suit);
-  else deselectCard(key);
-  emitOrderedTemplates();
+const toggleCard = (combo: CharacterCombo, checked: boolean) => {
+  if (checked) selectCard(combo);
+  else deselectCard(combo);
+  emit("update:modelValue", selectedTemplates.value);
 };
 
 const drawRandom = () => {
   const unselected = combinations.filter(
-    (c) => !selected.value.has(comboKey(c.archetype, c.suit)),
+    (c) => !selectedTemplates.value.some((t) => isSameCombo(t, c)),
   );
   if (unselected.length === 0 || !isSelectable.value) return;
   const pick = unselected[Math.floor(Math.random() * unselected.length)]!;
-  toggleCard(pick.archetype, pick.suit, true);
+  selectCard(pick);
+  emit("update:modelValue", selectedTemplates.value);
 };
 
 const orderedCards = computed((): (CharacterTemplate | null)[] => {
-  const filled = selectionOrder.value
-    .map((key) => templates.value.get(key))
-    .filter((tmpl): tmpl is CharacterTemplate => tmpl !== undefined);
-  const empty = Array<null>(MAX_PARTY - filled.length).fill(null);
-  return [...filled, ...empty];
+  const empty = Array<null>(MAX_PARTY - selectedTemplates.value.length).fill(
+    null,
+  );
+  return [...selectedTemplates.value, ...empty];
 });
 </script>
 
@@ -108,7 +84,9 @@ const orderedCards = computed((): (CharacterTemplate | null)[] => {
   <div class="flex flex-col lg:flex-row gap-4">
     <CharacterSelectorList
       :combinations="combinations"
-      :selected="selected"
+      :is-selected="
+        (combo) => selectedTemplates.some((t) => isSameCombo(t, combo))
+      "
       :can-select="isSelectable"
       @toggle="toggleCard"
     />
@@ -131,7 +109,6 @@ const orderedCards = computed((): (CharacterTemplate | null)[] => {
         </div>
       </div>
 
-      <!-- Bottom bar: stats + actions -->
       <div class="flex items-center justify-between flex-wrap gap-2">
         <span
           aria-live="polite"

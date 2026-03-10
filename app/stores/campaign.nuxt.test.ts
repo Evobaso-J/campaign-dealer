@@ -42,7 +42,7 @@ describe("campaign store", () => {
     useCampaignStore().reset();
   });
 
-  describe("setG.setGenres", () => {
+  describe("setGenres", () => {
     it("writes campaignSetting", () => {
       const store = useCampaignStore();
       store.setGenres(["cyberpunk", "postApocalyptic"] as Genre[]);

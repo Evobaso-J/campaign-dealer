@@ -73,7 +73,7 @@ const characterSheetSchema: z.ZodType<CharacterSheet> = z.object({
   modifiers: suitRecord(statModifierSchema),
   suitSkill: characterSkillSchema,
   characterIdentity: characterIdentitySchema,
-  archetypeSkills: z.array(characterSkillSchema),
+  archetypeSkills: z.array(characterSkillSchema).min(1),
 });
 
 const settingSchema = z.array(genreSchema).min(1);
@@ -84,7 +84,7 @@ const characterTemplateSchema = z.object({
   damage: suitRecord(z.boolean()),
   modifiers: suitRecord(statModifierSchema),
   suitSkill: characterSkillSchema,
-  archetypeSkills: z.array(characterSkillSchema),
+  archetypeSkills: z.array(characterSkillSchema).min(1),
   suitCharacterization: z.custom<SuitCharacterization>(
     (val) => typeof val === "string",
   ),

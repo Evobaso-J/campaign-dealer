@@ -1,33 +1,27 @@
 <script setup lang="ts">
 import {
   archetypeInitials,
-  type CharacterArchetype,
-  type CharacterSuit,
+  type CharacterCombo,
 } from "~~/shared/types/character";
 import { suitIcons } from "~/utils/suitIcons";
 
 const { t } = useI18n();
 
 const props = defineProps<{
-  combinations: { archetype: CharacterArchetype; suit: CharacterSuit }[];
-  selected: Set<string>;
+  combinations: CharacterCombo[];
+  isSelected: (combo: CharacterCombo) => boolean;
   canSelect: boolean;
 }>();
 
 const emit = defineEmits<{
-  toggle: [
-    archetype: CharacterArchetype,
-    suit: CharacterSuit,
-    checked: boolean,
-  ];
+  toggle: [combo: CharacterCombo, checked: boolean];
 }>();
 
 const enrichedCombinations = computed(() =>
-  props.combinations.map((combo) => {
-    const key = `${combo.archetype}-${combo.suit}`;
-    const isSelected = props.selected.has(key);
-    return { ...combo, key, isSelected };
-  }),
+  props.combinations.map((combo) => ({
+    ...combo,
+    isSelected: props.isSelected(combo),
+  })),
 );
 
 function comboClasses(isSelected: boolean) {
@@ -38,12 +32,8 @@ function comboClasses(isSelected: boolean) {
   return "bg-primary-500 border-2 border-primary-700 hover:bg-primary-400/40 cursor-pointer";
 }
 
-function handleToggle(
-  archetype: CharacterArchetype,
-  suit: CharacterSuit,
-  isSelected: boolean,
-) {
-  emit("toggle", archetype, suit, !isSelected);
+function handleToggle(combo: CharacterCombo, isSelected: boolean) {
+  emit("toggle", combo, !isSelected);
 }
 </script>
 
@@ -60,14 +50,14 @@ function handleToggle(
     <div role="list" class="overflow-y-auto max-h-80 space-y-1">
       <button
         v-for="combo in enrichedCombinations"
-        :key="combo.key"
+        :key="`${combo.archetype}-${combo.suit}`"
         role="listitem"
         class="w-full flex items-center gap-2 px-2 py-1.5 text-left transition-colors text-primary-900"
         :class="comboClasses(combo.isSelected)"
         :aria-label="`${t(`ui.selector.archetype.${combo.archetype}`)}-${t(`ui.selector.suit.${combo.suit}`)}`"
         :aria-pressed="combo.isSelected"
         :disabled="!canSelect && !combo.isSelected"
-        @click="handleToggle(combo.archetype, combo.suit, combo.isSelected)"
+        @click="handleToggle(combo, combo.isSelected)"
       >
         <span
           aria-hidden="true"

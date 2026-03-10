@@ -26,6 +26,11 @@ export const CharacterSuit = {
 } as const;
 
 export type CharacterSuit = (typeof CharacterSuit)[keyof typeof CharacterSuit];
+
+export type CharacterCombo = {
+  archetype: CharacterArchetype;
+  suit: CharacterSuit;
+};
 type StatModifier = -2 | -1 | 0 | 1 | 2;
 
 interface CharacterItem {
