@@ -57,8 +57,8 @@ export const buildAllCharacterCombinations = (): {
 }[] => {
   const suits = Object.values(CharacterSuit);
   const archetypes = Object.values(CharacterArchetype);
-  return archetypes.flatMap((archetype) =>
-    suits.map((suit) => ({ archetype, suit })),
+  return suits.flatMap((suit) =>
+    archetypes.map((archetype) => ({ archetype, suit })),
   );
 };
 

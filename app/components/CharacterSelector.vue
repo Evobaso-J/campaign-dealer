@@ -4,7 +4,10 @@ import {
   generateCharacterTemplate,
   type CharacterTemplate,
 } from "~~/shared/utils/characterRandomizer";
-import type { CharacterArchetype } from "~~/shared/types/character";
+import type {
+  CharacterArchetype,
+  CharacterSuit,
+} from "~~/shared/types/character";
 
 const MAX_PARTY = 4;
 
@@ -27,65 +30,63 @@ const templates = ref<Map<string, CharacterTemplate>>(new Map());
 const selectionOrder = ref<string[]>([]);
 
 const partySize = computed(() => selected.value.size);
-const canSelect = computed(() => partySize.value < MAX_PARTY);
+const isSelectable = computed(() => partySize.value < MAX_PARTY);
 
-function comboKey(archetype: CharacterArchetype, suit: string): string {
-  return `${archetype}-${suit}`;
-}
+const comboKey = (archetype: CharacterArchetype, suit: CharacterSuit): string =>
+  `${archetype}-${suit}`;
 
-function toggleCombo(
-  archetype: CharacterArchetype,
-  suit: string,
-  checked: boolean,
-) {
-  const key = comboKey(archetype, suit);
-  const newSelected = new Set(selected.value);
-  const newTemplates = new Map(templates.value);
-  const newOrder = [...selectionOrder.value];
-
-  if (checked) {
-    if (newSelected.size >= MAX_PARTY) return;
-    const template = generateCharacterTemplate(
-      archetype,
-      suit as CharacterTemplate["suit"],
-    );
-    newSelected.add(key);
-    newTemplates.set(key, template);
-    newOrder.push(key);
-  } else {
-    newSelected.delete(key);
-    newTemplates.delete(key);
-    const idx = newOrder.indexOf(key);
-    if (idx !== -1) newOrder.splice(idx, 1);
-  }
-
-  selected.value = newSelected;
-  templates.value = newTemplates;
-  selectionOrder.value = newOrder;
-
-  const ordered = newOrder
-    .map((k) => newTemplates.get(k))
-    .filter((t): t is CharacterTemplate => t !== undefined);
+const emitOrderedTemplates = () => {
+  const ordered = selectionOrder.value
+    .map((k) => templates.value.get(k))
+    .filter((tmpl): tmpl is CharacterTemplate => tmpl !== undefined);
   emit("update:modelValue", ordered);
-}
+};
+
+const selectCard = (
+  key: string,
+  archetype: CharacterArchetype,
+  suit: CharacterSuit,
+) => {
+  if (!isSelectable.value) return;
+  const template = generateCharacterTemplate(archetype, suit);
+  selected.value.add(key);
+  templates.value.set(key, template);
+  selectionOrder.value.push(key);
+};
+
+const deselectCard = (key: string) => {
+  selected.value.delete(key);
+  templates.value.delete(key);
+  const idx = selectionOrder.value.indexOf(key);
+  if (idx !== -1) selectionOrder.value.splice(idx, 1);
+};
+
+const toggleCard = (
+  archetype: CharacterArchetype,
+  suit: CharacterSuit,
+  checked: boolean,
+) => {
+  const key = comboKey(archetype, suit);
+  if (checked) selectCard(key, archetype, suit);
+  else deselectCard(key);
+  emitOrderedTemplates();
+};
 
 const drawRandom = () => {
   const unselected = combinations.filter(
     (c) => !selected.value.has(comboKey(c.archetype, c.suit)),
   );
-  if (unselected.length === 0 || !canSelect.value) return;
+  if (unselected.length === 0 || !isSelectable.value) return;
   const pick = unselected[Math.floor(Math.random() * unselected.length)]!;
-  toggleCombo(pick.archetype, pick.suit, true);
+  toggleCard(pick.archetype, pick.suit, true);
 };
 
-const orderedCards = computed(() => {
-  const cards: (CharacterTemplate | null)[] = [];
-  for (const key of selectionOrder.value) {
-    const tmpl = templates.value.get(key);
-    if (tmpl) cards.push(tmpl);
-  }
-  while (cards.length < MAX_PARTY) cards.push(null);
-  return cards;
+const orderedCards = computed((): (CharacterTemplate | null)[] => {
+  const filled = selectionOrder.value
+    .map((key) => templates.value.get(key))
+    .filter((tmpl): tmpl is CharacterTemplate => tmpl !== undefined);
+  const empty = Array<null>(MAX_PARTY - filled.length).fill(null);
+  return [...filled, ...empty];
 });
 </script>
 
@@ -94,8 +95,8 @@ const orderedCards = computed(() => {
     <CharacterSelectorList
       :combinations="combinations"
       :selected="selected"
-      :can-select="canSelect"
-      @toggle="toggleCombo"
+      :can-select="isSelectable"
+      @toggle="toggleCard"
     />
 
     <!-- Right panel: card arena -->
@@ -136,7 +137,7 @@ const orderedCards = computed(() => {
             variant="outline"
             color="neutral"
             size="xs"
-            :disabled="!canSelect"
+            :disabled="!isSelectable"
             @click="drawRandom"
           >
             {{ t("ui.selector.drawRandom") }}
