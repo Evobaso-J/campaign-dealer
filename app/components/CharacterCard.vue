@@ -36,7 +36,7 @@ const cardAriaLabel = computed(() => {
           aria-hidden="true"
           class="absolute top-1 left-1.5 flex flex-col items-center leading-none"
         >
-          <span class="text-xs font-pixel font-bold">
+          <span class="text-xs font-bold">
             {{ archetypeInitials[card.archetype] }}
           </span>
           <UIcon :name="suitIcons[card.suit]!" class="text-sm" />
@@ -51,7 +51,7 @@ const cardAriaLabel = computed(() => {
           class="absolute bottom-0 left-0 right-0 mx-1 mb-1 px-1.5 py-1 flex items-center justify-center bg-primary-400/90 border border-primary-700 h-1/4"
         >
           <span
-            class="text-[0.45rem] leading-tight font-pixel text-primary-900 text-center italic"
+            class="text-[0.45rem] leading-tight text-primary-900 text-center italic"
           >
             {{ t(card.archetypeSkills[0]!.name) }}
           </span>
@@ -65,7 +65,7 @@ const cardAriaLabel = computed(() => {
         >
           <UIcon name="i-lucide-plus" class="text-primary-400 text-xl" />
           <span
-            class="text-[0.4rem] text-primary-400 tracking-widest font-pixel animate-[blinker_1s_step-end_infinite] motion-reduce:animate-none"
+            class="text-[0.4rem] text-primary-400 tracking-widest animate-[blinker_1s_step-end_infinite] motion-reduce:animate-none"
           >
             {{ t("ui.selector.readyToJoin") }}
           </span>

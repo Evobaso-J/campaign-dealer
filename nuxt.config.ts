@@ -58,7 +58,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       bodyAttrs: {
-        class: "font-mono",
+        class: "font-pixel",
       },
     },
   },
