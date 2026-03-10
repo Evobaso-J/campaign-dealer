@@ -196,7 +196,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
         <UButton
           :loading="store.generationStatus === 'generating-script'"
           :disabled="store.isLoading || !store.characters.length"
-          @click="generateScript(selectedGenres)"
+          @click="generateScript()"
         >
           Generate Script
         </UButton>

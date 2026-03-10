@@ -17,7 +17,7 @@ const emit = defineEmits<{
   "update:modelValue": [value: CharacterTemplate[]];
 }>();
 
-defineProps<{
+const props = defineProps<{
   modelValue: CharacterTemplate[];
 }>();
 
@@ -25,15 +25,29 @@ const cardRotations = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
 
 const combinations = buildAllCharacterCombinations();
 
+const comboKey = (archetype: CharacterArchetype, suit: CharacterSuit): string =>
+  `${archetype}-${suit}`;
+
 const selected = ref<Set<string>>(new Set());
 const templates = ref<Map<string, CharacterTemplate>>(new Map());
 const selectionOrder = ref<string[]>([]);
 
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value.length > 0) {
+      selected.value = new Set(value.map((t) => comboKey(t.archetype, t.suit)));
+      templates.value = new Map(
+        value.map((t) => [comboKey(t.archetype, t.suit), t]),
+      );
+      selectionOrder.value = value.map((t) => comboKey(t.archetype, t.suit));
+    }
+  },
+  { immediate: true, once: true },
+);
+
 const partySize = computed(() => selected.value.size);
 const isSelectable = computed(() => partySize.value < MAX_PARTY);
-
-const comboKey = (archetype: CharacterArchetype, suit: CharacterSuit): string =>
-  `${archetype}-${suit}`;
 
 const emitOrderedTemplates = () => {
   const ordered = selectionOrder.value

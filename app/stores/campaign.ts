@@ -4,6 +4,7 @@ import type {
   GameMasterScript,
 } from "~~/shared/types/campaign";
 import type { CharacterSheet } from "~~/shared/types/character";
+import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 type GenerationStatus =
   | "idle"
@@ -15,6 +16,7 @@ type GenerationStatus =
 
 export const useCampaignStore = defineStore("campaign", () => {
   const playerCount = ref(0);
+  const selectedTemplates = ref<CharacterTemplate[]>([]);
   const campaignSetting = ref<Genre[]>([]);
   const characters = ref<CharacterSheet[]>([]);
   const gmScript = ref<GameMasterScript | undefined>();
@@ -67,6 +69,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   function reset() {
     playerCount.value = 0;
+    selectedTemplates.value = [];
     campaignSetting.value = [];
     characters.value = [];
     gmScript.value = undefined;
@@ -76,6 +79,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   return {
     playerCount,
+    selectedTemplates,
     campaignSetting,
     characters,
     gmScript,

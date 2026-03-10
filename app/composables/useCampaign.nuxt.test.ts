@@ -71,7 +71,7 @@ describe("useCampaign", () => {
     const store = useCampaignStore();
 
     await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateScript();
 
     expect(store.generationStatus).toBe("done");
     expect(store.characters).toEqual([mockCharacter]);
@@ -120,7 +120,7 @@ describe("useCampaign", () => {
     const store = useCampaignStore();
 
     await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateScript();
 
     expect(store.generationStatus).toBe("error");
     expect(store.errorMessage).toBeTruthy();
@@ -132,7 +132,7 @@ describe("useCampaign", () => {
     const store = useCampaignStore();
     store.reset();
 
-    await expect(generateScript(["cyberpunk"])).rejects.toThrow();
+    await expect(generateScript()).rejects.toThrow();
   });
 
   it("resets store back to idle", async () => {
@@ -149,7 +149,7 @@ describe("useCampaign", () => {
     const store = useCampaignStore();
 
     await generateCharacters(1, ["cyberpunk"]);
-    await generateScript(["cyberpunk"]);
+    await generateScript();
     expect(store.hasResult).toBe(true);
 
     store.reset();

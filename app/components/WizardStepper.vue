@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
 import type { Genre } from "~~/shared/types/campaign";
-import type { CharacterTemplate } from "~~/shared/utils/characterRandomizer";
 
 const { t } = useI18n();
 const store = useCampaignStore();
@@ -18,8 +17,6 @@ const steps: Record<StepKey, { titleKey: string }> = {
 };
 
 const currentStep = ref<StepKey>("party");
-const selectedTemplates = ref<CharacterTemplate[]>([]);
-const selectedGenres = ref<Genre[]>([]);
 
 const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
 const isFirstStep = computed(() => currentStepIndex.value === 0);
@@ -29,8 +26,8 @@ const isLastStep = computed(
 
 const canGoNext = computed(() => {
   if (store.isLoading) return false;
-  if (currentStep.value === "party") return selectedTemplates.value.length > 0;
-  if (currentStep.value === "setting") return selectedGenres.value.length > 0;
+  if (currentStep.value === "party") return store.selectedTemplates.length > 0;
+  if (currentStep.value === "setting") return store.campaignSetting.length > 0;
   if (currentStep.value === "characters")
     return store.characters.length > 0 && !store.isLoading;
   return !isLastStep.value;
@@ -49,10 +46,10 @@ const nextButtonLabel = computed(() => {
 
 function toggleGenre(genre: Genre, checked: boolean) {
   if (checked) {
-    selectedGenres.value.push(genre);
+    store.campaignSetting.push(genre);
   } else {
-    const idx = selectedGenres.value.indexOf(genre);
-    if (idx !== -1) selectedGenres.value.splice(idx, 1);
+    const idx = store.campaignSetting.indexOf(genre);
+    if (idx !== -1) store.campaignSetting.splice(idx, 1);
   }
 }
 
@@ -69,13 +66,13 @@ async function goNext() {
 
   if (currentStep.value === "setting" && !hasCharacters.value) {
     await generateCharacters(
-      selectedTemplates.value.length,
-      selectedGenres.value,
+      store.selectedTemplates.length,
+      store.campaignSetting,
     );
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {
-    await generateScript(selectedGenres.value);
+    await generateScript();
   }
 
   currentStep.value = nextStepKey();
@@ -88,8 +85,8 @@ function goBack() {
 }
 
 function isCompleted(key: StepKey) {
-  if (key === "party") return selectedTemplates.value.length > 0;
-  if (key === "setting") return selectedGenres.value.length > 0;
+  if (key === "party") return store.selectedTemplates.length > 0;
+  if (key === "setting") return store.campaignSetting.length > 0;
   if (key === "characters") return hasCharacters.value;
   if (key === "script") return hasScript.value;
   return stepKeys.indexOf(key) < currentStepIndex.value;
@@ -141,7 +138,7 @@ function isActive(key: StepKey) {
     <div>
       <!-- Character selector -->
       <div v-if="currentStep === 'party'">
-        <CharacterSelector v-model="selectedTemplates" />
+        <CharacterSelector v-model="store.selectedTemplates" />
       </div>
 
       <!-- Setting (inline placeholder for SettingForm) -->
@@ -159,7 +156,7 @@ function isActive(key: StepKey) {
             <UCheckbox
               v-for="genre in genres"
               :key="genre"
-              :model-value="selectedGenres.includes(genre)"
+              :model-value="store.campaignSetting.includes(genre)"
               :label="genre"
               @update:model-value="
                 (checked: boolean | 'indeterminate') =>
