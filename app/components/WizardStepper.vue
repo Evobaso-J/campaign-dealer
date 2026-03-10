@@ -122,7 +122,7 @@ function isActive(key: StepKey) {
         />
       </div>
       <h2 class="text-center">
-        <span class="section-header text-xs tracking-widest">
+        <span class="text-xs tracking-widest">
           {{ t(steps[currentStep].titleKey).toUpperCase() }}
         </span>
       </h2>
@@ -152,7 +152,7 @@ function isActive(key: StepKey) {
           :key="group"
           class="space-y-2"
         >
-          <span class="section-header text-xs text-neutral-500">
+          <span class="text-xs text-neutral-500">
             {{ t(`ui.setting.groups.${group}`) }}
           </span>
           <div class="flex flex-wrap gap-3">

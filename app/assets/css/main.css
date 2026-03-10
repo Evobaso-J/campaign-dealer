@@ -198,15 +198,6 @@
     background: var(--ui-color-primary-400);
     color: var(--ui-color-primary-950);
   }
-
-  /* Section header — bordered inline-block label */
-  .section-header {
-    display: inline-block;
-    padding: 5px 15px;
-    border: 1px solid var(--ui-color-primary-400);
-    text-transform: uppercase;
-  }
-
   .crt-vignette {
     pointer-events: none;
     position: fixed;
