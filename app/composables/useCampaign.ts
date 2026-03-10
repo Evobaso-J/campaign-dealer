@@ -8,6 +8,7 @@ export function useCampaign() {
     setting: Genre[],
   ): Promise<void> {
     campaign.reset();
+    campaign.selectedTemplates = templates;
     campaign.setInput(setting);
     campaign.generationStatus = "generating-characters";
 
