@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { GenreGroups } from "~~/shared/types/campaign";
-import type { Genre } from "~~/shared/types/campaign";
-
 const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
 
-const stepKeys = ["party", "setting", "characters", "script"] as const;
+const stepKeys = ["setting", "party", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
 
 const steps: Record<StepKey, { titleKey: string }> = {
-  party: { titleKey: "ui.wizard.step1Title" },
-  setting: { titleKey: "ui.wizard.step2Title" },
+  setting: { titleKey: "ui.wizard.step1Title" },
+  party: { titleKey: "ui.wizard.step2Title" },
   characters: { titleKey: "ui.wizard.step3Title" },
   script: { titleKey: "ui.wizard.step4Title" },
 };
 
-const currentStep = ref<StepKey>("party");
+const currentStep = ref<StepKey>("setting");
 
 const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
 const isFirstStep = computed(() => currentStepIndex.value === 0);
@@ -26,8 +23,8 @@ const isLastStep = computed(
 
 const canGoNext = computed(() => {
   if (store.isLoading) return false;
-  if (currentStep.value === "party") return store.selectedTemplates.length > 0;
   if (currentStep.value === "setting") return store.campaignSetting.length > 0;
+  if (currentStep.value === "party") return store.selectedTemplates.length > 0;
   if (currentStep.value === "characters")
     return store.characters.length > 0 && !store.isLoading;
   return !isLastStep.value;
@@ -37,21 +34,12 @@ const hasCharacters = computed(() => store.characters.length > 0);
 const hasScript = computed(() => store.gmScript !== undefined);
 
 const nextButtonLabel = computed(() => {
-  if (currentStep.value === "setting" && !hasCharacters.value)
+  if (currentStep.value === "party" && !hasCharacters.value)
     return t("ui.wizard.generate");
   if (currentStep.value === "characters" && !hasScript.value)
     return t("ui.wizard.generateScript");
   return t("ui.wizard.next");
 });
-
-function toggleGenre(genre: Genre, checked: boolean) {
-  if (checked) {
-    store.campaignSetting.push(genre);
-  } else {
-    const idx = store.campaignSetting.indexOf(genre);
-    if (idx !== -1) store.campaignSetting.splice(idx, 1);
-  }
-}
 
 function nextStepKey(): StepKey {
   return stepKeys[currentStepIndex.value + 1]!;
@@ -64,7 +52,7 @@ function prevStepKey(): StepKey {
 async function goNext() {
   if (!canGoNext.value) return;
 
-  if (currentStep.value === "setting" && !hasCharacters.value) {
+  if (currentStep.value === "party" && !hasCharacters.value) {
     await generateCharacters(store.selectedTemplates, store.campaignSetting);
   }
 
@@ -133,35 +121,14 @@ function isActive(key: StepKey) {
 
     <!-- Step content -->
     <div>
-      <!-- Character selector -->
-      <div v-if="currentStep === 'party'">
-        <CharacterSelector v-model="store.selectedTemplates" />
+      <!-- Setting -->
+      <div v-if="currentStep === 'setting'">
+        <SettingForm v-model="store.campaignSetting" />
       </div>
 
-      <!-- Setting (inline placeholder for SettingForm) -->
-      <div v-else-if="currentStep === 'setting'" class="space-y-4">
-        <p class="text-sm font-medium">{{ t("ui.setting.label") }}</p>
-        <div
-          v-for="(genres, group) in GenreGroups"
-          :key="group"
-          class="space-y-2"
-        >
-          <span class="text-xs text-neutral-500">
-            {{ t(`ui.setting.groups.${group}`) }}
-          </span>
-          <div class="flex flex-wrap gap-3">
-            <UCheckbox
-              v-for="genre in genres"
-              :key="genre"
-              :model-value="store.campaignSetting.includes(genre)"
-              :label="genre"
-              @update:model-value="
-                (checked: boolean | 'indeterminate') =>
-                  toggleGenre(genre, checked === true)
-              "
-            />
-          </div>
-        </div>
+      <!-- Character selector -->
+      <div v-else-if="currentStep === 'party'">
+        <CharacterSelector v-model="store.selectedTemplates" />
       </div>
 
       <!-- Characters (placeholder for CharacterGrid) -->

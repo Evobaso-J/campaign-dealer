@@ -179,6 +179,30 @@
       "title": "Select Characters"
     },
     "setting": {
+      "combo": "COMBO",
+      "empty": "EMPTY",
+      "genres": {
+        "chanbara": "Chanbara",
+        "conspiracy": "Conspiracy",
+        "cosmicHorror": "Cosmic Horror",
+        "cyberpunk": "Cyberpunk",
+        "darkFantasy": "Dark Fantasy",
+        "folkHorror": "Folk Horror",
+        "gothicHorror": "Gothic Horror",
+        "hardScifi": "Hard Sci-Fi",
+        "highFantasy": "High Fantasy",
+        "isekai": "Isekai",
+        "mythicFantasy": "Mythic Fantasy",
+        "postApocalyptic": "Post-Apocalyptic",
+        "spaceOpera": "Space Opera",
+        "steampunk": "Steampunk",
+        "superhero": "Superhero",
+        "survivalHorror": "Survival Horror",
+        "swordAndSorcery": "Sword & Sorcery",
+        "urbanFantasy": "Urban Fantasy",
+        "weirdWest": "Weird West",
+        "wuxia": "Wuxia"
+      },
       "groups": {
         "aesthetic": "Aesthetic",
         "cultural": "Cultural",
@@ -187,6 +211,9 @@
         "modern": "Modern",
         "scifi": "Sci-Fi"
       },
+      "inputA": "INPUT A",
+      "inputB": "INPUT B",
+      "instruction": "Combine two cartridges to initialize world.",
       "label": "Select genres"
     },
     "status": {
@@ -200,8 +227,8 @@
       "next": "Next",
       "reroll": "Re-roll",
       "reset": "Start Over",
-      "step1Title": "Build your party",
-      "step2Title": "Choose your setting",
+      "step1Title": "Choose your setting",
+      "step2Title": "Build your party",
       "step3Title": "Your characters",
       "step4Title": "Campaign script"
     }
