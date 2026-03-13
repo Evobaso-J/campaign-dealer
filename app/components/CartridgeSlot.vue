@@ -16,8 +16,8 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
 </script>
 
 <template>
-  <div class="space-y-1">
-    <span class="text-[0.6rem] tracking-widest text-neutral-500">
+  <div class="space-y-1 flex flex-col items-center">
+    <span class="text-xs tracking-widest text-neutral-500">
       {{ label }}
     </span>
     <div
@@ -26,9 +26,9 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
       :class="genreGroupConfig[group].border"
     >
       <UButton
-        icon="i-lucide-x"
+        icon="i-pixelarticons-close"
         size="xs"
-        variant="soft"
+        variant="outline"
         color="neutral"
         class="absolute top-1 right-1 z-20"
         @click="$emit('remove')"
@@ -42,7 +42,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
         class="text-2xl relative z-10"
         :class="genreGroupConfig[group].icon"
       />
-      <span class="crt-badge relative z-10 text-[0.5rem]">
+      <span class="crt-badge relative z-10">
         {{ t(`ui.setting.genres.${genre}`) }}
       </span>
     </div>
@@ -50,7 +50,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
       v-else
       class="max-w-48 w-full aspect-square mx-auto bg-neutral-900 pixel-border border-dashed flex items-center justify-center"
     >
-      <span class="text-[0.5rem] text-neutral-600">
+      <span class="text-neutral-600">
         {{ t("ui.setting.empty") }}
       </span>
     </div>

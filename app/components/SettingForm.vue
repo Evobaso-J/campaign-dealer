@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GenreGroups } from "~~/shared/types/campaign";
-import type { Genre } from "~~/shared/types/campaign";
+import type { Genre, GenreGroup } from "~~/shared/types/campaign";
 
 const MAX_GENRES = 2;
 
@@ -32,9 +32,22 @@ watch(
 
 const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
+const selectedGroups = computed<Set<GenreGroup>>(() => {
+  const groups = new Set<GenreGroup>();
+  for (const genre of selected.value) {
+    groups.add(getGenreGroup(genre));
+  }
+  return groups;
+});
+
+function isGenreDisabled(genre: Genre): boolean {
+  if (selected.value.includes(genre)) return true;
+  if (selected.value.length >= MAX_GENRES) return true;
+  return selectedGroups.value.has(getGenreGroup(genre));
+}
+
 function selectGenre(genre: Genre) {
-  if (selected.value.includes(genre)) return;
-  if (selected.value.length >= MAX_GENRES) return;
+  if (isGenreDisabled(genre)) return;
   if (slotA.value === null) {
     slotA.value = genre;
   } else {
@@ -49,23 +62,16 @@ function removeSlotA() {
 function removeSlotB() {
   slotB.value = null;
 }
-
-const comboLabel = computed(() => {
-  if (selected.value.length === 0) return "";
-  return selected.value.map((g) => t(`ui.setting.genres.${g}`)).join(" / ");
-});
 </script>
 
 <template>
-  <div class="space-y-4 overflow-hidden">
-    <!-- Instruction bar -->
+  <div class="space-y-4">
     <div class="terminal-panel text-center">
       <span class="text-xs text-neutral-400">
         {{ t("ui.setting.instruction") }}
       </span>
     </div>
 
-    <!-- Cartridge slots -->
     <div class="grid grid-cols-2 gap-3">
       <CartridgeSlot
         :genre="slotA"
@@ -79,40 +85,39 @@ const comboLabel = computed(() => {
       />
     </div>
 
-    <!-- Genre carousel -->
     <UCarousel
       v-slot="{ item: genre }"
       :items="allGenres"
       arrows
       :watch-drag="false"
       :slides-to-scroll="4"
-      prev-icon="i-lucide-chevron-left"
-      next-icon="i-lucide-chevron-right"
-      :prev="{ variant: 'outline', color: 'neutral', size: 'xs' }"
-      :next="{ variant: 'outline', color: 'neutral', size: 'xs' }"
+      align="center"
+      prev-icon="i-pixelarticons-chevron-left"
+      next-icon="i-pixelarticons-chevron-right"
+      :prev="{ variant: 'outline', size: 'lg' }"
+      :next="{ variant: 'outline', size: 'lg' }"
       :ui="{
         root: 'w-full',
         viewport: 'mx-8',
         item: 'basis-1/4',
-        container: 'gap-2 ms-0',
-        prev: 'inset-s-0 top-1/2 -translate-y-1/2',
-        next: 'inset-e-0 top-1/2 -translate-y-1/2',
+        container: 'ms-0 py-2',
+        prev: 'inset-s-0',
+        next: 'inset-e-0',
       }"
       class="py-2"
     >
       <button
-        class="w-full aspect-square pixel-border flex flex-col items-center justify-center gap-1 transition-transform hover:-translate-y-1 relative overflow-hidden"
+        class="w-32 aspect-square pixel-border flex flex-col items-center justify-center gap-1 transition-transform hover:-translate-y-1 relative overflow-hidden"
         :class="[
           genreGroupConfig[getGenreGroup(genre)].border,
           {
             'opacity-30 cursor-default': selected.includes(genre),
-            'cursor-pointer':
-              !selected.includes(genre) && selected.length < MAX_GENRES,
+            'cursor-pointer': !isGenreDisabled(genre),
             'opacity-50 cursor-default':
-              !selected.includes(genre) && selected.length >= MAX_GENRES,
+              !selected.includes(genre) && isGenreDisabled(genre),
           },
         ]"
-        :disabled="selected.includes(genre) || selected.length >= MAX_GENRES"
+        :disabled="isGenreDisabled(genre)"
         @click="selectGenre(genre)"
       >
         <div
@@ -131,14 +136,5 @@ const comboLabel = computed(() => {
         </span>
       </button>
     </UCarousel>
-
-    <!-- Combo summary bar -->
-    <div
-      v-if="selected.length > 0"
-      class="terminal-panel flex items-center gap-2"
-    >
-      <span class="crt-badge">{{ t("ui.setting.combo") }}</span>
-      <span class="text-xs text-neutral-400">{{ comboLabel }}</span>
-    </div>
   </div>
 </template>
