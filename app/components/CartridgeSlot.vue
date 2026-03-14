@@ -30,6 +30,10 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
           <GenreCartridge
             :genre="genre"
             :group="group"
+            :ui="{
+              base: 'size-full',
+              icon: 'text-8xl',
+            }"
             @remove="$emit('remove')"
           />
         </div>
