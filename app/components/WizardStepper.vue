@@ -93,7 +93,7 @@ function isActive(key: StepKey) {
           class="w-14 h-5 pixel-border"
           :class="{
             'bg-primary': isActive(key),
-            'bg-primary-600 cursor-pointer hover:bg-primary-500':
+            'bg-primary-600 cursor-pointer hover:bg-primary':
               !isActive(key) && isCompleted(key),
             'bg-neutral-800': !isActive(key) && !isCompleted(key),
           }"

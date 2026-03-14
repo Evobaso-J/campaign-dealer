@@ -1,7 +1,7 @@
 <template>
   <div class="border-8 rounded-4xl h-dvh w-dvw border-gray-600">
     <div
-      class="flex flex-col flex-1 border-8 border-primary-900 rounded-3xl bg-primary-500 h-full w-full"
+      class="flex flex-col flex-1 border-8 border-primary-900 rounded-3xl bg-primary h-full w-full"
     >
       <header
         class="flex items-center justify-between pt-5 px-5 pb-2 border-b-3 border-primary-800 uppercase text-primary-950 shrink-0"

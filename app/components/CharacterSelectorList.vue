@@ -28,8 +28,8 @@ function comboClasses(isSelected: boolean) {
   if (isSelected)
     return "bg-primary-400 border-2 border-primary-900 cursor-pointer";
   if (!props.canSelect)
-    return "bg-primary-500 border-2 border-primary-700 opacity-50 cursor-not-allowed";
-  return "bg-primary-500 border-2 border-primary-700 hover:bg-primary-400/40 cursor-pointer";
+    return "bg-primary border-2 border-primary-700 opacity-50 cursor-not-allowed";
+  return "bg-primary border-2 border-primary-700 hover:bg-primary-400/40 cursor-pointer";
 }
 
 function handleToggle(combo: CharacterCombo, isSelected: boolean) {
