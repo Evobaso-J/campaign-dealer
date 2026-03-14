@@ -5,7 +5,6 @@ const { t } = useI18n();
 
 const props = defineProps<{
   genre: Genre | null;
-  label: string;
 }>();
 
 defineEmits<{
@@ -17,22 +16,17 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
 
 <template>
   <div class="flex flex-col items-center gap-3">
-    <div v-if="genre && group" class="w-full max-w-48 min-h-56 flex flex-col">
-      <div class="bg-primary-900 h-2 rounded-t-lg" />
+    <div
+      v-if="genre && group"
+      class="w-full max-w-48 min-h-56 flex flex-col animate-float"
+    >
+      <div class="bg-primary-900 h-2 rounded-t-lg pixel-shadow" />
       <div
         class="bg-primary pixel-border border-primary-800 w-full max-w-48 p-1 relative pixel-shadow"
       >
         <div
           class="border-4 border-dashed [border-bottom-style:solid] pixel-border-thick border-primary-800"
         >
-          <UButton
-            icon="i-pixelarticons-close"
-            size="xs"
-            variant="outline"
-            color="neutral"
-            class="absolute top-1 right-1 z-20"
-            @click="$emit('remove')"
-          />
           <GenreCartridge
             :genre="genre"
             :group="group"
@@ -61,15 +55,27 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
         </span>
       </div>
     </div>
-    <div
-      class="w-full max-w-48 py-1 text-center uppercase pixel-shadow pixel-border-thick bg-primary-400"
-      :class="{
-        'opacity-80 animate-pulse': !(genre && group),
-      }"
-    >
-      <span class="text-xs tracking-widest">
-        {{ label }}
-      </span>
+    <div class="flex justify-center items-center w-full max-w-48 uppercase">
+      <UButton
+        v-if="genre && group"
+        trailing-icon="i-pixelarticons-arrow-bar-up"
+        :label="t('ui.setting.eject')"
+        :ui="{
+          base: 'text-center text-primary-800 tracking-widest w-full',
+          label: 'inline-block mx-auto',
+        }"
+        color="primary"
+        variant="outline"
+        @click="$emit('remove')"
+      />
+      <div
+        v-else
+        class="py-1 text-center pixel-border text-primary-800 bg-primary-400 opacity-80 animate-pulse w-full"
+      >
+        <span class="text-xs tracking-widest">
+          {{ t("ui.setting.insertCartridge") }}
+        </span>
+      </div>
     </div>
   </div>
 </template>

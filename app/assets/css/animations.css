@@ -8,7 +8,6 @@
   }
 }
 
-/* Blink animation for empty card slots */
 @keyframes blinker {
   0%,
   49% {
@@ -17,6 +16,16 @@
   50%,
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3%);
   }
 }
 

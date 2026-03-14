@@ -9,6 +9,11 @@ export default defineAppConfig({
       slots: {
         base: "rounded-none uppercase cursor-pointer",
       },
+      variants: {
+        variant: {
+          outline: "pixel-border",
+        },
+      },
     },
     badge: {
       slots: {

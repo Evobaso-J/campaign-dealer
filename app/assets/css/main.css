@@ -16,8 +16,8 @@
   --font-pixel: "Press Start 2P", cursive;
   --font-mono: "Courier New", Courier, monospace;
 
-  /* Blink animation for empty card slots */
   --animate-blinker: blinker 1s step-end infinite;
+  --animate-float: float 4s ease-in-out infinite;
 
   /* Error palette (fixed across all genres) */
   --color-crt-error-bg: #100005;

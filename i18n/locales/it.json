@@ -180,6 +180,7 @@
     },
     "setting": {
       "combo": "COMBO",
+      "eject": "Espelli",
       "empty": "VUOTO",
       "emptySlot": "Empty slot",
       "genres": {
@@ -212,8 +213,7 @@
         "modern": "Moderno",
         "scifi": "Fantascienza"
       },
-      "inputA": "INPUT A",
-      "inputB": "INPUT B",
+      "insertCartridge": "Inserisci",
       "label": "Seleziona i generi"
     },
     "status": {
