@@ -87,16 +87,6 @@ function scrollCarousel(direction: "left" | "right") {
     <div
       class="relative pixel-border-thick pixel-shadow bg-primary pt-6 pb-4 px-4"
     >
-      <!-- Top connector bar -->
-      <div
-        class="absolute top-0 left-4 right-4 h-3 bg-primary-800 flex justify-around"
-      >
-        <div class="w-20 h-1.5 bg-primary" />
-        <div class="w-20 h-1.5 bg-primary" />
-        <div class="w-20 h-1.5 bg-primary" />
-      </div>
-
-      <!-- Cartridge slots -->
       <div class="grid grid-cols-2 gap-3">
         <CartridgeSlot :genre="slotA" @remove="removeSlotA" />
         <CartridgeSlot :genre="slotB" @remove="removeSlotB" />
