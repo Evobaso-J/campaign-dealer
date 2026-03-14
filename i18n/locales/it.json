@@ -213,7 +213,6 @@
       },
       "inputA": "INPUT A",
       "inputB": "INPUT B",
-      "instruction": "Combina due cartucce per inizializzare il mondo.",
       "label": "Seleziona i generi"
     },
     "status": {
@@ -227,7 +226,7 @@
       "next": "Avanti",
       "reroll": "Rigenera",
       "reset": "Ricomincia",
-      "step1Title": "Scegli l'ambientazione",
+      "step1Title": "Combina due cartucce per inizializzare il mondo.",
       "step2Title": "Schiera la tua squadra",
       "step3Title": "I tuoi personaggi",
       "step4Title": "Copione della campagna"

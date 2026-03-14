@@ -213,7 +213,6 @@
       },
       "inputA": "INPUT A",
       "inputB": "INPUT B",
-      "instruction": "Combine two cartridges to initialize world.",
       "label": "Select genres"
     },
     "status": {
@@ -227,7 +226,7 @@
       "next": "Next",
       "reroll": "Re-roll",
       "reset": "Start Over",
-      "step1Title": "Choose your setting",
+      "step1Title": "Combine two cartridges to initialize world.",
       "step2Title": "Build your party",
       "step3Title": "Your characters",
       "step4Title": "Campaign script"
