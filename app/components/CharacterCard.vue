@@ -65,7 +65,7 @@ const cardAriaLabel = computed(() => {
         >
           <UIcon name="i-lucide-plus" class="text-primary-400 text-xl" />
           <span
-            class="text-[0.4rem] text-primary-400 tracking-widest animate-[blinker_1s_step-end_infinite] motion-reduce:animate-none"
+            class="text-[0.4rem] text-primary-400 tracking-widest animate-blinker motion-reduce:animate-none"
           >
             {{ t("ui.selector.readyToJoin") }}
           </span>
