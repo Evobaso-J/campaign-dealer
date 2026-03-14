@@ -27,7 +27,7 @@ const cardAriaLabel = computed(() => {
       class="w-full h-full flex flex-col items-center justify-center text-center transition-all duration-200"
       :class="
         card
-          ? ['pixel-border-thick bg-primary-400 text-primary-800', rotation]
+          ? ['pixel-border-thick bg-primary-400', rotation]
           : 'card-empty-slot'
       "
     >

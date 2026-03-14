@@ -113,7 +113,7 @@ const orderedCards = computed((): (CharacterTemplate | null)[] => {
         <span
           aria-live="polite"
           aria-atomic="true"
-          class="text-xs text-primary-800 tracking-wider"
+          class="text-xs tracking-wider"
         >
           {{
             t("ui.selector.lineUpCount", {

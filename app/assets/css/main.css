@@ -13,6 +13,8 @@
    ────────────────────────────────────────────── */
 
 @theme static {
+  --ui-text: var(--ui-color-primary-800);
+
   --font-pixel: "Press Start 2P", cursive;
   --font-mono: "Courier New", Courier, monospace;
 
