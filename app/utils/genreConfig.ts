@@ -26,30 +26,30 @@ export const genreIcons: Record<Genre, string> = {
 
 export const genreGroupConfig: Record<
   GenreGroup,
-  { dither: string; icon: string; border: string }
+  { class: string; icon: string; border: string }
 > = {
   fantasy: {
-    dither: "dither-sm [--dither-color:var(--color-fantasy-400)]",
+    class: "dither-sm [--dither-color:var(--color-fantasy-400)]",
     icon: "text-fantasy-400",
     border: "border-fantasy-500",
   },
   scifi: {
-    dither: "dither-md [--dither-color:var(--color-scifi-400)]",
+    class: "dither-md [--dither-color:var(--color-scifi-400)]",
     icon: "text-scifi-400",
     border: "border-scifi-500",
   },
   horror: {
-    dither: "dither-lg [--dither-color:var(--color-horror-400)]",
+    class: "dither-lg [--dither-color:var(--color-horror-400)]",
     icon: "text-horror-400",
     border: "border-horror-500",
   },
   modern: {
-    dither: "dither-sm [--dither-color:var(--color-modern-400)]",
+    class: "dither-sm [--dither-color:var(--color-modern-400)]",
     icon: "text-modern-400",
     border: "border-modern-500",
   },
   cultural: {
-    dither: "dither-md [--dither-color:var(--color-cultural-400)]",
+    class: "dither-md [--dither-color:var(--color-cultural-400)]",
     icon: "text-cultural-400",
     border: "border-cultural-500",
   },

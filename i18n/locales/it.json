@@ -181,6 +181,7 @@
     "setting": {
       "combo": "COMBO",
       "empty": "VUOTO",
+      "emptySlot": "Empty slot",
       "genres": {
         "chanbara": "Chanbara",
         "conspiracy": "Cospirazione",
