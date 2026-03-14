@@ -17,7 +17,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
 
 <template>
   <div class="flex flex-col items-center gap-3">
-    <div v-if="genre && group" class="w-full max-w-48">
+    <div v-if="genre && group" class="w-full max-w-48 min-h-56 flex flex-col">
       <div class="bg-primary-900 h-2 rounded-t-lg" />
       <div
         class="bg-primary pixel-border border-primary-800 w-full max-w-48 p-1 relative pixel-shadow"
@@ -50,7 +50,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
     </div>
     <div
       v-else
-      class="max-w-48 min-h-56 w-full h-full opacity-80 border-4 rounded-lg border-primary-800 border-dashed flex items-center justify-center p-2 animate-pulse"
+      class="max-w-48 min-h-56 w-full opacity-80 border-4 rounded-t-lg border-primary-800 border-dashed flex items-center justify-center p-2 animate-pulse"
     >
       <div
         class="flex flex-col items-center gap-8 justify-center text-primary-800 dither-sm h-full w-full"
