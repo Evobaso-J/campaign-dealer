@@ -112,12 +112,12 @@ function randomGenres() {
         class="flex-1 min-w-0 relative pixel-border-thick pixel-shadow bg-primary pt-6 pb-4 px-4"
       >
         <div class="grid grid-cols-2 gap-3">
-          <CartridgeSlot :genre="slotA" @remove="removeSlotA" />
-          <CartridgeSlot :genre="slotB" @remove="removeSlotB" />
+          <SettingFormCartridgeSlot :genre="slotA" @remove="removeSlotA" />
+          <SettingFormCartridgeSlot :genre="slotB" @remove="removeSlotB" />
         </div>
       </div>
 
-      <SidebarGenreInfo
+      <SettingFormSidebarGenreInfo
         :selected-genres="selected"
         :is-rolling="isRolling"
         @reroll="reroll"
@@ -125,7 +125,7 @@ function randomGenres() {
       />
     </div>
 
-    <GenreCarousel
+    <SettingFormGenreCarousel
       class="mx-auto"
       :disabled-groups="disabledGroups"
       :selected-genres="selected"

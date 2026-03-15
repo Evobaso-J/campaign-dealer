@@ -25,7 +25,7 @@ const isInfoOpen = ref(false);
       class="bg-primary pixel-border border-primary-800 w-full max-w-48 p-1 relative pixel-shadow"
     >
       <div class="border-4 pixel-border-thick border-primary-800">
-        <GenreCartridge
+        <SettingFormGenreCartridge
           :genre="props.genre"
           :group="props.group"
           :ui="{
@@ -61,7 +61,7 @@ const isInfoOpen = ref(false);
         <div class="flex items-start justify-between">
           <div class="flex items-start gap-4">
             <div class="pixel-border-thick shrink-0">
-              <GenreCartridge
+              <SettingFormGenreCartridge
                 :genre="props.genre"
                 :group="props.group"
                 :ui="{

@@ -16,7 +16,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
 
 <template>
   <div class="flex flex-col items-center gap-3">
-    <CartridgeSlotFilled
+    <SettingFormCartridgeSlotFilled
       v-if="genre && group"
       :genre="genre"
       :group="group"

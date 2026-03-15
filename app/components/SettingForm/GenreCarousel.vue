@@ -77,7 +77,7 @@ function selectGenre(genre: Genre) {
             @click="selectGenre(genre)"
           >
             <div class="bg-primary pixel-border border-primary-800">
-              <GenreCartridge
+              <SettingFormGenreCartridge
                 :genre="genre"
                 :group="group"
                 :ui="{
