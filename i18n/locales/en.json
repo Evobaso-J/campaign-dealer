@@ -237,7 +237,10 @@
         "wuxia": "Martial arts mastery, honor codes, and the flow of inner Chi."
       },
       "insertCartridge": "Insert",
-      "label": "Select genres"
+      "label": "Select genres",
+      "selected": "SELECTED",
+      "randomRoll": "RANDOM",
+      "clear": "Clear"
     },
     "status": {
       "error": "Something went wrong",

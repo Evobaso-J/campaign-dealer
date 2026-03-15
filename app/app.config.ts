@@ -17,7 +17,11 @@ export default defineAppConfig({
       compoundVariants: [
         {
           variant: "outline" as const,
-          class: { leadingIcon: "text-primary-800" },
+          class: {
+            leadingIcon: "text-primary-800",
+            label: "text-primary-800",
+            base: "hover:bg-primary-400/30",
+          },
         },
       ],
     },

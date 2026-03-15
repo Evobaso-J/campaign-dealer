@@ -3,15 +3,17 @@ import { GenreGroups } from "~~/shared/types/campaign";
 import type { Genre, GenreGroup } from "~~/shared/types/campaign";
 
 const MAX_GENRES = 2;
+const ROLL_DURATION = 1200;
+const ROLL_INTERVAL = 80;
 const allGroups = Object.keys(GenreGroups) as GenreGroup[];
-
-const { t } = useI18n();
+const allGenres = Object.values(GenreGroups).flat() as Genre[];
 
 const props = defineProps<{ modelValue: Genre[] }>();
 const emit = defineEmits<{ "update:modelValue": [value: Genre[]] }>();
 
 const slotA = ref<Genre | null>(props.modelValue[0] ?? null);
 const slotB = ref<Genre | null>(props.modelValue[1] ?? null);
+const isRolling = ref(false);
 
 const selected = computed<Genre[]>(() =>
   [slotA.value, slotB.value].filter((g): g is Genre => g !== null),
@@ -71,17 +73,56 @@ function reroll() {
   slotA.value = null;
   slotB.value = null;
 }
+
+function pickRandomPair(): [Genre, Genre] {
+  const shuffledGroups = [...allGroups].sort(() => Math.random() - 0.5);
+  const groupA = shuffledGroups[0]!;
+  const groupB = shuffledGroups[1]!;
+  const genresA = GenreGroups[groupA];
+  const genresB = GenreGroups[groupB];
+  return [
+    genresA[Math.floor(Math.random() * genresA.length)] as Genre,
+    genresB[Math.floor(Math.random() * genresB.length)] as Genre,
+  ];
+}
+
+function randomGenres() {
+  if (isRolling.value) return;
+  isRolling.value = true;
+
+  const interval = setInterval(() => {
+    slotA.value = allGenres[Math.floor(Math.random() * allGenres.length)]!;
+    slotB.value = allGenres[Math.floor(Math.random() * allGenres.length)]!;
+  }, ROLL_INTERVAL);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    const [a, b] = pickRandomPair();
+    slotA.value = a;
+    slotB.value = b;
+    isRolling.value = false;
+  }, ROLL_DURATION);
+}
 </script>
 
 <template>
   <div class="space-y-4">
-    <div
-      class="relative pixel-border-thick pixel-shadow bg-primary pt-6 pb-4 px-4"
-    >
-      <div class="grid grid-cols-2 gap-3">
-        <CartridgeSlot :genre="slotA" @remove="removeSlotA" />
-        <CartridgeSlot :genre="slotB" @remove="removeSlotB" />
+    <div class="flex flex-col lg:flex-row gap-4">
+      <div
+        class="flex-1 min-w-0 relative pixel-border-thick pixel-shadow bg-primary pt-6 pb-4 px-4"
+      >
+        <div class="grid grid-cols-2 gap-3">
+          <CartridgeSlot :genre="slotA" @remove="removeSlotA" />
+          <CartridgeSlot :genre="slotB" @remove="removeSlotB" />
+        </div>
       </div>
+
+      <SidebarGenreInfo
+        :selected-genres="selected"
+        :is-rolling="isRolling"
+        @reroll="reroll"
+        @random="randomGenres"
+      />
     </div>
 
     <GenreCarousel
@@ -91,33 +132,5 @@ function reroll() {
       :disabled-genres="disabledGenreSet"
       @select="selectGenre"
     />
-
-    <!-- Combo summary panel -->
-    <div
-      v-if="selected.length > 0"
-      class="terminal-panel flex items-center justify-between gap-3"
-    >
-      <div class="flex-1 min-w-0">
-        <span class="text-[0.5rem] text-neutral-500 tracking-widest">
-          {{ t("ui.setting.combo") }}
-        </span>
-        <div class="text-xs mt-1 truncate">
-          <template v-if="slotA">
-            {{ t(`ui.setting.genres.${slotA}`) }}
-          </template>
-          <template v-if="slotA && slotB"> / </template>
-          <template v-if="slotB">
-            {{ t(`ui.setting.genres.${slotB}`) }}
-          </template>
-        </div>
-      </div>
-      <button
-        class="shrink-0 w-8 h-8 rounded-full pixel-border flex items-center justify-center hover:bg-primary-900 transition-colors"
-        :title="t('ui.wizard.reroll')"
-        @click="reroll"
-      >
-        <UIcon name="i-pixelarticons-redo" class="text-sm" />
-      </button>
-    </div>
   </div>
 </template>

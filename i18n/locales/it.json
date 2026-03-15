@@ -237,7 +237,10 @@
         "wuxia": "Maestria nelle arti marziali, codici d'onore e il flusso del Chi interiore."
       },
       "insertCartridge": "Inserisci",
-      "label": "Seleziona i generi"
+      "label": "Seleziona i generi",
+      "selected": "SELEZIONATI",
+      "randomRoll": "CASUALE",
+      "clear": "Cancella"
     },
     "status": {
       "error": "Qualcosa è andato storto",
