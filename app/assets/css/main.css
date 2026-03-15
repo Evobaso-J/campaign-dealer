@@ -13,8 +13,13 @@
    ────────────────────────────────────────────── */
 
 @theme static {
+  --ui-text: var(--ui-color-primary-800);
+
   --font-pixel: "Press Start 2P", cursive;
   --font-mono: "Courier New", Courier, monospace;
+
+  --animate-blinker: blinker 1s step-end infinite;
+  --animate-float: float 4s ease-in-out infinite;
 
   /* Error palette (fixed across all genres) */
   --color-crt-error-bg: #100005;
@@ -110,22 +115,24 @@
    - Footer / very muted text:  opacity-50
    ────────────────────────────────────────────── */
 
+/* Hard pixel border — 2px solid using the shadow shade */
+@utility pixel-border {
+  border: 2px solid var(--ui-color-primary-800);
+}
+
+/* Thicker variant */
+@utility pixel-border-thick {
+  border: 4px solid var(--ui-color-primary-800);
+}
+
+/* Offset pixel shadow — no blur, block shadow in shadow color */
+@utility pixel-shadow {
+  box-shadow: 4px 4px 0 var(--ui-color-primary-800);
+}
+
+/* CRT overlay — scanlines + flicker + scan bar.
+   Uses @layer because @utility does not support pseudo-elements. */
 @layer utilities {
-  /* Hard pixel border — 2px solid using the shadow shade */
-  .pixel-border {
-    border: 2px solid var(--ui-color-primary-800);
-  }
-
-  /* Thicker variant */
-  .pixel-border-thick {
-    border: 4px solid var(--ui-color-primary-800);
-  }
-
-  /* Offset pixel shadow — no blur, block shadow in shadow color */
-  .pixel-shadow {
-    box-shadow: 4px 4px 0 var(--ui-color-primary-800);
-  }
-
   .crt-overlay {
     pointer-events: none;
     position: fixed;
@@ -158,55 +165,58 @@
     );
     animation: crt-scan 6s linear infinite;
   }
+}
 
-  /* Dither patterns — 1-bit checkerboard fills at 3 scales */
-  /* Control color via --dither-color (falls back to primary-400) */
-  .dither-sm {
-    background: repeating-conic-gradient(
-        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
-        #000 0% 50%
-      )
-      50% / 2px 2px;
-  }
-  .dither-md {
-    background: repeating-conic-gradient(
-        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
-        #000 0% 50%
-      )
-      50% / 4px 4px;
-  }
-  .dither-lg {
-    background: repeating-conic-gradient(
-        var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
-        #000 0% 50%
-      )
-      50% / 8px 8px;
-  }
+/* Dither patterns — 1-bit checkerboard fills at 3 scales */
+/* Control color via --dither-color (falls back to primary-400) */
+@utility dither-sm {
+  background: repeating-conic-gradient(
+      var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
+      #000 0% 50%
+    )
+    50% / 2px 2px;
+}
 
-  /* Terminal panel — CRT-aesthetic card container */
-  .terminal-panel {
-    border: 1px solid var(--ui-color-primary-400);
-    padding: 20px;
-    background: color-mix(in srgb, var(--ui-color-primary-400) 5%, transparent);
-  }
+@utility dither-md {
+  background: repeating-conic-gradient(
+      var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
+      #000 0% 50%
+    )
+    50% / 4px 4px;
+}
 
-  /* CRT badge — inverted inline label */
-  .crt-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 0.7rem;
-    background: var(--ui-color-primary-400);
-    color: var(--ui-color-primary-950);
-  }
-  .crt-vignette {
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 60%,
-      rgba(0, 0, 0, 0.4) 100%
-    );
-  }
+@utility dither-lg {
+  background: repeating-conic-gradient(
+      var(--dither-color, var(--ui-color-primary-400)) 0% 25%,
+      #000 0% 50%
+    )
+    50% / 8px 8px;
+}
+
+/* Terminal panel — CRT-aesthetic card container */
+@utility terminal-panel {
+  border: 1px solid var(--ui-color-primary-400);
+  padding: 20px;
+  background: color-mix(in srgb, var(--ui-color-primary-400) 5%, transparent);
+}
+
+/* CRT badge — inverted inline label */
+@utility crt-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  background: var(--ui-color-primary-400);
+  color: var(--ui-color-primary-950);
+}
+
+@utility crt-vignette {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
 }

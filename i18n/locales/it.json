@@ -179,6 +179,32 @@
       "title": "Seleziona Personaggi"
     },
     "setting": {
+      "combo": "COMBO",
+      "eject": "Espelli",
+      "empty": "VUOTO",
+      "emptySlot": "Empty slot",
+      "genres": {
+        "chanbara": "Chanbara",
+        "conspiracy": "Cospirazione",
+        "cosmicHorror": "Horror Cosmico",
+        "cyberpunk": "Cyberpunk",
+        "darkFantasy": "Dark Fantasy",
+        "folkHorror": "Folk Horror",
+        "gothicHorror": "Horror Gotico",
+        "hardScifi": "Fantascienza Hard",
+        "highFantasy": "High Fantasy",
+        "isekai": "Isekai",
+        "mythicFantasy": "Fantasy Mitico",
+        "postApocalyptic": "Post-Apocalittico",
+        "spaceOpera": "Space Opera",
+        "steampunk": "Steampunk",
+        "superhero": "Supereroi",
+        "survivalHorror": "Survival Horror",
+        "swordAndSorcery": "Spada e Stregoneria",
+        "urbanFantasy": "Urban Fantasy",
+        "weirdWest": "Weird West",
+        "wuxia": "Wuxia"
+      },
       "groups": {
         "aesthetic": "Estetico",
         "cultural": "Culturale",
@@ -187,7 +213,34 @@
         "modern": "Moderno",
         "scifi": "Fantascienza"
       },
-      "label": "Seleziona i generi"
+      "closeInfo": "Chiudi",
+      "genreDescriptions": {
+        "chanbara": "Drammi di samurai, onore dei ronin e intrighi politici feudali.",
+        "conspiracy": "Spionaggio, società segrete e verità nascoste in bella vista.",
+        "cosmicHorror": "Forze eldritch inconoscibili che erodono la sanità mentale e sfidano la comprensione.",
+        "cyberpunk": "Città distopiche al neon dove hacker e reietti combattono le corporazioni.",
+        "darkFantasy": "Un mondo cupo e moralmente ambiguo dove il pericolo è ovunque e la sopravvivenza mai garantita.",
+        "folkHorror": "Comunità isolate, antiche superstizioni e rituali che è meglio dimenticare.",
+        "gothicHorror": "Castelli maledetti, vampiri e oscuro romanticismo in un mondo di terrore.",
+        "hardScifi": "Fantascienza realistica basata sulla fisica reale e tecnologia plausibile.",
+        "highFantasy": "Avventure eroiche in un mondo ricco di magia con imprese epiche e eroi leggendari.",
+        "isekai": "Trasportati in un altro mondo — un pesce fuor d'acqua con tutto da dimostrare.",
+        "mythicFantasy": "Racconti di dèi, semidei e eroi leggendari che camminano tra i mortali.",
+        "postApocalyptic": "Sopravvivenza tra le rovine della civiltà, raccogliendo risorse e ricostruendo.",
+        "spaceOpera": "Avventure galattiche con astronavi, imperi alieni e posta in gioco cosmica.",
+        "steampunk": "La rivoluzione industriale incontra l'invenzione fantastica in un mondo di ingranaggi e vapore.",
+        "superhero": "Vigilanti con superpoteri che proteggono il mondo da minacce straordinarie.",
+        "survivalHorror": "Risorse scarse, minacce incessanti e la lotta costante per restare in vita.",
+        "swordAndSorcery": "Azione pulp a bassa magia con potenti guerrieri e stregonerie ancestrali.",
+        "urbanFantasy": "Magia nascosta sotto la superficie della vita urbana moderna.",
+        "weirdWest": "Sei-colpi e occulto in una frontiera soprannaturale senza legge.",
+        "wuxia": "Maestria nelle arti marziali, codici d'onore e il flusso del Chi interiore."
+      },
+      "insertCartridge": "Inserisci",
+      "label": "Seleziona i generi",
+      "selected": "SELEZIONATI",
+      "randomRoll": "CASUALE",
+      "clear": "Cancella"
     },
     "status": {
       "error": "Qualcosa è andato storto",
@@ -200,8 +253,8 @@
       "next": "Avanti",
       "reroll": "Rigenera",
       "reset": "Ricomincia",
-      "step1Title": "Schiera la tua squadra",
-      "step2Title": "Scegli l'ambientazione",
+      "step1Title": "Combina due cartucce per inizializzare il mondo.",
+      "step2Title": "Schiera la tua squadra",
       "step3Title": "I tuoi personaggi",
       "step4Title": "Copione della campagna"
     }

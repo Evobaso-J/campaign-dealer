@@ -40,6 +40,7 @@
   },
   "engineStrict": true,
   "devDependencies": {
+    "@iconify-json/pixelarticons": "^1.2.4",
     "@nuxt/eslint": "1.14.0",
     "@nuxt/test-utils": "^4.0.0",
     "@pinia/testing": "^1.0.3",

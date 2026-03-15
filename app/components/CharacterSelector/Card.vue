@@ -27,7 +27,7 @@ const cardAriaLabel = computed(() => {
       class="w-full h-full flex flex-col items-center justify-center text-center transition-all duration-200"
       :class="
         card
-          ? ['pixel-border-thick bg-primary-400 text-primary-800', rotation]
+          ? ['pixel-border-thick bg-primary-400', rotation]
           : 'card-empty-slot'
       "
     >
@@ -65,7 +65,7 @@ const cardAriaLabel = computed(() => {
         >
           <UIcon name="i-lucide-plus" class="text-primary-400 text-xl" />
           <span
-            class="text-[0.4rem] text-primary-400 tracking-widest animate-[blinker_1s_step-end_infinite] motion-reduce:animate-none"
+            class="text-[0.4rem] text-primary-400 tracking-widest animate-blinker motion-reduce:animate-none"
           >
             {{ t("ui.selector.readyToJoin") }}
           </span>

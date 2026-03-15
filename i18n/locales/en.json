@@ -179,6 +179,32 @@
       "title": "Select Characters"
     },
     "setting": {
+      "combo": "COMBO",
+      "eject": "Eject",
+      "empty": "EMPTY",
+      "emptySlot": "Empty slot",
+      "genres": {
+        "chanbara": "Chanbara",
+        "conspiracy": "Conspiracy",
+        "cosmicHorror": "Cosmic Horror",
+        "cyberpunk": "Cyberpunk",
+        "darkFantasy": "Dark Fantasy",
+        "folkHorror": "Folk Horror",
+        "gothicHorror": "Gothic Horror",
+        "hardScifi": "Hard Sci-Fi",
+        "highFantasy": "High Fantasy",
+        "isekai": "Isekai",
+        "mythicFantasy": "Mythic Fantasy",
+        "postApocalyptic": "Post-Apocalyptic",
+        "spaceOpera": "Space Opera",
+        "steampunk": "Steampunk",
+        "superhero": "Superhero",
+        "survivalHorror": "Survival Horror",
+        "swordAndSorcery": "Sword & Sorcery",
+        "urbanFantasy": "Urban Fantasy",
+        "weirdWest": "Weird West",
+        "wuxia": "Wuxia"
+      },
       "groups": {
         "aesthetic": "Aesthetic",
         "cultural": "Cultural",
@@ -187,7 +213,34 @@
         "modern": "Modern",
         "scifi": "Sci-Fi"
       },
-      "label": "Select genres"
+      "closeInfo": "Close",
+      "genreDescriptions": {
+        "chanbara": "Samurai drama, ronin honor, and feudal political intrigue.",
+        "conspiracy": "Espionage, secret societies, and truths hidden in plain sight.",
+        "cosmicHorror": "Unknowable eldritch forces that erode sanity and defy comprehension.",
+        "cyberpunk": "Dystopian neon-lit cities where hackers and outcasts fight corporate overlords.",
+        "darkFantasy": "Gritty, morally grey world where danger lurks and survival is never guaranteed.",
+        "folkHorror": "Isolated communities, ancient superstitions, and rituals best left forgotten.",
+        "gothicHorror": "Cursed castles, vampires, and dark romance in a world of dread.",
+        "hardScifi": "Realistic science fiction grounded in actual physics and plausible technology.",
+        "highFantasy": "Heroic adventures in a magic-rich world with epic quests and legendary heroes.",
+        "isekai": "Transported to another world — a fish out of water with everything to prove.",
+        "mythicFantasy": "Tales of gods, demigods, and legendary heroes walking among mortals.",
+        "postApocalyptic": "Survival in the ruins of civilization, scavenging and rebuilding.",
+        "spaceOpera": "Galaxy-spanning adventures with starships, alien empires, and cosmic stakes.",
+        "steampunk": "Industrial revolution meets fantastical invention in a world of gears and steam.",
+        "superhero": "Superpowered vigilantes protecting the world from extraordinary threats.",
+        "survivalHorror": "Scarce resources, relentless threats, and the constant fight to stay alive.",
+        "swordAndSorcery": "Low-magic pulp action with mighty warriors and ancient sorceries.",
+        "urbanFantasy": "Hidden magic lurking beneath the surface of modern city life.",
+        "weirdWest": "Six-shooters meet the occult on a lawless supernatural frontier.",
+        "wuxia": "Martial arts mastery, honor codes, and the flow of inner Chi."
+      },
+      "insertCartridge": "Insert",
+      "label": "Select genres",
+      "selected": "SELECTED",
+      "randomRoll": "RANDOM",
+      "clear": "Clear"
     },
     "status": {
       "error": "Something went wrong",
@@ -200,8 +253,8 @@
       "next": "Next",
       "reroll": "Re-roll",
       "reset": "Start Over",
-      "step1Title": "Build your party",
-      "step2Title": "Choose your setting",
+      "step1Title": "Combine two cartridges to initialize world.",
+      "step2Title": "Build your party",
       "step3Title": "Your characters",
       "step4Title": "Campaign script"
     }

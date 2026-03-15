@@ -97,10 +97,10 @@ const orderedCards = computed((): (CharacterTemplate | null)[] => {
     >
       <!-- Arena area -->
       <div
-        class="border-2 border-primary-900 bg-primary-500/10 p-4 flex items-center justify-center bg-[linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] bg-size-[20px_20px]"
+        class="border-2 border-primary-900 bg-primary/10 p-4 flex items-center justify-center bg-[linear-gradient(var(--ui-color-primary-800)_1px,transparent_1px),linear-gradient(90deg,var(--ui-color-primary-800)_1px,transparent_1px)] bg-size-[20px_20px]"
       >
         <div class="flex flex-wrap justify-center gap-4">
-          <CharacterCard
+          <CharacterSelectorCard
             v-for="(card, i) in orderedCards"
             :key="i"
             :card="card"
@@ -113,7 +113,7 @@ const orderedCards = computed((): (CharacterTemplate | null)[] => {
         <span
           aria-live="polite"
           aria-atomic="true"
-          class="text-xs text-primary-800 tracking-wider"
+          class="text-xs tracking-wider"
         >
           {{
             t("ui.selector.lineUpCount", {
