@@ -29,17 +29,17 @@ export const genreGroupConfig: Record<
   { class: string; icon: string; border: string }
 > = {
   fantasy: {
-    class: "dither-sm [--dither-color:var(--color-fantasy-400)]",
+    class: "dither-md [--dither-color:var(--color-fantasy-400)]",
     icon: "text-fantasy-400",
     border: "border-fantasy-500",
   },
   scifi: {
-    class: "dither-md [--dither-color:var(--color-scifi-400)]",
+    class: "dither-sm [--dither-color:var(--color-scifi-400)]",
     icon: "text-scifi-400",
     border: "border-scifi-500",
   },
   horror: {
-    class: "dither-lg [--dither-color:var(--color-horror-400)]",
+    class: "dither-md [--dither-color:var(--color-horror-400)]",
     icon: "text-horror-400",
     border: "border-horror-500",
   },

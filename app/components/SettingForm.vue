@@ -30,7 +30,10 @@ watch(
   },
 );
 
-const allGenres = Object.values(GenreGroups).flat() as Genre[];
+const groupEntries = Object.entries(GenreGroups) as [
+  GenreGroup,
+  readonly Genre[],
+][];
 
 const selectedGroups = computed<Set<GenreGroup>>(() => {
   const groups = new Set<GenreGroup>();
@@ -40,19 +43,43 @@ const selectedGroups = computed<Set<GenreGroup>>(() => {
   return groups;
 });
 
+function isGroupDisabled(group: GenreGroup): boolean {
+  if (selected.value.length >= MAX_GENRES) return true;
+  return selectedGroups.value.has(group);
+}
+
 function isGenreDisabled(genre: Genre): boolean {
   if (selected.value.includes(genre)) return true;
-  if (selected.value.length >= MAX_GENRES) return true;
-  return selectedGroups.value.has(getGenreGroup(genre));
+  return isGroupDisabled(getGenreGroup(genre));
+}
+
+function scrollToNextAvailableGroup(currentGroup: GenreGroup) {
+  if (!scrollContainer.value) return;
+  const groupKeys = groupEntries.map(([g]) => g);
+  const currentIdx = groupKeys.indexOf(currentGroup);
+
+  for (let i = 1; i < groupKeys.length; i++) {
+    const nextIdx = (currentIdx + i) % groupKeys.length;
+    const nextGroup = groupKeys[nextIdx]!;
+    if (!isGroupDisabled(nextGroup)) {
+      const el = scrollContainer.value.querySelector(
+        `[data-group="${nextGroup}"]`,
+      );
+      el?.scrollIntoView({ behavior: "smooth", inline: "center" });
+      return;
+    }
+  }
 }
 
 function selectGenre(genre: Genre) {
   if (isGenreDisabled(genre)) return;
+  const group = getGenreGroup(genre);
   if (slotA.value === null) {
     slotA.value = genre;
   } else {
     slotB.value = genre;
   }
+  nextTick(() => scrollToNextAvailableGroup(group));
 }
 
 function removeSlotA() {
@@ -103,29 +130,43 @@ function scrollCarousel(direction: "left" | "right") {
         <UIcon name="i-pixelarticons-chevron-left" class="text-lg" />
       </button>
 
-      <!-- Scrollable genre strip -->
-      <div
-        ref="scrollContainer"
-        class="flex gap-2 overflow-x-auto scrollbar-none py-2 px-1"
-      >
-        <button
-          v-for="genre in allGenres"
-          :key="genre"
-          class="shrink-0 w-24 flex flex-col items-center gap-1 transition-transform hover:-translate-y-1"
-          :class="{
-            'opacity-30 cursor-default': selected.includes(genre),
-            'cursor-pointer': !isGenreDisabled(genre),
-            'opacity-50 cursor-default':
-              !selected.includes(genre) && isGenreDisabled(genre),
-          }"
-          :disabled="isGenreDisabled(genre)"
-          @click="selectGenre(genre)"
+      <!-- Scrollable genre strip grouped by genre group -->
+      <div ref="scrollContainer" class="flex gap-4 overflow-x-hidden py-2 px-1">
+        <div
+          v-for="[group, genres] in groupEntries"
+          :key="group"
+          :data-group="group"
+          class="shrink-0 flex flex-col items-center gap-1 transition-opacity"
+          :class="{ 'opacity-30': isGroupDisabled(group) }"
         >
-          <GenreCartridge :genre="genre" :group="getGenreGroup(genre)" />
-          <span class="text-[0.4rem] text-center leading-tight px-1">
-            {{ t(`ui.setting.genres.${genre}`) }}
+          <span
+            class="text-[0.4rem] tracking-widest uppercase"
+            :class="genreGroupConfig[group].icon"
+          >
+            {{ t(`ui.setting.groups.${group}`) }}
           </span>
-        </button>
+          <div class="flex gap-2">
+            <button
+              v-for="genre in genres"
+              :key="genre"
+              class="shrink-0 w-24 flex flex-col items-center gap-1 transition-transform hover:-translate-y-1"
+              :class="{
+                'opacity-30 cursor-default': selected.includes(genre),
+                'cursor-pointer': !isGenreDisabled(genre),
+                'cursor-default': isGenreDisabled(genre),
+              }"
+              :disabled="isGenreDisabled(genre)"
+              @click="selectGenre(genre)"
+            >
+              <div class="pixel-border">
+                <GenreCartridge :genre="genre" :group="group" />
+              </div>
+              <span class="text-[0.4rem] text-center leading-tight px-1">
+                {{ t(`ui.setting.genres.${genre}`) }}
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Right arrow -->
