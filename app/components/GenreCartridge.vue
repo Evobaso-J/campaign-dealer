@@ -13,14 +13,10 @@ withDefaults(
   {
     ui: () => ({
       base: "size-12",
-      icon: "text-2xl",
+      icon: "text-3xl",
     }),
   },
 );
-
-defineEmits<{
-  remove: [];
-}>();
 </script>
 
 <template>

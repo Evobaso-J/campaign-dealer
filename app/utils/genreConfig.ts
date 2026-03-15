@@ -26,40 +26,49 @@ export const genreIcons: Record<Genre, string> = {
 
 export const genreGroupConfig: Record<
   GenreGroup,
-  { class: string; icon: string; border: string }
+  { class: string; icon: string; border: string; text: string }
 > = {
   fantasy: {
     class: "dither-md [--dither-color:var(--color-fantasy-400)]",
     icon: "text-fantasy-400",
     border: "border-fantasy-500",
+    text: "text-fantasy-600",
   },
   scifi: {
     class: "dither-sm [--dither-color:var(--color-scifi-400)]",
     icon: "text-scifi-400",
     border: "border-scifi-500",
+    text: "text-scifi-600",
   },
   horror: {
     class: "dither-md [--dither-color:var(--color-horror-400)]",
     icon: "text-horror-400",
     border: "border-horror-500",
+    text: "text-horror-600",
   },
   modern: {
     class: "dither-sm [--dither-color:var(--color-modern-400)]",
     icon: "text-modern-400",
     border: "border-modern-500",
+    text: "text-modern-600",
   },
   cultural: {
     class: "dither-md [--dither-color:var(--color-cultural-400)]",
     icon: "text-cultural-400",
     border: "border-cultural-500",
+    text: "text-cultural-600",
   },
 };
 
-export function getGenreGroup(genre: Genre): GenreGroup {
-  for (const [group, genres] of Object.entries(GenreGroups)) {
-    if ((genres as readonly string[]).includes(genre)) {
-      return group as GenreGroup;
-    }
+const genreToGroup = new Map<Genre, GenreGroup>();
+for (const [group, genres] of Object.entries(GenreGroups)) {
+  for (const genre of genres) {
+    genreToGroup.set(genre as Genre, group as GenreGroup);
   }
-  return "fantasy";
+}
+
+export function getGenreGroup(genre: Genre): GenreGroup {
+  const group = genreToGroup.get(genre);
+  if (!group) throw new Error(`Unknown genre: ${genre}`);
+  return group;
 }

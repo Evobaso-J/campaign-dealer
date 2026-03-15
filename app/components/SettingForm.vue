@@ -3,6 +3,7 @@ import { GenreGroups } from "~~/shared/types/campaign";
 import type { Genre, GenreGroup } from "~~/shared/types/campaign";
 
 const MAX_GENRES = 2;
+const allGroups = Object.keys(GenreGroups) as GenreGroup[];
 
 const { t } = useI18n();
 
@@ -30,56 +31,32 @@ watch(
   },
 );
 
-const groupEntries = Object.entries(GenreGroups) as [
-  GenreGroup,
-  readonly Genre[],
-][];
+const selectedGroups = computed<Set<GenreGroup>>(
+  () => new Set(selected.value.map(getGenreGroup)),
+);
 
-const selectedGroups = computed<Set<GenreGroup>>(() => {
-  const groups = new Set<GenreGroup>();
-  for (const genre of selected.value) {
-    groups.add(getGenreGroup(genre));
-  }
-  return groups;
-});
+const disabledGroups = computed<Set<GenreGroup>>(() =>
+  selected.value.length >= MAX_GENRES
+    ? new Set(allGroups)
+    : new Set(selectedGroups.value),
+);
 
-function isGroupDisabled(group: GenreGroup): boolean {
-  if (selected.value.length >= MAX_GENRES) return true;
-  return selectedGroups.value.has(group);
-}
-
-function isGenreDisabled(genre: Genre): boolean {
-  if (selected.value.includes(genre)) return true;
-  return isGroupDisabled(getGenreGroup(genre));
-}
-
-function scrollToNextAvailableGroup(currentGroup: GenreGroup) {
-  if (!scrollContainer.value) return;
-  const groupKeys = groupEntries.map(([g]) => g);
-  const currentIdx = groupKeys.indexOf(currentGroup);
-
-  for (let i = 1; i < groupKeys.length; i++) {
-    const nextIdx = (currentIdx + i) % groupKeys.length;
-    const nextGroup = groupKeys[nextIdx]!;
-    if (!isGroupDisabled(nextGroup)) {
-      const el = scrollContainer.value.querySelector(
-        `[data-group="${nextGroup}"]`,
-      );
-      el?.scrollIntoView({ behavior: "smooth", inline: "center" });
-      return;
+const disabledGenreSet = computed<Set<Genre>>(() => {
+  const set = new Set<Genre>(selected.value);
+  for (const [group, genres] of Object.entries(GenreGroups)) {
+    if (disabledGroups.value.has(group as GenreGroup)) {
+      for (const g of genres) set.add(g as Genre);
     }
   }
-}
+  return set;
+});
 
 function selectGenre(genre: Genre) {
-  if (isGenreDisabled(genre)) return;
-  const group = getGenreGroup(genre);
   if (slotA.value === null) {
     slotA.value = genre;
   } else {
     slotB.value = genre;
   }
-  nextTick(() => scrollToNextAvailableGroup(group));
 }
 
 function removeSlotA() {
@@ -93,18 +70,6 @@ function removeSlotB() {
 function reroll() {
   slotA.value = null;
   slotB.value = null;
-}
-
-// Carousel scroll
-const scrollContainer = ref<HTMLElement | null>(null);
-
-function scrollCarousel(direction: "left" | "right") {
-  if (!scrollContainer.value) return;
-  const amount = 200;
-  scrollContainer.value.scrollBy({
-    left: direction === "left" ? -amount : amount,
-    behavior: "smooth",
-  });
 }
 </script>
 
@@ -120,63 +85,13 @@ function scrollCarousel(direction: "left" | "right") {
       </div>
     </div>
 
-    <!-- Custom carousel -->
-    <div class="flex items-center gap-1">
-      <!-- Left arrow -->
-      <button
-        class="shrink-0 w-8 h-8 pixel-border flex items-center justify-center hover:bg-primary-900 transition-colors"
-        @click="scrollCarousel('left')"
-      >
-        <UIcon name="i-pixelarticons-chevron-left" class="text-lg" />
-      </button>
-
-      <!-- Scrollable genre strip grouped by genre group -->
-      <div ref="scrollContainer" class="flex gap-4 overflow-x-hidden py-2 px-1">
-        <div
-          v-for="[group, genres] in groupEntries"
-          :key="group"
-          :data-group="group"
-          class="shrink-0 flex flex-col items-center gap-1 transition-opacity"
-          :class="{ 'opacity-30': isGroupDisabled(group) }"
-        >
-          <span
-            class="text-[0.4rem] tracking-widest uppercase"
-            :class="genreGroupConfig[group].icon"
-          >
-            {{ t(`ui.setting.groups.${group}`) }}
-          </span>
-          <div class="flex gap-2">
-            <button
-              v-for="genre in genres"
-              :key="genre"
-              class="shrink-0 w-24 flex flex-col items-center gap-1 transition-transform hover:-translate-y-1"
-              :class="{
-                'opacity-30 cursor-default': selected.includes(genre),
-                'cursor-pointer': !isGenreDisabled(genre),
-                'cursor-default': isGenreDisabled(genre),
-              }"
-              :disabled="isGenreDisabled(genre)"
-              @click="selectGenre(genre)"
-            >
-              <div class="pixel-border">
-                <GenreCartridge :genre="genre" :group="group" />
-              </div>
-              <span class="text-[0.4rem] text-center leading-tight px-1">
-                {{ t(`ui.setting.genres.${genre}`) }}
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right arrow -->
-      <button
-        class="shrink-0 w-8 h-8 pixel-border flex items-center justify-center hover:bg-primary-900 transition-colors"
-        @click="scrollCarousel('right')"
-      >
-        <UIcon name="i-pixelarticons-chevron-right" class="text-lg" />
-      </button>
-    </div>
+    <!-- Genre carousel -->
+    <GenreCarousel
+      :disabled-groups="disabledGroups"
+      :selected-genres="selected"
+      :disabled-genres="disabledGenreSet"
+      @select="selectGenre"
+    />
 
     <!-- Combo summary panel -->
     <div

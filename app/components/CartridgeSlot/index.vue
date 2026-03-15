@@ -41,7 +41,7 @@ const group = computed(() => (props.genre ? getGenreGroup(props.genre) : null));
         trailing-icon="i-pixelarticons-arrow-bar-up"
         :label="t('ui.setting.eject')"
         :ui="{
-          base: 'text-center tracking-widest w-full text-primary-800',
+          base: 'text-center tracking-widest w-full text-primary-800 hover:bg-primary-400',
           label: 'inline-block mx-auto',
         }"
         color="primary"

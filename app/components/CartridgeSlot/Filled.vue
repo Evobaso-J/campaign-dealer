@@ -24,9 +24,7 @@ const isInfoOpen = ref(false);
     <div
       class="bg-primary pixel-border border-primary-800 w-full max-w-48 p-1 relative pixel-shadow"
     >
-      <div
-        class="border-4 border-dashed [border-bottom-style:solid] pixel-border-thick border-primary-800"
-      >
+      <div class="border-4 pixel-border-thick border-primary-800">
         <GenreCartridge
           :genre="props.genre"
           :group="props.group"
@@ -73,12 +71,12 @@ const isInfoOpen = ref(false);
               />
             </div>
             <div class="space-y-1">
-              <p class="text-lg uppercase tracking-widest">
+              <p class="text-lg uppercase tracking-widest text-primary-800">
                 {{ t(`ui.setting.genres.${genre}`) }}
               </p>
               <span
                 class="text-sm uppercase tracking-widest"
-                :class="genreGroupConfig[group].icon"
+                :class="genreGroupConfig[group].text"
               >
                 [{{ t(`ui.setting.groups.${group}`) }}]
               </span>

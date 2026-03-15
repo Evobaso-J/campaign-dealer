@@ -14,6 +14,12 @@ export default defineAppConfig({
           outline: "pixel-border",
         },
       },
+      compoundVariants: [
+        {
+          variant: "outline" as const,
+          class: { leadingIcon: "text-primary-800" },
+        },
+      ],
     },
     badge: {
       slots: {
