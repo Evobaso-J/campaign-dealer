@@ -37,8 +37,7 @@ function selectGenre(genre: Genre) {
 </script>
 
 <template>
-  <div class="flex items-center gap-4">
-    <!-- Left arrow -->
+  <div class="flex items-center gap-4 w-fit">
     <UButton
       icon="i-pixelarticons-chevron-left"
       variant="outline"
@@ -48,7 +47,7 @@ function selectGenre(genre: Genre) {
       @click="scrollCarousel('left')"
     />
 
-    <div class="flex-1 min-w-0 py-2 px-1">
+    <div class="py-2 w-min">
       <div
         v-for="([group, genres], idx) in groupEntries"
         v-show="idx === currentGroupIndex"
@@ -77,18 +76,17 @@ function selectGenre(genre: Genre) {
             :disabled="disabledGenres.has(genre)"
             @click="selectGenre(genre)"
           >
-            <div
-              class="bg-primary pixel-border border-primary-800 w-full max-w-48 relative"
-            >
+            <div class="bg-primary pixel-border border-primary-800">
               <GenreCartridge
                 :genre="genre"
                 :group="group"
                 :ui="{
+                  base: 'size-24',
                   icon: 'text-5xl',
                 }"
               />
               <div
-                class="bg-primary-800 text-primary uppercase text-center flex items-center justify-center py-1"
+                class="bg-primary-800 text-primary uppercase text-center flex items-center justify-center py-1 max-w-24"
               >
                 <span class="text-[0.4rem] tracking-wide truncate px-2">
                   {{ t(`ui.setting.genres.${genre}`) }}
@@ -100,7 +98,6 @@ function selectGenre(genre: Genre) {
       </div>
     </div>
 
-    <!-- Right arrow -->
     <UButton
       icon="i-pixelarticons-chevron-right"
       variant="outline"

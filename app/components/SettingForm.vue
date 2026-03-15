@@ -75,7 +75,6 @@ function reroll() {
 
 <template>
   <div class="space-y-4">
-    <!-- Console dock panel -->
     <div
       class="relative pixel-border-thick pixel-shadow bg-primary pt-6 pb-4 px-4"
     >
@@ -85,8 +84,8 @@ function reroll() {
       </div>
     </div>
 
-    <!-- Genre carousel -->
     <GenreCarousel
+      class="mx-auto"
       :disabled-groups="disabledGroups"
       :selected-genres="selected"
       :disabled-genres="disabledGenreSet"
