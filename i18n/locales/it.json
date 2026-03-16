@@ -246,6 +246,9 @@
       "error": "Qualcosa è andato storto",
       "generating": "Generazione in corso..."
     },
+    "pdf": {
+      "download": "Scarica PDF"
+    },
     "wizard": {
       "back": "Indietro",
       "generate": "Genera Personaggi",

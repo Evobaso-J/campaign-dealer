@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useCharacterPdf } from "~/composables/useCharacterPdf";
+
 const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
+const { downloadPdf } = useCharacterPdf();
 
 const stepKeys = ["setting", "party", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
@@ -145,15 +148,31 @@ function isActive(key: StepKey) {
           />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
-        <div
-          v-else-if="store.characters.length"
-          class="terminal-panel text-center"
-        >
-          <span class="crt-badge mb-2">SYS_LOG</span>
-          <p class="text-neutral-500 text-xs leading-relaxed mt-2">
-            [CharacterGrid placeholder —
-            {{ store.characters.length }} characters generated]
-          </p>
+        <div v-else-if="store.characters.length" class="space-y-3">
+          <div
+            v-for="(char, i) in store.characters"
+            :key="i"
+            class="terminal-panel flex items-center justify-between gap-4"
+          >
+            <div class="min-w-0">
+              <p class="text-sm font-bold truncate">
+                {{ char.characterIdentity.name }}
+              </p>
+              <p class="text-xs text-neutral-500">
+                {{ t(`ui.selector.archetype.${char.archetype}`) }}
+                {{ t(`ui.selector.suit.${char.suit}`) }}
+              </p>
+            </div>
+            <UButton
+              size="xs"
+              variant="outline"
+              color="neutral"
+              icon="i-lucide-download"
+              @click="downloadPdf(char)"
+            >
+              {{ t("ui.pdf.download") }}
+            </UButton>
+          </div>
         </div>
       </div>
 

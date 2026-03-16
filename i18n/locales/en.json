@@ -246,6 +246,9 @@
       "error": "Something went wrong",
       "generating": "Generating..."
     },
+    "pdf": {
+      "download": "Download PDF"
+    },
     "wizard": {
       "back": "Back",
       "generate": "Generate Characters",
