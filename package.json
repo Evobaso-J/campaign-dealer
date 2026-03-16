@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@google/genai": "^1.45.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "4.4.0",
     "@nuxtjs/i18n": "10.2.3",

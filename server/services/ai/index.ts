@@ -1,5 +1,6 @@
 import { AIProviderError, ok, err, type Result } from "~~/shared/types/errors";
 import { AnthropicProvider } from "./anthropic";
+import { GeminiProvider } from "./gemini";
 import { OllamaProvider } from "./ollama";
 import { OpenAIProvider } from "./openai";
 import { AIProviderName } from "./types";
@@ -95,5 +96,6 @@ export function getAIProvider(): Result<AIProvider, AIProviderError> {
 
 /** Explicit provider registration — ensures factories are available at runtime. */
 registerProvider("anthropic", (config) => new AnthropicProvider(config));
+registerProvider("gemini", (config) => new GeminiProvider(config));
 registerProvider("ollama", (config) => new OllamaProvider(config));
 registerProvider("openai", (config) => new OpenAIProvider(config));

@@ -49,6 +49,7 @@ export interface AIProvider {
  */
 export const AIProviderName = {
   anthropic: "anthropic",
+  gemini: "gemini",
   ollama: "ollama",
   openai: "openai",
 } as const;
