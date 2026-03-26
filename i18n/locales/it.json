@@ -254,7 +254,7 @@
       "weapon": "Arma"
     },
     "pdf": {
-      "download": "Scarica PDF"
+      "open": "Apri PDF"
     },
     "wizard": {
       "back": "Indietro",

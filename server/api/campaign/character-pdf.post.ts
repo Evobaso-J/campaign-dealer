@@ -4,7 +4,6 @@ import { toHttpError } from "~~/server/utils/errors";
 import { characterPdfRequestSchema } from "~~/server/utils/validate";
 import { getTemplateBytes } from "~~/server/services/pdf/templateCache";
 import { overlayCharacterData } from "~~/server/services/pdf/characterSheetOverlay";
-import { createI18nResolver } from "~~/server/utils/i18n";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -13,7 +12,7 @@ export default defineEventHandler(async (event) => {
     toHttpError(new ValidationError("Validation failed", parsed.error.issues));
   }
 
-  const { character, language } = parsed.data;
+  const { character } = parsed.data;
 
   let templateBytes: Uint8Array;
   try {
@@ -24,18 +23,13 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const resolveI18n = await createI18nResolver(language);
-  const pdfBytes = await overlayCharacterData(
-    templateBytes!,
-    character,
-    resolveI18n,
-  );
+  const pdfBytes = await overlayCharacterData(templateBytes!, character);
 
   const filename = `character-sheet-${String(character.characterIdentity.name).toLowerCase().replace(/\s+/g, "-")}.pdf`;
 
   setResponseHeaders(event, {
     "Content-Type": "application/pdf",
-    "Content-Disposition": `attachment; filename="${filename}"`,
+    "Content-Disposition": `inline; filename="${filename}"`,
   });
 
   return pdfBytes;

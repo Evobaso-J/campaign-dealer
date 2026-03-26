@@ -7,7 +7,7 @@ import type {
   AIRuntimeConfig,
 } from "./types";
 
-const DEFAULT_MODEL = "llama3.1";
+const DEFAULT_MODEL = "llama3.2";
 const MODEL_TEMPERATURE = 1.5;
 
 export class OllamaProvider implements AIProvider {

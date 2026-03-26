@@ -4,7 +4,7 @@ import { useCharacterPdf } from "~/composables/useCharacterPdf";
 const { t } = useI18n();
 const store = useCampaignStore();
 const { generateCharacters, generateScript } = useCampaign();
-const { downloadPdf } = useCharacterPdf();
+const { openPdf } = useCharacterPdf();
 
 const stepKeys = ["setting", "party", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
@@ -117,7 +117,7 @@ function isActive(key: StepKey) {
     <UAlert
       v-if="store.errorMessage"
       color="error"
-      icon="i-lucide-circle-x"
+      icon="i-pixelarticons-close-box"
       :title="t('ui.status.error')"
       :description="store.errorMessage"
     />
@@ -143,7 +143,7 @@ function isActive(key: StepKey) {
         >
           <UIcon
             aria-hidden="true"
-            name="i-lucide-loader-circle"
+            name="i-pixelarticons-loader"
             class="animate-spin"
           />
           <span>{{ t("ui.status.generating") }}</span>
@@ -157,7 +157,7 @@ function isActive(key: StepKey) {
             :key="idx"
             :character="char"
             class="w-full sm:w-[calc(50%-0.75rem)]"
-            @download="downloadPdf(char)"
+            @open-pdf="openPdf(char)"
           />
         </div>
       </div>
@@ -171,7 +171,7 @@ function isActive(key: StepKey) {
         >
           <UIcon
             aria-hidden="true"
-            name="i-lucide-loader-circle"
+            name="i-pixelarticons-loader"
             class="animate-spin"
           />
           <span>{{ t("ui.status.generating") }}</span>

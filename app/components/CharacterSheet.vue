@@ -10,7 +10,7 @@ const props = defineProps<{
 
 defineEmits<{
   reroll: [];
-  download: [];
+  openPdf: [];
 }>();
 
 const identity = computed(() => props.character.characterIdentity);
@@ -48,14 +48,14 @@ function usesDisplay(skill: CharacterSkill) {
         </div>
         <div class="flex gap-1">
           <UButton
-            icon="i-lucide-download"
+            icon="i-pixelarticons-file-text"
             size="xs"
             variant="outline"
-            :aria-label="t('ui.pdf.download')"
-            @click="$emit('download')"
+            :aria-label="t('ui.pdf.open')"
+            @click="$emit('openPdf')"
           />
           <UButton
-            icon="i-lucide-refresh-cw"
+            icon="i-pixelarticons-reload"
             size="xs"
             variant="outline"
             :loading="loading"
@@ -93,7 +93,7 @@ function usesDisplay(skill: CharacterSkill) {
           class="flex flex-col gap-1.5 text-[0.625rem]"
         >
           <div v-if="identity.weapon" class="flex items-center gap-2">
-            <UIcon name="i-lucide-sword" class="size-3 shrink-0" />
+            <UIcon name="i-pixelarticons-sword" class="size-3 shrink-0" />
             <span class="font-bold">{{ identity.weapon.name }}</span>
             <span
               v-if="identity.weapon.concealed"
@@ -103,7 +103,7 @@ function usesDisplay(skill: CharacterSkill) {
             </span>
           </div>
           <div v-if="identity.instrument" class="flex items-center gap-2">
-            <UIcon name="i-lucide-music" class="size-3 shrink-0" />
+            <UIcon name="i-pixelarticons-music" class="size-3 shrink-0" />
             <span class="font-bold">{{ identity.instrument.name }}</span>
             <span
               v-if="identity.instrument.concealed"

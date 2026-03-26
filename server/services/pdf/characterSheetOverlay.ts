@@ -16,7 +16,7 @@ const PAGE_HEIGHT = 651.969;
 const FIELDS = {
   name: { vx: 636, vy: 385, size: 9, bold: true },
   pronouns: { vx: 536, vy: 432, size: 7 },
-  concept: { vx: 620, vy: 385, size: 7, maxWidth: 45 },
+  concept: { vx: 620, vy: 385, size: 7, maxWidth: 130, maxLines: 2 },
   weapon: { vx: 600, vy: 385, size: 8 },
   weaponConcealed: { vx: 585, vy: 433 },
   instrument: { vx: 568, vy: 385, size: 8 },
@@ -54,6 +54,7 @@ function wrapText(
   font: PDFFont,
   fontSize: number,
   maxWidth: number,
+  maxLines?: number,
 ): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
@@ -70,13 +71,12 @@ function wrapText(
     }
   }
   if (currentLine) lines.push(currentLine);
-  return lines;
+  return maxLines ? lines.slice(0, maxLines) : lines;
 }
 
 export async function overlayCharacterData(
   templateBytes: Uint8Array,
   character: CharacterSheet,
-  resolveI18n: (key: string) => string,
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.load(templateBytes);
   const page = doc.getPage(0);
@@ -110,6 +110,7 @@ export async function overlayCharacterData(
       font,
       FIELDS.concept.size,
       FIELDS.concept.maxWidth,
+      FIELDS.concept.maxLines,
     );
     for (let i = 0; i < conceptLines.length; i++) {
       drawRotatedText(

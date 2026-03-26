@@ -115,7 +115,6 @@ export const charactersRequestSchema: z.ZodType<{
 
 export const characterPdfRequestSchema = z.object({
   character: characterSheetSchema,
-  language: z.enum(Locales),
 });
 
 export const scriptRequestSchema: z.ZodType<{

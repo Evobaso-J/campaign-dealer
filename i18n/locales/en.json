@@ -254,7 +254,7 @@
       "weapon": "Weapon"
     },
     "pdf": {
-      "download": "Download PDF"
+      "open": "Open PDF"
     },
     "wizard": {
       "back": "Back",
