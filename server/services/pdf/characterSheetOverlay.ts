@@ -1,52 +1,96 @@
-import { PDFDocument, StandardFonts, rgb, degrees } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import type { PDFPage, PDFFont } from "pdf-lib";
-import type { CharacterSheet } from "~~/shared/types/character";
+import type {
+  CharacterArchetype,
+  CharacterSheet,
+  CharacterSuit,
+} from "~~/shared/types/character";
 
-/**
- * The template PDFs are 453.543 × 651.969 pts (portrait dimensions)
- * but all content is drawn rotated 90° counter-clockwise, making them
- * appear landscape when viewed. To overlay text that appears correctly
- * in the landscape view we draw with rotate=90° and transform visual
- * landscape coordinates (vx = left→right, vy = top→bottom) into raw
- * PDF coordinates: pdf_x = vy, pdf_y = pageHeight − vx.
- */
-const PAGE_HEIGHT = 651.969;
-
-/** Visual landscape coordinates for each fillable field. Shared across all three archetype templates. */
+/** Field positions in the landscape character sheet (origin = bottom-left). */
 const FIELDS = {
-  name: { vx: 636, vy: 385, size: 9, bold: true },
-  pronouns: { vx: 536, vy: 432, size: 7 },
-  concept: { vx: 620, vy: 385, size: 7, maxWidth: 130, maxLines: 2 },
-  weapon: { vx: 600, vy: 385, size: 8 },
-  weaponConcealed: { vx: 585, vy: 433 },
-  instrument: { vx: 568, vy: 385, size: 8 },
-  instrumentConcealed: { vx: 553, vy: 433 },
+  name: { x: 57, y: 164, size: 14, bold: true },
+  pronouns: { x: 284.5, y: 164, size: 7 },
+  concept: { x: 45, y: 125, size: 7, maxWidth: 260, maxLines: 6 },
+  weapon: { x: 50, y: 50, size: 8 },
+  weaponConcealed: { x: 148.5, y: 48, hw: 5, hh: 9 },
+  instrument: { x: 200, y: 50, size: 8 },
+  instrumentConcealed: { x: 294.5, y: 48, hw: 5, hh: 9 },
 } as const;
 
-function drawRotatedText(
-  page: PDFPage,
-  text: string,
-  vx: number,
-  vy: number,
-  opts: { size?: number; font: PDFFont; bold?: boolean },
-): void {
-  page.drawText(text, {
-    x: vy,
-    y: PAGE_HEIGHT - vx,
-    size: opts.size ?? 8,
-    font: opts.font,
-    color: rgb(0.1, 0.1, 0.1),
-    rotate: degrees(90),
-  });
-}
+/** Diamond position for each suit skill panel, per archetype template.
+ *  Panel order differs between templates; offsets are baked in. */
+const SUIT_SKILL_DIAMONDS: Record<
+  CharacterArchetype,
+  Record<CharacterSuit, { x: number; y: number }>
+> = {
+  jack: {
+    clubs: { x: 186, y: 397 },
+    hearts: { x: 186, y: 338 },
+    spades: { x: 186, y: 278 },
+  },
+  queen: {
+    hearts: { x: 193, y: 399 },
+    clubs: { x: 193, y: 340 },
+    spades: { x: 193, y: 280 },
+  },
+  king: {
+    clubs: { x: 190, y: 398 },
+    hearts: { x: 190, y: 339 },
+    spades: { x: 190, y: 279 },
+  },
+};
 
-function drawConcealedMark(
+/** Diamond positions for each archetype skill (right side, "Abilità" section).
+ *  All 7 skills are always drawn. Offsets baked in per archetype. */
+const ARCHETYPE_SKILL_DIAMONDS: Record<
+  CharacterArchetype,
+  Array<{ x: number; y: number }>
+> = {
+  jack: [
+    { x: 345, y: 381 },
+    { x: 345, y: 355 },
+    { x: 345, y: 323 },
+    { x: 345, y: 299 },
+    { x: 345, y: 269 },
+    { x: 345, y: 239 },
+    { x: 345, y: 209 },
+  ],
+  queen: [
+    { x: 350, y: 383 },
+    { x: 350, y: 357 },
+    { x: 350, y: 325 },
+    { x: 350, y: 301 },
+    { x: 350, y: 271 },
+    { x: 350, y: 241 },
+    { x: 350, y: 211 },
+  ],
+  king: [
+    { x: 350, y: 382 },
+    { x: 350, y: 356 },
+    { x: 350, y: 324 },
+    { x: 350, y: 300 },
+    { x: 350, y: 270 },
+    { x: 350, y: 240 },
+    { x: 350, y: 210 },
+  ],
+};
+
+const SKILL_DIAMOND_SIZE = { hw: 5, hh: 9 };
+
+const TEXT_COLOR = rgb(0.1, 0.1, 0.1);
+
+function drawDiamond(
   page: PDFPage,
-  vx: number,
-  vy: number,
-  font: PDFFont,
+  cx: number,
+  cy: number,
+  hw: number,
+  hh: number,
 ): void {
-  drawRotatedText(page, "X", vx, vy, { size: 9, font });
+  page.drawSvgPath(`M 0 ${hh} L ${hw} 0 L 0 ${-hh} L ${-hw} 0 Z`, {
+    x: cx,
+    y: cy,
+    color: TEXT_COLOR,
+  });
 }
 
 function wrapText(
@@ -87,20 +131,23 @@ export async function overlayCharacterData(
   const identity = character.characterIdentity;
 
   // Name
-  drawRotatedText(page, String(identity.name), FIELDS.name.vx, FIELDS.name.vy, {
+  page.drawText(String(identity.name), {
+    x: FIELDS.name.x,
+    y: FIELDS.name.y,
     size: FIELDS.name.size,
     font: fontBold,
+    color: TEXT_COLOR,
   });
 
   // Pronouns
   if (identity.pronouns) {
-    drawRotatedText(
-      page,
-      String(identity.pronouns),
-      FIELDS.pronouns.vx,
-      FIELDS.pronouns.vy,
-      { size: FIELDS.pronouns.size, font },
-    );
+    page.drawText(String(identity.pronouns), {
+      x: FIELDS.pronouns.x,
+      y: FIELDS.pronouns.y,
+      size: FIELDS.pronouns.size,
+      font,
+      color: TEXT_COLOR,
+    });
   }
 
   // Concept (with word wrapping)
@@ -113,53 +160,76 @@ export async function overlayCharacterData(
       FIELDS.concept.maxLines,
     );
     for (let i = 0; i < conceptLines.length; i++) {
-      drawRotatedText(
-        page,
-        conceptLines[i]!,
-        FIELDS.concept.vx + i * 10,
-        FIELDS.concept.vy,
-        { size: FIELDS.concept.size, font },
-      );
+      page.drawText(conceptLines[i]!, {
+        x: FIELDS.concept.x,
+        y: FIELDS.concept.y - i * 9,
+        size: FIELDS.concept.size,
+        font,
+        color: TEXT_COLOR,
+      });
     }
   }
 
   // Weapon
   if (identity.weapon) {
-    drawRotatedText(
-      page,
-      String(identity.weapon.name),
-      FIELDS.weapon.vx,
-      FIELDS.weapon.vy,
-      { size: FIELDS.weapon.size, font },
-    );
+    page.drawText(String(identity.weapon.name), {
+      x: FIELDS.weapon.x,
+      y: FIELDS.weapon.y,
+      size: FIELDS.weapon.size,
+      font,
+      color: TEXT_COLOR,
+    });
     if (identity.weapon.concealed) {
-      drawConcealedMark(
+      drawDiamond(
         page,
-        FIELDS.weaponConcealed.vx,
-        FIELDS.weaponConcealed.vy,
-        fontBold,
+        FIELDS.weaponConcealed.x,
+        FIELDS.weaponConcealed.y,
+        FIELDS.weaponConcealed.hw,
+        FIELDS.weaponConcealed.hh,
       );
     }
   }
 
   // Instrument
   if (identity.instrument) {
-    drawRotatedText(
-      page,
-      String(identity.instrument.name),
-      FIELDS.instrument.vx,
-      FIELDS.instrument.vy,
-      { size: FIELDS.instrument.size, font },
-    );
+    page.drawText(String(identity.instrument.name), {
+      x: FIELDS.instrument.x,
+      y: FIELDS.instrument.y,
+      size: FIELDS.instrument.size,
+      font,
+      color: TEXT_COLOR,
+    });
     if (identity.instrument.concealed) {
-      drawConcealedMark(
+      drawDiamond(
         page,
-        FIELDS.instrumentConcealed.vx,
-        FIELDS.instrumentConcealed.vy,
-        fontBold,
+        FIELDS.instrumentConcealed.x,
+        FIELDS.instrumentConcealed.y,
+        FIELDS.instrumentConcealed.hw,
+        FIELDS.instrumentConcealed.hh,
       );
     }
   }
+
+  // Archetype skill diamonds (all 7)
+  for (const pos of ARCHETYPE_SKILL_DIAMONDS[character.archetype]) {
+    drawDiamond(
+      page,
+      pos.x,
+      pos.y,
+      SKILL_DIAMOND_SIZE.hw,
+      SKILL_DIAMOND_SIZE.hh,
+    );
+  }
+
+  // Suit skill diamond
+  const suitPos = SUIT_SKILL_DIAMONDS[character.archetype][character.suit];
+  drawDiamond(
+    page,
+    suitPos.x,
+    suitPos.y,
+    SKILL_DIAMOND_SIZE.hw,
+    SKILL_DIAMOND_SIZE.hh,
+  );
 
   return doc.save();
 }
