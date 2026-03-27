@@ -61,8 +61,10 @@ const identity = computed(() => props.character.characterIdentity);
       </div>
 
       <!-- Right column: concept + items -->
-      <div class="relative min-w-0">
-        <div class="absolute inset-0 flex flex-col gap-3 overflow-y-auto">
+      <div
+        class="relative min-w-0 mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]"
+      >
+        <div class="absolute inset-0 flex flex-col gap-3 pb-6 overflow-y-auto">
           <p
             v-if="identity.concept"
             class="text-[0.625rem] italic leading-snug opacity-80"
