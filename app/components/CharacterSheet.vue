@@ -48,10 +48,10 @@ const identity = computed(() => props.character.characterIdentity);
           aria-hidden="true"
           class="absolute top-1 left-1.5 flex flex-col items-center leading-none z-10"
         >
-          <span class="text-xs font-bold">
+          <span class="text-sm font-bold">
             {{ archetypeInitials[character.archetype] }}
           </span>
-          <UIcon :name="suitIcons[character.suit]!" class="text-sm" />
+          <UIcon :name="suitIcons[character.suit]!" class="text-base" />
         </div>
         <NuxtImg
           :src="`/cards/${character.archetype}_${character.suit}.svg`"
@@ -81,24 +81,37 @@ const identity = computed(() => props.character.characterIdentity);
             v-if="identity.weapon || identity.instrument"
             class="flex flex-col gap-1.5 text-[0.625rem]"
           >
-            <div v-if="identity.weapon" class="flex items-center gap-2">
-              <UIcon name="i-pixelarticons-sword" class="size-3 shrink-0" />
-              <span class="font-bold">{{ identity.weapon.name }}</span>
+            <div
+              v-if="identity.weapon"
+              class="flex items-center justify-between gap-2"
+            >
+              <div class="flex items-center gap-2">
+                <UIcon name="i-pixelarticons-sword" class="size-3 shrink-0" />
+                <span class="font-bold">{{ identity.weapon.name }}</span>
+              </div>
               <span
                 v-if="identity.weapon.concealed"
-                class="crt-badge text-[0.5rem]"
+                class="text-[0.5rem] shrink-0"
               >
-                {{ t("ui.character.concealed") }}
+                [{{ t("ui.character.concealed") }}]
               </span>
             </div>
-            <div v-if="identity.instrument" class="flex items-center gap-2">
-              <UIcon name="i-pixelarticons-music" class="size-3 shrink-0" />
-              <span class="font-bold">{{ identity.instrument.name }}</span>
+            <div
+              v-if="identity.instrument"
+              class="flex items-center justify-between gap-2"
+            >
+              <div class="flex items-center gap-2">
+                <UIcon
+                  name="i-pixelarticons-briefcase"
+                  class="size-3 shrink-0"
+                />
+                <span class="font-bold">{{ identity.instrument.name }}</span>
+              </div>
               <span
                 v-if="identity.instrument.concealed"
-                class="crt-badge text-[0.5rem]"
+                class="text-[0.5rem] shrink-0"
               >
-                {{ t("ui.character.concealed") }}
+                [{{ t("ui.character.concealed") }}]
               </span>
             </div>
           </div>
