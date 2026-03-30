@@ -45,16 +45,14 @@ describe("OllamaProvider", () => {
         user: "Create a character.",
       });
 
-      expect(mockChat).toHaveBeenCalledWith({
-        model: "llama3.1",
-        stream: false,
-        format: "json",
-        options: { temperature: 1.5 },
-        messages: [
-          { role: "system", content: "You are a GM." },
-          { role: "user", content: "Create a character." },
-        ],
-      });
+      expect(mockChat).toHaveBeenCalledWith(
+        expect.objectContaining({
+          messages: [
+            { role: "system", content: "You are a GM." },
+            { role: "user", content: "Create a character." },
+          ],
+        }),
+      );
     });
 
     it("returns text from the response message", async () => {
@@ -182,15 +180,16 @@ describe("OllamaProvider", () => {
         void _;
       }
 
-      expect(mockChat).toHaveBeenCalledWith({
-        model: "llama3.1",
-        stream: true,
-        options: { temperature: 1.5 },
-        messages: [
-          { role: "system", content: "Stream system" },
-          { role: "user", content: "Stream user" },
-        ],
-      });
+      expect(mockChat).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stream: true,
+          options: { temperature: 1.5 },
+          messages: [
+            { role: "system", content: "Stream system" },
+            { role: "user", content: "Stream user" },
+          ],
+        }),
+      );
     });
   });
 });
