@@ -246,8 +246,19 @@
       "error": "Something went wrong",
       "generating": "Generating..."
     },
+    "character": {
+      "archetypeSkills": "Skills",
+      "concealed": "CONCEALED",
+      "instrument": "Instrument",
+      "skillUses": "Uses: {usesLeft} of {maxUses}",
+      "suitSkill": "Suit Skill",
+      "weapon": "Weapon"
+    },
+    "modal": {
+      "close": "Close"
+    },
     "pdf": {
-      "download": "Download PDF"
+      "open": "Open PDF"
     },
     "wizard": {
       "back": "Back",

@@ -34,15 +34,17 @@ export class ValidationError extends AppError {
 }
 
 export class AIProviderError extends AppError {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, 502, undefined, options);
+  constructor(message: string, cause?: unknown) {
+    const data = cause instanceof Error ? cause.message : undefined;
+    super(message, 502, data, { cause });
     this.name = "AIProviderError";
   }
 }
 
 export class AIResponseError extends AppError {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, 502, undefined, options);
+  constructor(message: string, cause?: unknown) {
+    const data = cause instanceof Error ? cause.message : undefined;
+    super(message, 502, data, { cause });
     this.name = "AIResponseError";
   }
 }

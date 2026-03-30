@@ -246,8 +246,19 @@
       "error": "Qualcosa è andato storto",
       "generating": "Generazione in corso..."
     },
+    "character": {
+      "archetypeSkills": "Abilità",
+      "concealed": "OCCULTATO",
+      "instrument": "Strumento",
+      "skillUses": "Usi: {usesLeft} di {maxUses}",
+      "suitSkill": "Abilità di Seme",
+      "weapon": "Arma"
+    },
+    "modal": {
+      "close": "Chiudi"
+    },
     "pdf": {
-      "download": "Scarica PDF"
+      "open": "Apri PDF"
     },
     "wizard": {
       "back": "Indietro",

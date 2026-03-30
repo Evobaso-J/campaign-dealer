@@ -1,22 +1,27 @@
 import type { CharacterSheet } from "~~/shared/types/character";
 
 export function useCharacterPdf() {
-  const { t } = useI18n();
-
-  async function downloadPdf(character: CharacterSheet): Promise<void> {
-    const { buildCharacterPdf } = await import("~/utils/pdfCharacterSheet");
-    const pdfBytes = await buildCharacterPdf(character, t);
-
-    const blob = new Blob([pdfBytes.buffer as ArrayBuffer], {
-      type: "application/pdf",
+  async function openPdf(character: CharacterSheet): Promise<void> {
+    const pdfBytes = await $fetch("/api/campaign/character-pdf", {
+      method: "POST",
+      body: { character },
+      responseType: "arrayBuffer",
     });
+
+    const blob = new Blob(
+      [new Uint8Array(pdfBytes as unknown as ArrayBuffer)],
+      { type: "application/pdf" },
+    );
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `character-sheet-${String(character.characterIdentity.name).toLowerCase().replace(/\s+/g, "-")}.pdf`;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
 
-  return { downloadPdf };
+  return { openPdf };
 }

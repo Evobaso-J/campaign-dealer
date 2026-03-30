@@ -35,7 +35,7 @@ type StatModifier = -2 | -1 | 0 | 1 | 2;
 
 interface CharacterItem {
   name: GeneratedText;
-  concealed: boolean;
+  concealed?: boolean;
 }
 interface CharacterIdentity {
   name: GeneratedText;

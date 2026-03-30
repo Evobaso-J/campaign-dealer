@@ -60,7 +60,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
       </UBadge>
       <UIcon
         v-if="store.isLoading"
-        name="i-lucide-loader-circle"
+        name="i-pixelarticons-loader"
         class="animate-spin"
       />
       <UButton
@@ -77,7 +77,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
     <UAlert
       v-if="store.errorMessage"
       color="error"
-      icon="i-lucide-circle-x"
+      icon="i-pixelarticons-close-box"
       :description="store.errorMessage"
     />
 
@@ -208,7 +208,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-anchor" class="text-neutral-500" />
+                <UIcon name="i-pixelarticons-anchor" class="text-neutral-500" />
                 <h3 class="font-semibold">Hook</h3>
               </div>
             </template>
@@ -221,7 +221,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-zap" class="text-neutral-500" />
+                <UIcon name="i-pixelarticons-zap" class="text-neutral-500" />
                 <h3 class="font-semibold">Central Tension</h3>
               </div>
             </template>
@@ -232,7 +232,10 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-book-open" class="text-neutral-500" />
+                <UIcon
+                  name="i-pixelarticons-book-open"
+                  class="text-neutral-500"
+                />
                 <h3 class="font-semibold">Plot</h3>
               </div>
             </template>
@@ -243,7 +246,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-crosshair" class="text-neutral-500" />
+                <UIcon name="i-pixelarticons-target" class="text-neutral-500" />
                 <h3 class="font-semibold">Antagonist Targets</h3>
               </div>
             </template>
@@ -285,7 +288,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-film" class="text-neutral-500" />
+                <UIcon name="i-pixelarticons-video" class="text-neutral-500" />
                 <h3 class="font-semibold">Scenes</h3>
                 <UBadge color="neutral" variant="subtle" size="sm">{{
                   store.gmScript.scenes.length
@@ -311,7 +314,10 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-shield-off" class="text-neutral-500" />
+                <UIcon
+                  name="i-pixelarticons-shield-off"
+                  class="text-neutral-500"
+                />
                 <h3 class="font-semibold">Weak Points</h3>
                 <UBadge color="neutral" variant="subtle" size="sm">{{
                   store.gmScript.weakPoints.length

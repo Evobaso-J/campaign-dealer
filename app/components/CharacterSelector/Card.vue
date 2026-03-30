@@ -63,7 +63,7 @@ const cardAriaLabel = computed(() => {
           aria-hidden="true"
           class="absolute inset-1 border border-dashed border-primary-700 flex flex-col items-center justify-center gap-2"
         >
-          <UIcon name="i-lucide-plus" class="text-primary-400 text-xl" />
+          <UIcon name="i-pixelarticons-plus" class="text-primary-400 text-xl" />
           <span
             class="text-[0.4rem] text-primary-400 tracking-widest animate-blinker motion-reduce:animate-none"
           >

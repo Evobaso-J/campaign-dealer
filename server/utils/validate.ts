@@ -29,7 +29,7 @@ const i18nKey = z.string() as unknown as z.ZodType<I18nKey>;
 
 const characterItemSchema = z.object({
   name: generatedText,
-  concealed: z.boolean(),
+  concealed: z.optional(z.boolean()),
 });
 
 export const characterIdentitySchema = z.object({
@@ -111,6 +111,10 @@ export const charactersRequestSchema: z.ZodType<{
     ),
   setting: settingSchema,
   language: z.enum(Locales),
+});
+
+export const characterPdfRequestSchema = z.object({
+  character: characterSheetSchema,
 });
 
 export const scriptRequestSchema: z.ZodType<{

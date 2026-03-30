@@ -18,7 +18,7 @@ export async function withAIProvider<T>(
   try {
     return ok(await fn());
   } catch (error) {
-    return err(new AIProviderError("AI service error", { cause: error }));
+    return err(new AIProviderError("AI service error", error));
   }
 }
 
@@ -31,9 +31,7 @@ export function parseAndValidateAIResponse<T>(
   if (!parsed.ok) {
     console.error(`[${label}] Failed to parse AI JSON. Raw text:`, raw);
     return err(
-      new AIResponseError("AI returned an unparseable response", {
-        cause: parsed.error,
-      }),
+      new AIResponseError("AI returned an unparseable response", parsed.error),
     );
   }
 
