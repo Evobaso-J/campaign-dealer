@@ -2,6 +2,7 @@
 import {
   archetypeInitials,
   type CharacterSheet,
+  type CharacterSkill,
 } from "~~/shared/types/character";
 
 const { t } = useI18n();
@@ -17,6 +18,20 @@ defineEmits<{
 }>();
 
 const identity = computed(() => props.character.characterIdentity);
+
+const selectedSkill = ref<CharacterSkill | null>(null);
+const isSuitSkill = ref(false);
+const isSkillModalOpen = computed({
+  get: () => selectedSkill.value !== null,
+  set: (v) => {
+    if (!v) selectedSkill.value = null;
+  },
+});
+
+function openSkill(skill: CharacterSkill, suit = false) {
+  selectedSkill.value = skill;
+  isSuitSkill.value = suit;
+}
 </script>
 
 <template>
@@ -124,17 +139,30 @@ const identity = computed(() => props.character.characterIdentity);
       class="p-3 border-t-2 border-primary-800 flex flex-col sm:flex-row sm:items-center gap-2"
     >
       <div class="flex flex-wrap gap-1.5 flex-1">
-        <span class="crt-badge text-[0.5rem] inline-flex items-center gap-1">
-          <UIcon :name="suitIcons[character.suit]" class="size-2.5" />
-          {{ t(character.suitSkill.name).toUpperCase() }}
-        </span>
-        <span
+        <UButton
+          variant="outline"
+          size="xs"
+          trailing-icon="i-pixelarticons-info-box"
+          :label="t(character.suitSkill.name).toUpperCase()"
+          :ui="{
+            label: 'text-[0.5rem] truncate',
+            trailingIcon: 'text-primary-800',
+          }"
+          @click="openSkill(character.suitSkill, true)"
+        />
+        <UButton
           v-for="(skill, idx) in character.archetypeSkills"
           :key="idx"
-          class="crt-badge text-[0.5rem]"
-        >
-          {{ t(skill.name).toUpperCase() }}
-        </span>
+          variant="outline"
+          size="xs"
+          trailing-icon="i-pixelarticons-info-box"
+          :label="t(skill.name).toUpperCase()"
+          :ui="{
+            label: 'text-[0.5rem] truncate',
+            trailingIcon: 'text-primary-800',
+          }"
+          @click="openSkill(skill)"
+        />
       </div>
       <div class="flex gap-1 shrink-0">
         <UButton
@@ -155,4 +183,54 @@ const identity = computed(() => props.character.characterIdentity);
       </div>
     </div>
   </div>
+
+  <UModal
+    v-model:open="isSkillModalOpen"
+    :ui="{
+      content: 'rounded-none border-8 border-primary-800 bg-primary ring-0',
+      overlay: 'bg-primary-900/50',
+    }"
+  >
+    <template #content>
+      <div v-if="selectedSkill" class="flex flex-col gap-4 p-4">
+        <div class="flex items-start justify-between">
+          <div class="space-y-1">
+            <p
+              class="text-lg uppercase tracking-widest text-primary-800 inline-flex items-center gap-2"
+            >
+              <UIcon
+                v-if="isSuitSkill"
+                :name="suitIcons[character.suit]"
+                class="size-5"
+              />
+              {{ t(selectedSkill.name) }}
+            </p>
+            <p
+              v-if="selectedSkill.uses"
+              class="text-xs uppercase tracking-widest text-primary-800/70"
+            >
+              [{{ selectedSkill.uses.usesLeft }}/{{
+                selectedSkill.uses.maxUses
+              }}]
+            </p>
+          </div>
+
+          <UButton
+            icon="i-pixelarticons-close"
+            size="xl"
+            :ui="{
+              base: 'p-0',
+              leadingIcon: 'text-primary-800',
+            }"
+            variant="ghost"
+            @click="isSkillModalOpen = false"
+          />
+        </div>
+
+        <p class="text-xs leading-relaxed text-primary-800">
+          {{ t(selectedSkill.description) }}
+        </p>
+      </div>
+    </template>
+  </UModal>
 </template>
