@@ -250,8 +250,12 @@
       "archetypeSkills": "Abilità",
       "concealed": "OCCULTATO",
       "instrument": "Strumento",
+      "skillUses": "Usi: {usesLeft} di {maxUses}",
       "suitSkill": "Abilità di Seme",
       "weapon": "Arma"
+    },
+    "modal": {
+      "close": "Chiudi"
     },
     "pdf": {
       "open": "Apri PDF"

@@ -22,8 +22,20 @@ const emit = defineEmits<Emits>();
 
 const identity = computed(() => props.character.characterIdentity);
 
-const selectedSkill = ref<CharacterSkill | null>(null);
-const isSuitSkill = ref(false);
+const equipmentItems = computed(() => {
+  const items = [];
+  if (identity.value.weapon)
+    items.push({ icon: "i-pixelarticons-sword", ...identity.value.weapon });
+  if (identity.value.instrument)
+    items.push({
+      icon: "i-pixelarticons-briefcase",
+      ...identity.value.instrument,
+    });
+  return items;
+});
+
+type SkillSelection = { skill: CharacterSkill; isSuit: boolean };
+const selectedSkill = ref<SkillSelection | null>(null);
 const isSkillModalOpen = computed({
   get: () => selectedSkill.value !== null,
   set: (v) => {
@@ -31,9 +43,8 @@ const isSkillModalOpen = computed({
   },
 });
 
-function openSkill(skill: CharacterSkill, suit = false) {
-  selectedSkill.value = skill;
-  isSuitSkill.value = suit;
+function openSkill(skill: CharacterSkill, isSuit = false) {
+  selectedSkill.value = { skill, isSuit };
 }
 </script>
 
@@ -45,9 +56,9 @@ function openSkill(skill: CharacterSkill, suit = false) {
   >
     <!-- Row 1: Name -->
     <div class="p-3 border-b-2 border-primary-800 flex items-baseline gap-2">
-      <h4 class="text-xs uppercase leading-tight font-bold truncate">
+      <span class="text-xs uppercase leading-tight font-bold truncate">
         {{ identity.name }}
-      </h4>
+      </span>
       <span
         v-if="identity.pronouns"
         class="text-[0.5rem] opacity-70 font-bold uppercase italic shrink-0"
@@ -73,7 +84,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
         </div>
         <NuxtImg
           :src="`/cards/${character.archetype}_${character.suit}.svg`"
-          :alt="`${t(`ui.selector.archetype.${character.archetype}`)}-${t(`ui.selector.suit.${character.suit}`)}`"
+          :alt="`${t(`ui.selector.archetype.${character.archetype}`)} ${t(`ui.selector.suit.${character.suit}`)}`"
           class="absolute top-0 left-0 w-full object-contain"
         />
       </div>
@@ -83,6 +94,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
         class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] w-2/3 min-h-0"
       >
         <div
+          tabindex="0"
           class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll hide-scrollbar"
         >
           <p
@@ -93,44 +105,25 @@ function openSkill(skill: CharacterSkill, suit = false) {
           </p>
 
           <hr
-            v-if="identity.concept && (identity.weapon || identity.instrument)"
+            v-if="identity.concept && equipmentItems.length"
+            aria-hidden="true"
             class="border-primary-800"
           />
 
           <div
-            v-if="identity.weapon || identity.instrument"
+            v-if="equipmentItems.length"
             class="flex flex-col gap-1.5 text-[0.625rem]"
           >
             <div
-              v-if="identity.weapon"
+              v-for="item in equipmentItems"
+              :key="item.icon"
               class="flex items-center justify-between gap-2"
             >
               <div class="flex items-center gap-2">
-                <UIcon name="i-pixelarticons-sword" class="size-3 shrink-0" />
-                <span class="font-bold">{{ identity.weapon.name }}</span>
+                <UIcon :name="item.icon" class="size-3 shrink-0" />
+                <span class="font-bold">{{ item.name }}</span>
               </div>
-              <span
-                v-if="identity.weapon.concealed"
-                class="text-[0.5rem] shrink-0"
-              >
-                [{{ t("ui.character.concealed") }}]
-              </span>
-            </div>
-            <div
-              v-if="identity.instrument"
-              class="flex items-center justify-between gap-2"
-            >
-              <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-pixelarticons-briefcase"
-                  class="size-3 shrink-0"
-                />
-                <span class="font-bold">{{ identity.instrument.name }}</span>
-              </div>
-              <span
-                v-if="identity.instrument.concealed"
-                class="text-[0.5rem] shrink-0"
-              >
+              <span v-if="item.concealed" class="text-[0.5rem] shrink-0">
                 [{{ t("ui.character.concealed") }}]
               </span>
             </div>
@@ -156,8 +149,8 @@ function openSkill(skill: CharacterSkill, suit = false) {
           @click="openSkill(character.suitSkill, true)"
         />
         <UButton
-          v-for="(skill, idx) in character.archetypeSkills"
-          :key="idx"
+          v-for="skill in character.archetypeSkills"
+          :key="skill.name"
           variant="outline"
           size="xs"
           trailing-icon="i-pixelarticons-info-box"
@@ -189,25 +182,31 @@ function openSkill(skill: CharacterSkill, suit = false) {
     }"
   >
     <template #content>
-      <div v-if="selectedSkill" class="flex flex-col gap-4 p-4">
+      <div class="flex flex-col gap-4 p-4">
         <div class="flex items-start justify-between">
           <div class="space-y-1">
             <p
               class="text-lg uppercase tracking-widest text-primary-800 inline-flex items-center gap-2"
             >
               <UIcon
-                v-if="isSuitSkill"
+                v-if="selectedSkill!.isSuit"
                 :name="suitIcons[character.suit]"
                 class="size-5"
               />
-              {{ t(selectedSkill.name) }}
+              {{ t(selectedSkill!.skill.name) }}
             </p>
             <p
-              v-if="selectedSkill.uses"
+              v-if="selectedSkill!.skill.uses"
+              :aria-label="
+                t('ui.character.skillUses', {
+                  usesLeft: selectedSkill!.skill.uses.usesLeft,
+                  maxUses: selectedSkill!.skill.uses.maxUses,
+                })
+              "
               class="text-xs uppercase tracking-widest text-primary-800/70"
             >
-              [{{ selectedSkill.uses.usesLeft }}/{{
-                selectedSkill.uses.maxUses
+              [{{ selectedSkill!.skill.uses.usesLeft }}/{{
+                selectedSkill!.skill.uses.maxUses
               }}]
             </p>
           </div>
@@ -215,6 +214,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
           <UButton
             icon="i-pixelarticons-close"
             size="xl"
+            :aria-label="t('ui.modal.close')"
             :ui="{
               base: 'p-0',
               leadingIcon: 'text-primary-800',
@@ -225,7 +225,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
         </div>
 
         <p class="text-xs leading-relaxed text-primary-800">
-          {{ t(selectedSkill.description) }}
+          {{ t(selectedSkill!.skill.description) }}
         </p>
       </div>
     </template>

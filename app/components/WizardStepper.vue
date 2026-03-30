@@ -156,7 +156,6 @@ function isActive(key: StepKey) {
             v-for="(char, idx) in store.characters"
             :key="idx"
             :character="char"
-            class="w-full sm:w-[calc(50%-0.75rem)]"
             @open-pdf="openPdf(char)"
           />
         </div>
