@@ -52,7 +52,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
   <div
     role="article"
     :aria-label="`${identity.name}, ${t(`ui.selector.archetype.${character.archetype}`)} ${t(`ui.selector.suit.${character.suit}`)}`"
-    class="pixel-border pixel-shadow bg-primary flex flex-col max-w-1/2"
+    class="pixel-border pixel-shadow bg-primary flex flex-col max-w-5/12"
   >
     <!-- Row 1: Name -->
     <div class="p-3 border-b-2 border-primary-800 flex items-baseline gap-2">
