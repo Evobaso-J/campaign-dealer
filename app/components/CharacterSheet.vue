@@ -143,7 +143,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
           trailing-icon="i-pixelarticons-info-box"
           :label="t(character.suitSkill.name).toUpperCase()"
           :ui="{
-            label: 'text-[0.5rem] truncate',
+            label: 'text-[0.5rem] truncate max-w-24',
             trailingIcon: 'text-primary-800',
           }"
           @click="openSkill(character.suitSkill, true)"
@@ -156,7 +156,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
           trailing-icon="i-pixelarticons-info-box"
           :label="t(skill.name).toUpperCase()"
           :ui="{
-            label: 'text-[0.5rem] truncate',
+            label: 'text-[0.5rem] truncate max-w-24',
             trailingIcon: 'text-primary-800',
           }"
           @click="openSkill(skill)"
@@ -182,31 +182,31 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
     }"
   >
     <template #content>
-      <div class="flex flex-col gap-4 p-4">
+      <div v-if="selectedSkill" class="flex flex-col gap-4 p-4">
         <div class="flex items-start justify-between">
           <div class="space-y-1">
             <p
               class="text-lg uppercase tracking-widest text-primary-800 inline-flex items-center gap-2"
             >
               <UIcon
-                v-if="selectedSkill!.isSuit"
+                v-if="selectedSkill.isSuit"
                 :name="suitIcons[character.suit]"
                 class="size-5"
               />
-              {{ t(selectedSkill!.skill.name) }}
+              {{ t(selectedSkill.skill.name) }}
             </p>
             <p
-              v-if="selectedSkill!.skill.uses"
+              v-if="selectedSkill.skill.uses"
               :aria-label="
                 t('ui.character.skillUses', {
-                  usesLeft: selectedSkill!.skill.uses.usesLeft,
-                  maxUses: selectedSkill!.skill.uses.maxUses,
+                  usesLeft: selectedSkill.skill.uses.usesLeft,
+                  maxUses: selectedSkill.skill.uses.maxUses,
                 })
               "
               class="text-xs uppercase tracking-widest text-primary-800/70"
             >
-              [{{ selectedSkill!.skill.uses.usesLeft }}/{{
-                selectedSkill!.skill.uses.maxUses
+              [{{ selectedSkill.skill.uses.usesLeft }}/{{
+                selectedSkill.skill.uses.maxUses
               }}]
             </p>
           </div>
@@ -225,7 +225,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
         </div>
 
         <p class="text-xs leading-relaxed text-primary-800">
-          {{ t(selectedSkill!.skill.description) }}
+          {{ t(selectedSkill.skill.description) }}
         </p>
       </div>
     </template>
