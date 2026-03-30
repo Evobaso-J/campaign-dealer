@@ -167,6 +167,13 @@
   }
 }
 
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Dither patterns — 1-bit checkerboard fills at 3 scales */
 /* Control color via --dither-color (falls back to primary-400) */
 @utility dither-sm {

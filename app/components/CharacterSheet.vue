@@ -7,15 +7,18 @@ import {
 
 const { t } = useI18n();
 
-const props = defineProps<{
+type Props = {
   character: CharacterSheet;
   loading?: boolean;
-}>();
+};
 
-defineEmits<{
-  reroll: [];
-  openPdf: [];
-}>();
+const props = defineProps<Props>();
+
+type Emits = {
+  (e: "openPdf"): void;
+};
+
+const emit = defineEmits<Emits>();
 
 const identity = computed(() => props.character.characterIdentity);
 
@@ -38,7 +41,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
   <div
     role="article"
     :aria-label="`${identity.name}, ${t(`ui.selector.archetype.${character.archetype}`)} ${t(`ui.selector.suit.${character.suit}`)}`"
-    class="pixel-border pixel-shadow bg-primary flex flex-col"
+    class="pixel-border pixel-shadow bg-primary flex flex-col max-w-1/2"
   >
     <!-- Row 1: Name -->
     <div class="p-3 border-b-2 border-primary-800 flex items-baseline gap-2">
@@ -54,14 +57,14 @@ function openSkill(skill: CharacterSkill, suit = false) {
     </div>
 
     <!-- Row 2: Avatar + Concept/Items -->
-    <div class="p-3 grid grid-cols-[1fr_2fr] gap-3">
+    <div class="p-3 flex gap-3 max-h-32">
       <!-- Left column: card avatar -->
       <div
-        class="aspect-square pixel-border-thick bg-primary-400 relative overflow-hidden"
+        class="aspect-square pixel-border-thick bg-primary-400 relative overflow-hidden shrink-0"
       >
         <div
           aria-hidden="true"
-          class="absolute top-1 left-1.5 flex flex-col items-center leading-none z-10"
+          class="absolute top-1 left-1.5 flex flex-col items-center leading-none z-10 aspect-square"
         >
           <span class="text-sm font-bold">
             {{ archetypeInitials[character.archetype] }}
@@ -71,15 +74,17 @@ function openSkill(skill: CharacterSkill, suit = false) {
         <NuxtImg
           :src="`/cards/${character.archetype}_${character.suit}.svg`"
           :alt="`${t(`ui.selector.archetype.${character.archetype}`)}-${t(`ui.selector.suit.${character.suit}`)}`"
-          class="absolute top-0 left-0 w-full object-cover object-top p-1"
+          class="absolute top-0 left-0 w-full object-contain"
         />
       </div>
 
       <!-- Right column: concept + items -->
       <div
-        class="relative min-w-0 mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]"
+        class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] w-2/3 min-h-0"
       >
-        <div class="absolute inset-0 flex flex-col gap-3 pb-6 overflow-y-auto">
+        <div
+          class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll hide-scrollbar"
+        >
           <p
             v-if="identity.concept"
             class="text-[0.625rem] italic leading-snug opacity-80"
@@ -170,15 +175,7 @@ function openSkill(skill: CharacterSkill, suit = false) {
           size="xs"
           variant="outline"
           :aria-label="t('ui.pdf.open')"
-          @click="$emit('openPdf')"
-        />
-        <UButton
-          icon="i-pixelarticons-reload"
-          size="xs"
-          variant="outline"
-          :loading="loading"
-          :aria-label="t('ui.wizard.reroll')"
-          @click="$emit('reroll')"
+          @click="emit('openPdf')"
         />
       </div>
     </div>
