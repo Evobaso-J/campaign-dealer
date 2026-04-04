@@ -19,9 +19,9 @@ User fills wizard
   → useCampaign.ts composable
       → POST /api/campaign/characters
           → Zod validation
-          → generateRandomDistinctCharacters() × N  [server/services/rpg/characterRandomizer.ts]
-          → getAIProvider().complete(buildCharacterPrompt(skeleton, setting)) × N
-          → merge skeleton + AI identity → CharacterSheet[]
+          → client-provided templates (archetype+suit combos)
+          → getAIProvider().complete(buildCharacterPrompt(template, setting)) × N
+          → merge template + AI identity → CharacterSheet[]
       → POST /api/campaign/script
           → Zod validation
           → getAIProvider().complete(buildScriptPrompt(characters, setting))
@@ -53,7 +53,7 @@ User fills wizard
 | "What are the component contracts for X?"        | 1. Read `brain/planning/PLANNING.md` 2. Find component in contracts table                                      |
 | "Fix a bug in character generation"              | 1. Read `brain/rpg/RPG.md` + `brain/ai/AI.md` 2. Check randomizer + prompt 3. Write regression test            |
 | "Add i18n strings"                               | 1. Read `brain/frontend/FRONTEND.md` 2. Add to both `en.json` and `it.json` 3. Natural case, CSS for uppercase |
-| "Write / fix a test"                             | 1. Read `brain/tooling/OPERATIONS.md` 2. Identify vitest project (unit/nuxt/server) 3. Run targeted            |
+| "Write / fix a test"                             | 1. Read `brain/tooling/TOOLING.md` 2. Identify vitest project (unit/nuxt/server) 3. Run targeted               |
 | "Add a new API endpoint"                         | 1. Read `brain/ai/AI.md` 2. Add Zod schema in `server/utils/validate.ts` 3. Follow existing patterns           |
 | "Change the theme / palette"                     | 1. Read `brain/frontend/FRONTEND.md` 2. Use `@theme` (Tailwind v4) 3. Respect 4-shade palette system           |
 | "Refactor / restructure code"                    | 1. Check `brain/tooling/decisions.jsonl` for past rationale 2. Preserve layer boundaries                       |

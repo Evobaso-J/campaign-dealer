@@ -19,23 +19,6 @@ server/  →  shared/types/  (auto-imported by Nuxt 4)
 app/  ✗→  server/          (never)
 ```
 
-## Key data flow
-
-```
-User fills wizard
-  → useCampaign.ts composable
-      → POST /api/campaign/characters
-          → Zod validation
-          → randomizer.generateRandomDistinctCharacters() × N
-          → aiProvider.complete(characterPrompt(template, setting)) × N
-          → merge template + AI identity → CharacterSheet[]
-      → POST /api/campaign/script
-          → Zod validation
-          → aiProvider.complete(scriptPrompt(characters, setting))
-          → GmScript
-  → Results written to Pinia store; components render reactively
-```
-
 ## Scaling conventions
 
 | Addition         | How to do it                                                                    | Files that change              |

@@ -26,7 +26,7 @@ brain/
 │   ├── phases.jsonl            ← Level 3: phase status (done/in_progress/todo)
 │   └── tasks.jsonl             ← Level 3: task-level status per phase
 └── tooling/
-    ├── OPERATIONS.md           ← Level 2: testing, CI, tooling
+    ├── TOOLING.md              ← Level 2: testing, CI, tooling
     ├── decisions.jsonl         ← Level 3: past tooling decisions
     └── failures.jsonl          ← Level 3: past failures and fixes
 ```

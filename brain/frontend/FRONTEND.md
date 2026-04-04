@@ -76,6 +76,6 @@ User interaction → composable method → $fetch to server API → store action
 - Use `@theme` for Tailwind v4 CSS variables, never `:root`.
 - Keep locale strings in natural case. Apply uppercase via CSS only.
 - Test component logic with `--project nuxt`, pure logic with `--project unit`.
-- Follow the 4-shade palette system. Check `DESIGN.md` for genre-specific palettes.
+- Follow the 4-shade palette system. See the genre palettes table above for visual character per genre.
 - When adding components, follow the existing pattern: props/emits for data flow, store for shared state.
 </instructions>

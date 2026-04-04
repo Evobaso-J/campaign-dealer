@@ -42,12 +42,12 @@ Prompt builders are pure functions: `(inputs) → { system: string, user: string
 
 ## Configuration
 
-| Env var               | Purpose                                           |
-| --------------------- | ------------------------------------------------- |
-| `NUXT_AI_PROVIDER`    | `"anthropic"`, `"gemini"`, `"ollama"`, `"openai"` |
-| `NUXT_AI_API_KEY`     | API key (required for commercial providers)       |
-| `NUXT_AI_OLLAMA_HOST` | Ollama host URL                                   |
-| `NUXT_AI_MODEL`       | Optional model override                           |
+| Env var               | `runtimeConfig` path | Purpose                                              |
+| --------------------- | -------------------- | ---------------------------------------------------- |
+| `NUXT_AI_PROVIDER`    | `ai.provider`        | `"anthropic"`, `"gemini"`, `"ollama"`, or `"openai"` |
+| `NUXT_AI_API_KEY`     | `ai.apiKey`          | API key (required for Anthropic, Gemini, OpenAI)     |
+| `NUXT_AI_OLLAMA_HOST` | `ai.ollamaHost`      | Ollama host URL (required for Ollama)                |
+| `NUXT_AI_MODEL`       | `ai.model`           | Optional; defaults per provider (see `.env.example`) |
 
 <instructions>
 - Never import a provider SDK outside its own implementation file.
