@@ -204,77 +204,136 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
         </UButton>
 
         <div v-if="store.gmScript" class="space-y-4">
-          <!-- Hook -->
+          <!-- Content Warnings -->
+          <UCard v-if="store.gmScript.contentWarnings?.length">
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon
+                  name="i-pixelarticons-warning-box"
+                  class="text-neutral-500"
+                />
+                <h3 class="font-semibold">Content Warnings</h3>
+              </div>
+            </template>
+            <div class="flex flex-wrap gap-2">
+              <UBadge
+                v-for="(warning, i) in store.gmScript.contentWarnings"
+                :key="i"
+                color="warning"
+                variant="subtle"
+              >
+                {{ warning }}
+              </UBadge>
+            </div>
+          </UCard>
+
+          <!-- Introduction -->
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-pixelarticons-anchor" class="text-neutral-500" />
-                <h3 class="font-semibold">Hook</h3>
+                <h3 class="font-semibold">Introduction</h3>
               </div>
             </template>
-            <p class="italic text-neutral-700 dark:text-neutral-300">
-              {{ store.gmScript.hook }}
+            <p
+              class="italic text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
+            >
+              {{ store.gmScript.introduction }}
             </p>
           </UCard>
 
-          <!-- Central Tension -->
-          <UCard>
-            <template #header>
-              <div class="flex items-center gap-2">
-                <UIcon name="i-pixelarticons-zap" class="text-neutral-500" />
-                <h3 class="font-semibold">Central Tension</h3>
-              </div>
-            </template>
-            <p>{{ store.gmScript.centralTension }}</p>
-          </UCard>
+          <!-- Weapons & Instruments -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    name="i-pixelarticons-sword"
+                    class="text-neutral-500"
+                  />
+                  <h3 class="font-semibold">Weapons</h3>
+                </div>
+              </template>
+              <p class="text-sm italic text-neutral-600 dark:text-neutral-400">
+                {{ store.gmScript.weapons.join(", ") }}
+              </p>
+            </UCard>
 
-          <!-- Plot -->
-          <UCard>
-            <template #header>
-              <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-pixelarticons-book-open"
-                  class="text-neutral-500"
-                />
-                <h3 class="font-semibold">Plot</h3>
-              </div>
-            </template>
-            <p>{{ store.gmScript.plot }}</p>
-          </UCard>
+            <UCard>
+              <template #header>
+                <div class="flex items-center gap-2">
+                  <UIcon
+                    name="i-pixelarticons-briefcase"
+                    class="text-neutral-500"
+                  />
+                  <h3 class="font-semibold">Instruments</h3>
+                </div>
+              </template>
+              <p class="text-sm italic text-neutral-600 dark:text-neutral-400">
+                {{ store.gmScript.instruments.join(", ") }}
+              </p>
+            </UCard>
+          </div>
 
           <!-- Targets -->
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-pixelarticons-target" class="text-neutral-500" />
-                <h3 class="font-semibold">Antagonist Targets</h3>
+                <h3 class="font-semibold">Targets</h3>
               </div>
             </template>
-            <div class="space-y-4">
+            <div class="space-y-6">
               <div v-for="(arch, idx) in targetArchetypes" :key="arch">
-                <div class="flex items-start gap-3">
-                  <UBadge
-                    color="neutral"
-                    variant="outline"
-                    class="capitalize shrink-0 mt-0.5"
-                    >{{ arch }}</UBadge
-                  >
-                  <div class="space-y-1 min-w-0">
-                    <p class="font-medium">
+                <div class="space-y-3">
+                  <div class="flex items-center gap-2">
+                    <UBadge
+                      color="neutral"
+                      variant="outline"
+                      class="capitalize shrink-0"
+                      >{{ arch }}</UBadge
+                    >
+                    <p class="font-semibold text-lg">
                       {{ store.gmScript.targets[arch].name }}
                     </p>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">
-                      {{ store.gmScript.targets[arch].description }}
-                    </p>
-                    <UBadge
-                      v-if="store.gmScript.targets[arch].fate"
-                      color="neutral"
-                      variant="subtle"
-                      size="sm"
-                      class="capitalize"
-                      >{{ store.gmScript.targets[arch].fate }}</UBadge
-                    >
                   </div>
+                  <p
+                    class="text-sm text-neutral-600 dark:text-neutral-400 whitespace-pre-line"
+                  >
+                    {{ store.gmScript.targets[arch].description }}
+                  </p>
+                  <div
+                    class="pl-4 border-l-2 border-neutral-200 dark:border-neutral-700 space-y-2"
+                  >
+                    <div>
+                      <p
+                        class="text-xs font-semibold uppercase text-neutral-500"
+                      >
+                        Locations
+                      </p>
+                      <p class="text-sm">
+                        {{ store.gmScript.targets[arch].locations }}
+                      </p>
+                    </div>
+                    <div>
+                      <p
+                        class="text-xs font-semibold uppercase text-neutral-500"
+                      >
+                        Defenses
+                      </p>
+                      <p class="text-sm">
+                        {{ store.gmScript.targets[arch].defenses }}
+                      </p>
+                    </div>
+                  </div>
+                  <UBadge
+                    v-if="store.gmScript.targets[arch].fate"
+                    color="neutral"
+                    variant="subtle"
+                    size="sm"
+                    class="capitalize"
+                    >{{ store.gmScript.targets[arch].fate }}</UBadge
+                  >
                 </div>
                 <USeparator
                   v-if="idx < targetArchetypes.length - 1"
@@ -284,61 +343,27 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
             </div>
           </UCard>
 
-          <!-- Scenes -->
+          <!-- Rumors -->
           <UCard>
             <template #header>
               <div class="flex items-center gap-2">
-                <UIcon name="i-pixelarticons-video" class="text-neutral-500" />
-                <h3 class="font-semibold">Scenes</h3>
+                <UIcon name="i-pixelarticons-chat" class="text-neutral-500" />
+                <h3 class="font-semibold">Rumors</h3>
                 <UBadge color="neutral" variant="subtle" size="sm">{{
-                  store.gmScript.scenes.length
+                  store.gmScript.rumors.length
                 }}</UBadge>
               </div>
             </template>
-            <ol class="space-y-3">
-              <li
-                v-for="(scene, i) in store.gmScript.scenes"
-                :key="i"
-                class="flex gap-3"
-              >
-                <span
-                  class="text-neutral-400 font-mono text-sm shrink-0 pt-px"
-                  >{{ String(i + 1).padStart(2, "0") }}</span
-                >
-                <p class="text-sm">{{ scene }}</p>
-              </li>
-            </ol>
-          </UCard>
-
-          <!-- Weak Points -->
-          <UCard>
-            <template #header>
-              <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-pixelarticons-shield-off"
-                  class="text-neutral-500"
-                />
-                <h3 class="font-semibold">Weak Points</h3>
-                <UBadge color="neutral" variant="subtle" size="sm">{{
-                  store.gmScript.weakPoints.length
-                }}</UBadge>
-              </div>
-            </template>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="space-y-3">
               <div
-                v-for="(wp, i) in store.gmScript.weakPoints"
+                v-for="(rumor, i) in store.gmScript.rumors"
                 :key="i"
-                class="flex gap-2 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
+                class="flex gap-3 p-2 rounded-md bg-neutral-50 dark:bg-neutral-800/50"
               >
                 <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5"
                   >{{ i + 1 }}.</span
                 >
-                <div class="min-w-0">
-                  <p class="text-sm font-medium">{{ wp.name }}</p>
-                  <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                    {{ wp.role }}
-                  </p>
-                </div>
+                <p class="text-sm italic">"{{ rumor }}"</p>
               </div>
             </div>
           </UCard>

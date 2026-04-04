@@ -132,6 +132,8 @@ const targetFateSchema = z.enum(["captured", "converted", "eliminated"]);
 const targetEnemySchema = z.object({
   name: generatedText,
   description: generatedText,
+  locations: generatedText,
+  defenses: generatedText,
   fate: targetFateSchema.optional(),
   notes: z.string().optional(),
 });
@@ -143,19 +145,14 @@ const targetArchetypes: [TargetArchetype, ...TargetArchetype[]] = [
 ];
 
 export const gameMasterScriptSchema: z.ZodType<GameMasterScript> = z.object({
-  hook: generatedText,
+  introduction: generatedText,
+  weapons: z.array(generatedText),
+  instruments: z.array(generatedText),
   targets: z.object(
     Object.fromEntries(targetArchetypes.map((k) => [k, targetEnemySchema])) as {
       [K in TargetArchetype]: typeof targetEnemySchema;
     },
   ),
-  weakPoints: z.array(
-    z.object({
-      name: generatedText,
-      role: generatedText,
-    }),
-  ),
-  scenes: z.array(generatedText),
-  centralTension: generatedText,
-  plot: generatedText,
+  rumors: z.array(generatedText),
+  contentWarnings: z.array(generatedText).optional(),
 });

@@ -153,8 +153,7 @@ describe.skipIf(!hasCredentials)(
       });
       const scriptElapsed = ((Date.now() - scriptStart) / 1000).toFixed(1);
       log(`    ✓ Done (${scriptElapsed}s)`);
-      log(`    Hook: ${String(gmScript.hook).slice(0, 80)}…`);
-      log(`    Central tension: ${gmScript.centralTension}\n`);
+      log(`    Introduction: ${String(gmScript.introduction).slice(0, 80)}…`);
     }, 300_000);
 
     afterAll(() => {
@@ -217,16 +216,14 @@ describe.skipIf(!hasCredentials)(
       lines.push(thinDivider);
       lines.push("");
 
-      lines.push(`  Hook:`);
-      lines.push(wrapText(gmScript.hook as string, 72, "    "));
+      lines.push(`  Introduction:`);
+      lines.push(wrapText(gmScript.introduction as string, 72, "    "));
       lines.push("");
 
-      lines.push(`  Central Tension:`);
-      lines.push(wrapText(gmScript.centralTension as string, 72, "    "));
-      lines.push("");
-
-      lines.push(`  Plot:`);
-      lines.push(wrapText(gmScript.plot as string, 72, "    "));
+      lines.push(`  Weapons: ${(gmScript.weapons as string[]).join(", ")}`);
+      lines.push(
+        `  Instruments: ${(gmScript.instruments as string[]).join(", ")}`,
+      );
       lines.push("");
 
       // Targets
@@ -240,6 +237,14 @@ describe.skipIf(!hasCredentials)(
           lines.push(`      Description:`);
           lines.push(wrapText(t.description, 72, "        "));
         }
+        if (t.locations) {
+          lines.push(`      Locations:`);
+          lines.push(wrapText(t.locations, 72, "        "));
+        }
+        if (t.defenses) {
+          lines.push(`      Defenses:`);
+          lines.push(wrapText(t.defenses, 72, "        "));
+        }
         if (t.fate) {
           lines.push(`      Fate:`);
           lines.push(wrapText(t.fate, 72, "        "));
@@ -251,24 +256,22 @@ describe.skipIf(!hasCredentials)(
       }
       lines.push("");
 
-      // Weak Points
-      const weakPoints = gmScript.weakPoints;
-      lines.push(`  Weak Points (${weakPoints.length}):`);
-      for (const [j, wp] of weakPoints.entries()) {
-        lines.push(
-          `    ${String(j + 1).padStart(2, " ")}. ${wp.name} — ${wp.role}`,
-        );
-      }
-      lines.push("");
-
-      // Scenes
-      const scenes = gmScript.scenes;
-      lines.push(`  Scenes (${scenes.length}):`);
-      for (const [j, scene] of scenes.entries()) {
+      // Rumors
+      const rumors = gmScript.rumors;
+      lines.push(`  Rumors (${rumors.length}):`);
+      for (const [j, rumor] of rumors.entries()) {
         const prefix = `    ${String(j + 1).padStart(2, " ")}. `;
         const continuation = " ".repeat(prefix.length);
-        const wrapped = wrapText(scene, 72, continuation);
+        const wrapped = wrapText(rumor, 72, continuation);
         lines.push(prefix + wrapped.slice(continuation.length));
+      }
+
+      // Content Warnings
+      if (gmScript.contentWarnings?.length) {
+        lines.push("");
+        lines.push(
+          `  Content Warnings: ${(gmScript.contentWarnings as string[]).join(", ")}`,
+        );
       }
 
       lines.push("");
@@ -302,8 +305,13 @@ describe.skipIf(!hasCredentials)(
       expect(new Set(keys).size).toBe(TEMPLATES.length);
     });
 
-    it("GM script has a hook", () => {
-      expect(gmScript.hook).toBeTruthy();
+    it("GM script has an introduction", () => {
+      expect(gmScript.introduction).toBeTruthy();
+    });
+
+    it("GM script has weapons and instruments", () => {
+      expect(gmScript.weapons.length).toBeGreaterThanOrEqual(1);
+      expect(gmScript.instruments.length).toBeGreaterThanOrEqual(1);
     });
 
     it("GM script has all three targets with descriptions", () => {
@@ -319,20 +327,19 @@ describe.skipIf(!hasCredentials)(
       expect(targets.jack.description).toBeTruthy();
     });
 
-    it("GM script has 10 weak points", () => {
-      const weakPoints = gmScript.weakPoints;
-      expect(weakPoints).toHaveLength(10);
-      for (const wp of weakPoints) {
-        expect(wp.name).toBeTruthy();
-        expect(wp.role).toBeTruthy();
+    it("GM script has all three targets with locations and defenses", () => {
+      for (const role of ["king", "queen", "jack"] as const) {
+        const t = gmScript.targets[role];
+        expect(t.locations).toBeTruthy();
+        expect(t.defenses).toBeTruthy();
       }
     });
 
-    it("GM script has scenes, central tension, and plot", () => {
-      expect(gmScript.scenes).toBeDefined();
-      expect(gmScript.scenes.length).toBeGreaterThanOrEqual(1);
-      expect(gmScript.centralTension).toBeTruthy();
-      expect(gmScript.plot).toBeTruthy();
+    it("GM script has rumors", () => {
+      expect(gmScript.rumors.length).toBeGreaterThanOrEqual(1);
+      for (const rumor of gmScript.rumors) {
+        expect(rumor).toBeTruthy();
+      }
     });
   },
 );

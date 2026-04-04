@@ -14,6 +14,8 @@ export type TargetFate = "captured" | "converted" | "eliminated";
 export interface TargetEnemy {
   name: GeneratedText;
   description: GeneratedText;
+  locations: GeneratedText;
+  defenses: GeneratedText;
   fate?: TargetFate;
   notes?: string;
 }
@@ -55,20 +57,18 @@ export type GenreGroup = keyof typeof GenreGroups;
 export type Genre = (typeof GenreGroups)[GenreGroup][number];
 
 export type GameMasterScript = {
-  hook: GeneratedText;
+  /** Multi-paragraph, in-world first-person narrative. The GM reads it aloud to set the scene. */
+  introduction: GeneratedText;
+  /** Setting-appropriate weapon names available to the characters. */
+  weapons: GeneratedText[];
+  /** Setting-appropriate tool and instrument names available to the characters. */
+  instruments: GeneratedText[];
   /** One antagonist Target per archetype (king, queen, jack). */
   targets: { [key in TargetArchetype]: TargetEnemy };
-  /**
-   * A list of 10 weak points for the antagonist Targets, with a brief description of each.
-   * The game master can use these to create tension and drama in the story, as the players discover and exploit the targets' weaknesses.
-   */
-  weakPoints: {
-    name: GeneratedText;
-    role: GeneratedText;
-  }[];
-  scenes: GeneratedText[];
-  centralTension: GeneratedText;
-  plot: GeneratedText;
+  /** In-world dialogue quotes — rumors and leads about the faction's vulnerabilities. */
+  rumors: GeneratedText[];
+  /** Optional sensitive content tags (e.g. death/violence, horror, substance use). */
+  contentWarnings?: GeneratedText[];
 };
 
 export interface Campaign {
