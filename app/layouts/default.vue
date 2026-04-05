@@ -10,7 +10,7 @@
         <ThemePicker />
       </header>
 
-      <main class="h-full container mx-auto overflow-y-scroll">
+      <main class="flex-1 min-h-0 flex flex-col container mx-auto p-8">
         <slot />
       </main>
 

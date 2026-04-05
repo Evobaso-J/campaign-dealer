@@ -272,7 +272,7 @@
       "step3Title": "Your characters",
       "step4Title": "Campaign script"
     },
-    "script": {
+    "gmScript": {
       "contentWarnings": "Content Warnings",
       "introduction": "Introduction",
       "weapons": "Weapons",

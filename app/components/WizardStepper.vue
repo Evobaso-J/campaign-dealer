@@ -25,11 +25,8 @@ const isLastStep = computed(
 );
 
 const canGoNext = computed(() => {
-  if (store.isLoading) return false;
   if (currentStep.value === "setting") return store.campaignSetting.length > 0;
   if (currentStep.value === "party") return store.selectedTemplates.length > 0;
-  if (currentStep.value === "characters")
-    return store.characters.length > 0 && !store.isLoading;
   return !isLastStep.value;
 });
 
@@ -52,15 +49,15 @@ function prevStepKey(): StepKey {
   return stepKeys[currentStepIndex.value - 1]!;
 }
 
-async function goNext() {
+function goNext() {
   if (!canGoNext.value) return;
 
   if (currentStep.value === "party" && !hasCharacters.value) {
-    await generateCharacters(store.selectedTemplates, store.campaignSetting);
+    generateCharacters(store.selectedTemplates, store.campaignSetting);
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {
-    await generateScript();
+    generateScript();
   }
 
   currentStep.value = nextStepKey();
@@ -86,7 +83,7 @@ function isActive(key: StepKey) {
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="flex flex-col gap-6 flex-1 min-h-0">
     <!-- Step indicator -->
     <div class="space-y-4">
       <div class="flex items-center justify-center gap-2">
@@ -106,7 +103,7 @@ function isActive(key: StepKey) {
           @click="currentStep = key"
         />
       </div>
-      <h2 class="text-center">
+      <h2 v-if="currentStep !== 'script'" class="text-center">
         <span class="text-xs tracking-widest">
           {{ t(steps[currentStep].titleKey).toUpperCase() }}
         </span>
@@ -123,7 +120,7 @@ function isActive(key: StepKey) {
     />
 
     <!-- Step content -->
-    <div>
+    <div class="flex-1 min-h-0 flex flex-col">
       <!-- Setting -->
       <div v-if="currentStep === 'setting'">
         <SettingForm v-model="store.campaignSetting" />
@@ -137,19 +134,7 @@ function isActive(key: StepKey) {
       <!-- Characters (placeholder for CharacterGrid) -->
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
-          v-if="store.generationStatus === 'generating-characters'"
-          role="status"
-          class="terminal-panel flex items-center gap-2 text-neutral-500"
-        >
-          <UIcon
-            aria-hidden="true"
-            name="i-pixelarticons-loader"
-            class="animate-spin"
-          />
-          <span>{{ t("ui.status.generating") }}</span>
-        </div>
-        <div
-          v-else-if="store.characters.length"
+          v-if="store.characters.length"
           class="flex flex-wrap justify-center gap-6"
         >
           <CharacterSheet
@@ -162,42 +147,25 @@ function isActive(key: StepKey) {
       </div>
 
       <!-- GM Script -->
-      <div v-else-if="currentStep === 'script'" class="space-y-4">
-        <div
-          v-if="store.generationStatus === 'generating-script'"
-          role="status"
-          class="terminal-panel flex items-center gap-2 text-neutral-500"
-        >
-          <UIcon
-            aria-hidden="true"
-            name="i-pixelarticons-loader"
-            class="animate-spin"
-          />
-          <span>{{ t("ui.status.generating") }}</span>
-        </div>
-        <GmScript v-else-if="store.gmScript" />
-      </div>
+      <ScriptStep
+        v-else-if="currentStep === 'script'"
+        class="flex flex-col flex-1 min-h-0"
+      />
     </div>
 
     <!-- Navigation buttons -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between shrink-0">
       <UButton
         v-if="!isFirstStep"
         variant="outline"
         color="neutral"
-        :disabled="store.isLoading"
         @click="goBack"
       >
         {{ t("ui.wizard.back") }}
       </UButton>
       <div v-else />
 
-      <UButton
-        v-if="!isLastStep"
-        :disabled="!canGoNext"
-        :loading="store.isLoading"
-        @click="goNext"
-      >
+      <UButton v-if="!isLastStep" :disabled="!canGoNext" @click="goNext">
         {{ nextButtonLabel }}
       </UButton>
     </div>

@@ -272,7 +272,7 @@
       "step3Title": "I tuoi personaggi",
       "step4Title": "Copione della campagna"
     },
-    "script": {
+    "gmScript": {
       "contentWarnings": "Avvertenze sui Contenuti",
       "introduction": "Introduzione",
       "weapons": "Armi",

@@ -13,151 +13,134 @@ const targetArchetypes = [
 </script>
 
 <template>
-  <div class="space-y-4">
-    <!-- Content Warnings -->
-    <div
-      v-if="gmScript.contentWarnings?.length"
-      class="pixel-border pixel-shadow bg-primary flex flex-col"
-    >
-      <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-        <UIcon name="i-pixelarticons-warning-box" class="shrink-0" />
-        <span class="text-xs uppercase font-bold">{{
-          t("ui.gmScript.contentWarnings")
-        }}</span>
-      </div>
-      <div class="p-3 flex flex-wrap gap-2">
-        <span
+  <div class="flex flex-col gap-4 min-h-0">
+    <!-- Title + Content Warnings -->
+    <div class="flex items-center gap-3">
+      <h2 class="text-lg uppercase font-bold truncate">
+        {{ gmScript.name }}
+      </h2>
+      <div
+        v-if="gmScript.contentWarnings?.length"
+        class="flex flex-wrap gap-1 shrink-0"
+      >
+        <AdvisoryBadge
           v-for="warning in gmScript.contentWarnings"
           :key="warning"
-          class="crt-badge"
-        >
-          {{ t(`ui.gmScript.contentWarning.${warning}`) }}
-        </span>
+          :warning="warning"
+        />
       </div>
     </div>
 
-    <!-- Introduction -->
-    <div class="pixel-border pixel-shadow bg-primary flex flex-col">
-      <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-        <UIcon name="i-pixelarticons-anchor" class="shrink-0" />
-        <span class="text-xs uppercase font-bold">{{
-          t("ui.gmScript.introduction")
-        }}</span>
-      </div>
-      <div class="p-3">
-        <p class="text-sm italic whitespace-pre-line leading-relaxed">
+    <!-- Scrollable script container -->
+    <div
+      class="pixel-border pixel-shadow bg-primary flex-1 min-h-0 overflow-y-scroll hide-scrollbar p-6 space-y-4"
+    >
+      <!-- Introduction -->
+      <div>
+        <div class="flex items-center gap-2 pb-3 border-b-2 border-primary-800">
+          <UIcon name="i-pixelarticons-anchor" class="shrink-0" />
+          <span class="text-xs uppercase font-bold">{{
+            t("ui.gmScript.introduction")
+          }}</span>
+        </div>
+        <p class="pt-3 text-sm italic whitespace-pre-line leading-relaxed">
           {{ gmScript.introduction }}
         </p>
       </div>
-    </div>
 
-    <!-- Weapons & Instruments -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="pixel-border pixel-shadow bg-primary flex flex-col">
-        <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-          <UIcon name="i-pixelarticons-sword" class="shrink-0" />
-          <span class="text-xs uppercase font-bold">{{
-            t("ui.gmScript.weapons")
-          }}</span>
-        </div>
-        <div class="p-3">
-          <p class="text-xs italic leading-relaxed">
+      <!-- Weapons & Instruments -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div
+            class="flex items-center gap-2 pb-3 border-b-2 border-primary-800"
+          >
+            <UIcon name="i-pixelarticons-sword" class="shrink-0" />
+            <span class="text-xs uppercase font-bold">{{
+              t("ui.gmScript.weapons")
+            }}</span>
+          </div>
+          <p class="pt-3 text-xs italic leading-relaxed">
             {{ gmScript.weapons.join(", ") }}
           </p>
         </div>
-      </div>
-      <div class="pixel-border pixel-shadow bg-primary flex flex-col">
-        <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-          <UIcon name="i-pixelarticons-briefcase" class="shrink-0" />
-          <span class="text-xs uppercase font-bold">{{
-            t("ui.gmScript.instruments")
-          }}</span>
-        </div>
-        <div class="p-3">
-          <p class="text-xs italic leading-relaxed">
+        <div>
+          <div
+            class="flex items-center gap-2 pb-3 border-b-2 border-primary-800"
+          >
+            <UIcon name="i-pixelarticons-briefcase" class="shrink-0" />
+            <span class="text-xs uppercase font-bold">{{
+              t("ui.gmScript.instruments")
+            }}</span>
+          </div>
+          <p class="pt-3 text-xs italic leading-relaxed">
             {{ gmScript.instruments.join(", ") }}
           </p>
         </div>
       </div>
-    </div>
 
-    <!-- Targets -->
-    <div class="pixel-border pixel-shadow bg-primary flex flex-col">
-      <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-        <UIcon name="i-pixelarticons-target" class="shrink-0" />
-        <span class="text-xs uppercase font-bold">{{
-          t("ui.gmScript.targets")
-        }}</span>
-      </div>
+      <!-- Targets -->
       <div>
-        <div
-          v-for="(arch, idx) in targetArchetypes"
-          :key="arch"
-          class="p-3 space-y-2"
-          :class="{ 'border-t-2 border-primary-800': idx > 0 }"
-        >
-          <div class="flex items-center gap-2">
-            <span class="crt-badge capitalize">{{
-              t(`ui.selector.archetype.${arch}`)
-            }}</span>
-            <span class="font-bold text-sm">{{
-              gmScript.targets[arch].name
-            }}</span>
-          </div>
-          <p class="text-xs leading-relaxed whitespace-pre-line">
-            {{ gmScript.targets[arch].description }}
-          </p>
-          <div class="pl-3 border-l-2 border-primary-800 space-y-2">
-            <div>
-              <p class="text-xs uppercase font-bold text-primary-600">
-                {{ t("ui.gmScript.locations") }}
-              </p>
-              <p class="text-xs leading-relaxed">
-                {{ gmScript.targets[arch].locations }}
-              </p>
+        <div class="flex items-center gap-2 pb-3 border-b-2 border-primary-800">
+          <UIcon name="i-pixelarticons-target" class="shrink-0" />
+          <span class="text-xs uppercase font-bold">{{
+            t("ui.gmScript.targets")
+          }}</span>
+        </div>
+        <div v-for="(arch, idx) in targetArchetypes" :key="arch">
+          <USeparator v-if="idx > 0" />
+          <div class="py-3 space-y-2">
+            <div class="flex items-center gap-2">
+              <UBadge
+                color="neutral"
+                variant="outline"
+                class="capitalize shrink-0"
+              >
+                {{ t(`ui.selector.archetype.${arch}`) }}
+              </UBadge>
+              <span class="font-bold text-sm">{{
+                gmScript.targets[arch].name
+              }}</span>
             </div>
-            <div>
-              <p class="text-xs uppercase font-bold text-primary-600">
-                {{ t("ui.gmScript.defenses") }}
-              </p>
-              <p class="text-xs leading-relaxed">
-                {{ gmScript.targets[arch].defenses }}
-              </p>
+            <p class="text-xs leading-relaxed whitespace-pre-line">
+              {{ gmScript.targets[arch].description }}
+            </p>
+            <div class="pl-3 border-l-2 border-primary-800 space-y-2">
+              <div>
+                <p class="text-xs uppercase font-bold text-primary-600">
+                  {{ t("ui.gmScript.locations") }}
+                </p>
+                <p class="text-xs leading-relaxed">
+                  {{ gmScript.targets[arch].locations }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs uppercase font-bold text-primary-600">
+                  {{ t("ui.gmScript.defenses") }}
+                </p>
+                <p class="text-xs leading-relaxed">
+                  {{ gmScript.targets[arch].defenses }}
+                </p>
+              </div>
             </div>
-          </div>
-          <div
-            v-if="gmScript.targets[arch].fate"
-            class="flex items-center gap-1"
-          >
-            <span class="text-xs uppercase font-bold text-primary-600"
-              >{{ t("ui.gmScript.fate") }}:</span
-            >
-            <span class="crt-badge">{{
-              t(`ui.gmScript.targetFate.${gmScript.targets[arch].fate}`)
-            }}</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Rumors -->
-    <div class="pixel-border pixel-shadow bg-primary flex flex-col">
-      <div class="p-3 border-b-2 border-primary-800 flex items-center gap-2">
-        <UIcon name="i-pixelarticons-chat" class="shrink-0" />
-        <span class="text-xs uppercase font-bold">{{
-          t("ui.gmScript.rumors")
-        }}</span>
-        <span class="crt-badge ml-auto">{{ gmScript.rumors.length }}</span>
-      </div>
+      <!-- Rumors -->
       <div>
-        <p
-          v-for="(rumor, i) in gmScript.rumors"
-          :key="i"
-          class="p-3 text-xs italic leading-relaxed"
-          :class="{ 'border-t-2 border-primary-800': i > 0 }"
-        >
-          "{{ rumor }}"
-        </p>
+        <div class="flex items-center gap-2 pb-3 border-b-2 border-primary-800">
+          <UIcon name="i-pixelarticons-chat" class="shrink-0" />
+          <span class="text-xs uppercase font-bold">{{
+            t("ui.gmScript.rumors")
+          }}</span>
+          <UBadge color="neutral" variant="subtle" size="sm" class="ml-auto">
+            {{ gmScript.rumors.length }}
+          </UBadge>
+        </div>
+        <div v-for="(rumor, i) in gmScript.rumors" :key="i">
+          <USeparator v-if="i > 0" />
+          <p class="py-3 text-xs italic leading-relaxed">"{{ rumor }}"</p>
+        </div>
       </div>
     </div>
   </div>
