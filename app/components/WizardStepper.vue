@@ -9,13 +9,6 @@ const { openPdf } = useCharacterPdf();
 const stepKeys = ["setting", "party", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
 
-const steps: Record<StepKey, { titleKey: string }> = {
-  setting: { titleKey: "ui.wizard.step1Title" },
-  party: { titleKey: "ui.wizard.step2Title" },
-  characters: { titleKey: "ui.wizard.step3Title" },
-  script: { titleKey: "ui.wizard.step4Title" },
-};
-
 const currentStep = ref<StepKey>("setting");
 
 const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
@@ -68,48 +61,10 @@ function goBack() {
     currentStep.value = prevStepKey();
   }
 }
-
-function isCompleted(key: StepKey) {
-  if (key === "party") return store.selectedTemplates.length > 0;
-  if (key === "setting") return store.campaignSetting.length > 0;
-  if (key === "characters") return hasCharacters.value;
-  if (key === "script") return hasScript.value;
-  return stepKeys.indexOf(key) < currentStepIndex.value;
-}
-
-function isActive(key: StepKey) {
-  return key === currentStep.value;
-}
 </script>
 
 <template>
   <div class="flex flex-col gap-6 flex-1 min-h-0">
-    <!-- Step indicator -->
-    <div class="space-y-4">
-      <div class="flex items-center justify-center gap-2">
-        <button
-          v-for="key in stepKeys"
-          :key="key"
-          class="w-14 h-5 pixel-border"
-          :class="{
-            'bg-primary': isActive(key),
-            'bg-primary-600 cursor-pointer hover:bg-primary':
-              !isActive(key) && isCompleted(key),
-            'bg-neutral-800': !isActive(key) && !isCompleted(key),
-          }"
-          :aria-label="t(steps[key].titleKey)"
-          :aria-current="isActive(key) ? 'step' : undefined"
-          :disabled="!isCompleted(key) || isActive(key)"
-          @click="currentStep = key"
-        />
-      </div>
-      <h2 v-if="currentStep !== 'script'" class="text-center">
-        <span class="text-xs tracking-widest">
-          {{ t(steps[currentStep].titleKey).toUpperCase() }}
-        </span>
-      </h2>
-    </div>
-
     <!-- Error alert -->
     <UAlert
       v-if="store.errorMessage"
