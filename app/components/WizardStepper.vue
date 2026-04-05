@@ -161,7 +161,7 @@ function isActive(key: StepKey) {
         </div>
       </div>
 
-      <!-- GM Script (placeholder for GmScript) -->
+      <!-- GM Script -->
       <div v-else-if="currentStep === 'script'" class="space-y-4">
         <div
           v-if="store.generationStatus === 'generating-script'"
@@ -175,12 +175,7 @@ function isActive(key: StepKey) {
           />
           <span>{{ t("ui.status.generating") }}</span>
         </div>
-        <div v-else-if="store.gmScript" class="terminal-panel text-center">
-          <span class="crt-badge mb-2">SYS_LOG</span>
-          <p class="text-neutral-500 text-xs leading-relaxed mt-2">
-            [GmScript placeholder — campaign script generated]
-          </p>
-        </div>
+        <GmScript v-else-if="store.gmScript" />
       </div>
     </div>
 
