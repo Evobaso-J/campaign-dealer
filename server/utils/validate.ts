@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  ContentWarnings,
   GenreGroups,
   Locales,
   type Genre,
@@ -154,5 +155,5 @@ export const gameMasterScriptSchema: z.ZodType<GameMasterScript> = z.object({
     },
   ),
   rumors: z.array(generatedText),
-  contentWarnings: z.array(generatedText).optional(),
+  contentWarnings: z.array(z.enum(ContentWarnings)).optional(),
 });

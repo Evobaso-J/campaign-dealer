@@ -9,6 +9,15 @@ export const LocaleNames: Record<Locale, string> = {
 };
 
 export type TargetArchetype = "king" | "queen" | "jack";
+
+export const ContentWarnings = [
+  "deathAndViolence",
+  "strongLanguage",
+  "horror",
+  "substanceUse",
+  "mentalIllness",
+] as const;
+export type ContentWarning = (typeof ContentWarnings)[number];
 export type TargetFate = "captured" | "converted" | "eliminated";
 
 export interface TargetEnemy {
@@ -68,7 +77,7 @@ export type GameMasterScript = {
   /** In-world dialogue quotes — rumors and leads about the faction's vulnerabilities. */
   rumors: GeneratedText[];
   /** Optional sensitive content tags (e.g. death/violence, horror, substance use). */
-  contentWarnings?: GeneratedText[];
+  contentWarnings?: ContentWarning[];
 };
 
 export interface Campaign {

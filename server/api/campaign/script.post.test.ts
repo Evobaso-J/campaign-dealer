@@ -106,7 +106,7 @@ const validScriptJson = JSON.stringify({
     "Word is Kain's energy shield has a recharge cycle — thirty seconds every six hours. If you time it right...",
     "Some of Cipher's enforcers are conscripts. They didn't choose this. Maybe they'd choose differently if given the chance.",
   ],
-  contentWarnings: ["Death and violence"],
+  contentWarnings: ["deathAndViolence"],
 });
 
 // --- Helpers ---

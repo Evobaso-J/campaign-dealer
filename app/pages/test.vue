@@ -363,7 +363,7 @@ const allGenres = Object.values(GenreGroups).flat() as Genre[];
                 <span class="text-neutral-400 font-mono text-xs shrink-0 pt-0.5"
                   >{{ i + 1 }}.</span
                 >
-                <p class="text-sm italic">"{{ rumor }}"</p>
+                <p class="text-sm italic">{{ rumor }}</p>
               </div>
             </div>
           </UCard>

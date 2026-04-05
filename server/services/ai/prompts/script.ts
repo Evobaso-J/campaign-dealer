@@ -33,13 +33,23 @@ GameMasterScript schema:
       "locations": string (required) — A prose paragraph describing where this Target can be found, how to reach them, and what the approach terrain looks like. The location description should hint at which strategy (capture, convert, or eliminate) might be most effective,
       "defenses": string (required) — A prose paragraph describing the Target's protections: personal traits (strength, weapon skill), external countermeasures (armed guards, security systems, traps), or situational advantages (hiding in public, using decoys). The GM can add or remove defenses to balance the scenario
     },
-    "queen": { same structure as jack },
-    "king": { same structure as jack }
+    "queen": {
+      "name": string (required),
+      "description": string (required),
+      "locations": string (required),
+      "defenses": string (required)
+    },
+    "king": {
+      "name": string (required),
+      "description": string (required),
+      "locations": string (required),
+      "defenses": string (required)
+    }
   } (required) — the three antagonist Targets the players must defeat, one per archetype,
 
   "rumors": string[] (required, 6-8 items) — In-world dialogue quotes — things NPCs or informants might say. These are leads and hints about the faction's vulnerabilities, secrets, and exploitable cracks. They serve as inspiration for the Diamonds (weak points in the game). They are intentionally open-ended: some may be true intelligence, others may be misleading gossip or half-truths. All are available to the players from the start — it's up to them to decide which to pursue. Write each as a short quoted statement, as if spoken by an NPC.
 
-  "contentWarnings": string[] (optional) — Tags for sensitive content present in the scenario, e.g. "Death and violence", "Horror", "Substance use", "Mental illness". Only include if the scenario contains such themes.
+  "contentWarnings": string[] (optional) — Tags for sensitive content present in the scenario. Only include if the scenario contains such themes. Allowed values: "deathAndViolence", "strongLanguage", "horror", "substanceUse", "mentalIllness".
 }
 
 Guidelines:
