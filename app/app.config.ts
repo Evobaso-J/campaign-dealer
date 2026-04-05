@@ -29,6 +29,11 @@ export default defineAppConfig({
       slots: {
         base: "rounded-none",
       },
+      variants: {
+        variant: {
+          outline: "pixel-border",
+        },
+      },
     },
     card: {
       slots: {
