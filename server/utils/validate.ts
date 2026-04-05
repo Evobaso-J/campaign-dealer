@@ -146,6 +146,7 @@ const targetArchetypes: [TargetArchetype, ...TargetArchetype[]] = [
 ];
 
 export const gameMasterScriptSchema: z.ZodType<GameMasterScript> = z.object({
+  name: generatedText,
   introduction: generatedText,
   weapons: z.array(generatedText),
   instruments: z.array(generatedText),

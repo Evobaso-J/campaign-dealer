@@ -49,6 +49,7 @@ const fakeCharacter = (): CharacterSheet => ({
 });
 
 const validScriptJson = JSON.stringify({
+  name: "Neon Shadows",
   introduction:
     "We move through the neon-lit streets like ghosts. The Kuroshi Corporation owns everything — the air we breathe, the water we drink, the screens that watch our every move. But not us. Not anymore.",
   weapons: [
