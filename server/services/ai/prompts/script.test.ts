@@ -69,12 +69,11 @@ describe("buildScriptPrompt", () => {
     it("jsonSchema includes the expected GameMasterScript fields", () => {
       const result = buildScriptPrompt(defaults());
       const props = result.jsonSchema!.properties as Record<string, unknown>;
-      expect(props).toHaveProperty("hook");
+      expect(props).toHaveProperty("introduction");
+      expect(props).toHaveProperty("weapons");
+      expect(props).toHaveProperty("instruments");
       expect(props).toHaveProperty("targets");
-      expect(props).toHaveProperty("weakPoints");
-      expect(props).toHaveProperty("scenes");
-      expect(props).toHaveProperty("centralTension");
-      expect(props).toHaveProperty("plot");
+      expect(props).toHaveProperty("rumors");
     });
   });
 
@@ -116,35 +115,26 @@ describe("buildScriptPrompt", () => {
       expect(system).toContain('"jack"');
     });
 
-    it("requires a description for each target", () => {
+    it("mentions locations and defenses for targets", () => {
       const { system } = buildScriptPrompt(defaults());
-      // Each target object in the schema must include a "description" field
-      const descriptionMatches = system.match(
-        /"description": string \(required\)/g,
-      );
-      expect(descriptionMatches).not.toBeNull();
-      expect(descriptionMatches!.length).toBe(3);
+      expect(system).toContain('"locations"');
+      expect(system).toContain('"defenses"');
     });
 
-    it("specifies exactly 10 weak points", () => {
+    it("specifies 6-8 rumors", () => {
       const { system } = buildScriptPrompt(defaults());
-      expect(system).toContain("exactly 10");
+      expect(system).toContain("6-8");
     });
 
     it("structures the campaign as three sessions", () => {
       const { system } = buildScriptPrompt(defaults());
-      expect(system).toContain("three sessions");
+      expect(system).toContain("three-session campaign");
     });
 
-    it("includes the plot field in the schema", () => {
+    it("mentions weapons and instruments", () => {
       const { system } = buildScriptPrompt(defaults());
-      expect(system).toContain('"plot"');
-    });
-
-    it("does not hardcode a fixed archetype order for sessions", () => {
-      const { system } = buildScriptPrompt(defaults());
-      expect(system).toContain("narrative escalation");
-      expect(system).toContain("need not follow Jack, Queen, King");
+      expect(system).toContain('"weapons"');
+      expect(system).toContain('"instruments"');
     });
 
     it("mentions the Diamonds faction", () => {

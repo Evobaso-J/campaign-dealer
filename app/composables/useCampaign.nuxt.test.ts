@@ -29,16 +29,33 @@ const mockCharacter: CharacterSheet = {
 };
 
 const mockScript: GameMasterScript = {
-  hook: gt("A dark force rises"),
+  introduction: gt("A dark force rises in the land"),
+  weapons: [gt("Sword"), gt("Bow")],
+  instruments: [gt("Lockpick"), gt("Rope")],
   targets: {
-    king: { name: gt("King Enemy"), description: gt("Desc") },
-    queen: { name: gt("Queen Enemy"), description: gt("Desc") },
-    jack: { name: gt("Jack Enemy"), description: gt("Desc") },
+    king: {
+      name: gt("King Enemy"),
+      description: gt("Desc"),
+      locations: gt("Found in the castle"),
+      defenses: gt("Protected by elite guards"),
+    },
+    queen: {
+      name: gt("Queen Enemy"),
+      description: gt("Desc"),
+      locations: gt("Found in the tower"),
+      defenses: gt("Surrounded by magical wards"),
+    },
+    jack: {
+      name: gt("Jack Enemy"),
+      description: gt("Desc"),
+      locations: gt("Found in the forest"),
+      defenses: gt("Uses traps and ambushes"),
+    },
   },
-  weakPoints: [{ name: gt("Weak Point"), role: gt("Role") }],
-  scenes: [gt("Scene 1")],
-  centralTension: gt("Central tension"),
-  plot: gt("The plot"),
+  rumors: [
+    gt("I heard the king fears fire"),
+    gt("The tower has a secret door"),
+  ],
 };
 
 const mockTemplate: CharacterTemplate = {

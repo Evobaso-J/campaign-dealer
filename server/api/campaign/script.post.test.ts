@@ -49,41 +49,64 @@ const fakeCharacter = (): CharacterSheet => ({
 });
 
 const validScriptJson = JSON.stringify({
-  hook: "The neon streets of Neo-Tokyo hide a dark secret.",
+  introduction:
+    "We move through the neon-lit streets like ghosts. The Kuroshi Corporation owns everything — the air we breathe, the water we drink, the screens that watch our every move. But not us. Not anymore.",
+  weapons: [
+    "Plasma pistol",
+    "Monofilament blade",
+    "EMP grenade",
+    "Neural disruptor",
+    "Railgun carbine",
+    "Vibro-knife",
+    "Arc caster",
+    "Slug revolver",
+  ],
+  instruments: [
+    "Hacking deck",
+    "Grapple launcher",
+    "Signal jammer",
+    "Med-spray",
+    "Holographic projector",
+    "Drone controller",
+    "Chem analyzer",
+    "Stealth cloak",
+  ],
   targets: {
     king: {
       name: "Director Kain",
-      description: "Head of the Diamond Corporation",
+      description: "Head of the Kuroshi Corporation.",
+      locations:
+        "Director Kain resides in the Spire, a fortified penthouse atop the Kuroshi Tower. The only known access is a private elevator requiring biometric authentication.",
+      defenses:
+        "Kain is protected by a personal energy shield and a squad of elite cyber-augmented bodyguards. The Spire's AI defense grid can lock down the entire floor in seconds.",
     },
     queen: {
       name: "Lady Vex",
-      description: "Chief of intelligence operations",
+      description: "Chief of intelligence operations.",
+      locations:
+        "Lady Vex operates from a mobile command center that shifts between safehouses across the Lower City. She is occasionally spotted at the Black Lotus club.",
+      defenses:
+        "Vex is a master of misdirection, employing body doubles and holographic decoys. Her personal combat implants make her lethal at close range.",
     },
     jack: {
       name: "Cipher",
-      description: "The corporation's master enforcer",
+      description: "The corporation's master enforcer.",
+      locations:
+        "Cipher haunts the industrial district, running operations from an abandoned factory complex known as The Crucible.",
+      defenses:
+        "Cipher's augmented reflexes border on precognition. The Crucible is rigged with automated turrets and deadfall traps.",
     },
   },
-  weakPoints: [
-    { name: "Rat", role: "Informant" },
-    { name: "Server Farm", role: "Data center" },
-    { name: "Dr. Sato", role: "Reluctant scientist" },
-    { name: "The Docks", role: "Smuggling route" },
-    { name: "Agent Null", role: "Double agent" },
-    { name: "Power Grid", role: "Infrastructure weakness" },
-    { name: "Old Guard", role: "Disgruntled veteran" },
-    { name: "Media Leak", role: "PR vulnerability" },
-    { name: "Supply Chain", role: "Logistics bottleneck" },
-    { name: "Vault 7", role: "Secret archive" },
+  rumors: [
+    "I heard Vex and Kain had a falling out last month. Something about budget cuts to her division. Maybe we can use that.",
+    "There's a maintenance tunnel under the Kuroshi Tower. The janitors use it — nobody checks IDs down there.",
+    "Cipher's got a sister in the refugee camp. Keeps sending her credits on the quiet. Funny, for a killer.",
+    "A cargo ship docks at pier 7 every Thursday. Kuroshi markings, no manifest on file. What are they moving?",
+    "The Black Lotus club has a VIP room. Vex meets her contacts there. Getting in is the hard part.",
+    "Word is Kain's energy shield has a recharge cycle — thirty seconds every six hours. If you time it right...",
+    "Some of Cipher's enforcers are conscripts. They didn't choose this. Maybe they'd choose differently if given the chance.",
   ],
-  scenes: [
-    "Scene 1: The heist begins",
-    "Scene 2: Betrayal",
-    "Scene 3: Showdown",
-  ],
-  centralTension:
-    "The revolutionaries must choose between justice and revenge.",
-  plot: "A sprawling campaign across the neon-lit underworld.",
+  contentWarnings: ["deathAndViolence"],
 });
 
 // --- Helpers ---
@@ -236,7 +259,9 @@ describe("POST /api/campaign/script", () => {
         language: "en",
       });
       mockComplete.mockResolvedValue({
-        text: JSON.stringify({ hook: "A story begins" }) as GeneratedText,
+        text: JSON.stringify({
+          introduction: "A story begins",
+        }) as GeneratedText,
       });
 
       await expect(callHandler()).rejects.toSatisfy((e: unknown) => {
@@ -258,16 +283,15 @@ describe("POST /api/campaign/script", () => {
       });
 
       const result = await callHandler();
-      expect(result.hook).toBe(
-        "The neon streets of Neo-Tokyo hide a dark secret.",
-      );
+      expect(result.introduction).toContain("neon-lit streets");
       expect(result.targets.king.name).toBe("Director Kain");
       expect(result.targets.queen.name).toBe("Lady Vex");
       expect(result.targets.jack.name).toBe("Cipher");
-      expect(result.weakPoints).toHaveLength(10);
-      expect(result.scenes).toHaveLength(3);
-      expect(result.centralTension).toBeDefined();
-      expect(result.plot).toBeDefined();
+      expect(result.targets.king.locations).toBeTruthy();
+      expect(result.targets.king.defenses).toBeTruthy();
+      expect(result.weapons).toHaveLength(8);
+      expect(result.instruments).toHaveLength(8);
+      expect(result.rumors).toHaveLength(7);
     });
 
     it("calls provider.complete exactly once", async () => {
