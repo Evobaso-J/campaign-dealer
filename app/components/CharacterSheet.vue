@@ -52,7 +52,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
   <div
     role="article"
     :aria-label="`${identity.name}, ${t(`ui.selector.archetype.${character.archetype}`)} ${t(`ui.selector.suit.${character.suit}`)}`"
-    class="pixel-border pixel-shadow bg-primary flex flex-col w-72 shrink-0"
+    class="pixel-border pixel-shadow bg-primary flex flex-col min-w-0 overflow-hidden"
   >
     <!-- Row 1: Name -->
     <div class="p-3 border-b-2 border-primary-800 flex items-baseline gap-2">
@@ -68,7 +68,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
     </div>
 
     <!-- Row 2: Avatar + Concept/Items -->
-    <div class="p-3 flex gap-3 max-h-28">
+    <div class="p-3 flex gap-3 max-h-28 overflow-hidden">
       <!-- Left column: card avatar -->
       <div
         class="size-24 pixel-border-thick bg-primary-400 relative overflow-hidden shrink-0"
@@ -91,11 +91,11 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
 
       <!-- Right column: concept + items -->
       <div
-        class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] flex-1 min-h-0"
+        class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] flex-1 min-w-0 min-h-0"
       >
         <div
           tabindex="0"
-          class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll hide-scrollbar"
+          class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll overflow-x-hidden hide-scrollbar break-words"
         >
           <p
             v-if="identity.concept"
