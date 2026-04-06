@@ -28,7 +28,7 @@ const label = computed(() => t(`ui.gmScript.contentWarning.${props.warning}`));
       side: 'top',
     }"
   >
-    <UBadge class="p-1 text-primary-800" variant="outline">
+    <UBadge class="p-1" variant="outline">
       <UIcon :name="icon" class="size-5" />
     </UBadge>
   </UTooltip>

@@ -142,7 +142,6 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
           :label="t(character.suitSkill.name).toUpperCase()"
           :ui="{
             label: 'text-[0.5rem] truncate max-w-14',
-            trailingIcon: 'text-primary-800',
           }"
           @click="openSkill(character.suitSkill, true)"
         />
@@ -155,7 +154,6 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
           :label="t(skill.name).toUpperCase()"
           :ui="{
             label: 'text-[0.5rem] truncate max-w-14',
-            trailingIcon: 'text-primary-800',
           }"
           @click="openSkill(skill)"
         />
@@ -184,7 +182,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
         <div class="flex items-start justify-between">
           <div class="space-y-1">
             <p
-              class="text-lg uppercase tracking-widest text-primary-800 inline-flex items-center gap-2"
+              class="text-lg uppercase tracking-widest inline-flex items-center gap-2"
             >
               <UIcon
                 v-if="selectedSkill.isSuit"
@@ -201,7 +199,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
                   maxUses: selectedSkill.skill.uses.maxUses,
                 })
               "
-              class="text-xs uppercase tracking-widest text-primary-800/70"
+              class="text-xs uppercase tracking-widest text-default/70"
             >
               [{{ selectedSkill.skill.uses.usesLeft }}/{{
                 selectedSkill.skill.uses.maxUses
@@ -215,14 +213,13 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
             :aria-label="t('ui.modal.close')"
             :ui="{
               base: 'p-0',
-              leadingIcon: 'text-primary-800',
             }"
             variant="ghost"
             @click="isSkillModalOpen = false"
           />
         </div>
 
-        <p class="text-xs leading-relaxed text-primary-800">
+        <p class="text-xs leading-relaxed">
           {{ t(selectedSkill.skill.description) }}
         </p>
       </div>
