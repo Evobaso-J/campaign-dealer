@@ -20,6 +20,7 @@
 
   --animate-blinker: blinker 1s step-end infinite;
   --animate-float: float 4s ease-in-out infinite;
+  --animate-bounce-x: bounce-x 1s infinite;
 
   /* Error palette (fixed across all genres) */
   --color-crt-error-bg: #100005;

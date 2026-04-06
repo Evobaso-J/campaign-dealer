@@ -91,5 +91,11 @@ export default defineAppConfig({
         base: "rounded-none",
       },
     },
+    tabs: {
+      slots: {
+        trigger: "rounded-none uppercase",
+        indicator: "rounded-none",
+      },
+    },
   },
 });
