@@ -80,12 +80,13 @@ function goToNext() {
       class="flex-1 min-h-0 pixel-border pixel-shadow bg-primary"
       :ui="{
         root: 'flex flex-col min-h-0',
-        content: 'flex-1 min-h-0',
+        content:
+          'flex-1 min-h-0 mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]',
       }"
     >
       <!-- Introduction tab -->
       <template #introduction>
-        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
+        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
           <p class="text-sm italic whitespace-pre-line leading-relaxed">
             {{ gmScript.introduction }}
           </p>
@@ -141,7 +142,7 @@ function goToNext() {
 
       <!-- Targets tab -->
       <template #targets>
-        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
+        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
           <div>
             <div v-for="(arch, idx) in targetArchetypes" :key="arch">
               <USeparator v-if="idx > 0" />
@@ -163,7 +164,7 @@ function goToNext() {
                 </p>
                 <div class="pl-3 border-l-2 border-primary-800 space-y-2">
                   <div>
-                    <p class="text-xs uppercase font-bold text-primary-600">
+                    <p class="text-xs uppercase font-bold text-dimmed">
                       {{ t("ui.gmScript.locations") }}
                     </p>
                     <p class="text-xs leading-relaxed">
@@ -171,7 +172,7 @@ function goToNext() {
                     </p>
                   </div>
                   <div>
-                    <p class="text-xs uppercase font-bold text-primary-600">
+                    <p class="text-xs uppercase font-bold text-dimmed">
                       {{ t("ui.gmScript.defenses") }}
                     </p>
                     <p class="text-xs leading-relaxed">
@@ -201,7 +202,7 @@ function goToNext() {
 
       <!-- Rumors tab -->
       <template #rumors>
-        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
+        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
           <div>
             <div v-for="(rumor, i) in gmScript.rumors" :key="i">
               <USeparator v-if="i > 0" />
