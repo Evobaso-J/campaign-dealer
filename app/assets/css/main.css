@@ -13,8 +13,6 @@
    ────────────────────────────────────────────── */
 
 @theme static {
-  --ui-text: var(--ui-color-primary-800);
-
   --font-pixel: "Press Start 2P", cursive;
   --font-mono: "Courier New", Courier, monospace;
 
@@ -104,6 +102,38 @@
   --color-cultural-800: #6b520a; /* shadow */
   --color-cultural-900: #4a3807;
   --color-cultural-950: #261d05; /* bg */
+}
+
+/* ──────────────────────────────────────────────
+   Nuxt UI semantic token overrides
+   Remap neutral-based defaults → primary-based CRT palette.
+   Must use .light to match Nuxt UI's selector specificity;
+   later source order makes our declarations win.
+   ────────────────────────────────────────────── */
+
+@layer theme {
+  .light {
+    /* Text — dark shades for readability on bright primary bg */
+    --ui-text-dimmed: var(--ui-color-primary-600);
+    --ui-text-muted: var(--ui-color-primary-700);
+    --ui-text-toned: var(--ui-color-primary-700);
+    --ui-text: var(--ui-color-primary-800);
+    --ui-text-highlighted: var(--ui-color-primary-950);
+    --ui-text-inverted: var(--ui-color-primary-50);
+
+    /* Backgrounds — primary surfaces matching bg-primary usage */
+    --ui-bg: var(--ui-color-primary-500);
+    --ui-bg-muted: var(--ui-color-primary-600);
+    --ui-bg-elevated: var(--ui-color-primary-400);
+    --ui-bg-accented: var(--ui-color-primary-400);
+    --ui-bg-inverted: var(--ui-color-primary-950);
+
+    /* Borders — matching pixel-border (primary-800) convention */
+    --ui-border: var(--ui-color-primary-800);
+    --ui-border-muted: var(--ui-color-primary-700);
+    --ui-border-accented: var(--ui-color-primary-900);
+    --ui-border-inverted: var(--ui-color-primary-400);
+  }
 }
 
 /* ──────────────────────────────────────────────
