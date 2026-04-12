@@ -247,6 +247,23 @@
   color: var(--ui-color-primary-950);
 }
 
+/* Speech-balloon pixel tails for the rumors chat layout.
+   Uses @layer because @utility does not support pseudo-elements. */
+@layer utilities {
+  .rumor-balloon--left::before,
+  .rumor-balloon--right::before {
+    @apply absolute top-3 h-0 w-0 content-[''] border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent;
+  }
+
+  .rumor-balloon--left::before {
+    @apply right-full border-r-8 border-r-primary-800;
+  }
+
+  .rumor-balloon--right::before {
+    @apply left-full border-l-8 border-l-primary-800;
+  }
+}
+
 @utility crt-vignette {
   pointer-events: none;
   position: fixed;

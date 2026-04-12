@@ -13,6 +13,13 @@ const targetArchetypes = [
 
 const TAB_ORDER = ["introduction", "targets", "rumors"] as const;
 
+const RUMOR_AVATARS = ["/guy.svg", "/bearded-guy.svg", "/girl.svg", "/hooded.svg", "/mohawk.svg"] as const;
+const rumorAvatars = computed(() =>
+  gmScript.value.rumors.map(
+    () => RUMOR_AVATARS[Math.floor(Math.random() * RUMOR_AVATARS.length)],
+  ),
+);
+
 const activeTab = ref<string>("introduction");
 const enabledTabs = ref(new Set<string>(["introduction"]));
 const clickedTabs = ref(new Set<string>());
@@ -232,11 +239,38 @@ function goToNext() {
 
       <!-- Rumors tab -->
       <template #rumors>
-        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
-          <div>
-            <div v-for="(rumor, i) in gmScript.rumors" :key="i">
-              <USeparator v-if="i > 0" />
-              <p class="py-3 text-xs italic leading-relaxed">"{{ rumor }}"</p>
+        <div class="overflow-y-auto hide-scrollbar p-6 space-y-6 h-full">
+          <div
+            v-for="(rumor, i) in gmScript.rumors"
+            :key="i"
+            :class="[
+              'flex items-start gap-3',
+              i % 2 !== 0 && 'flex-row-reverse',
+            ]"
+          >
+            <!-- Person icon -->
+            <div
+              class="size-10 pixel-border bg-primary-400 relative overflow-hidden shrink-0"
+            >
+              <div
+                class="absolute inset-0 bg-primary-800"
+                :style="{
+                  maskImage: `url(${rumorAvatars[i]})`,
+                  maskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                }"
+              />
+            </div>
+
+            <!-- Speech balloon -->
+            <div
+              :class="[
+                'rumor-balloon pixel-border bg-primary-400/20 px-4 py-3 relative flex-1',
+                i % 2 === 0 ? 'rumor-balloon--left' : 'rumor-balloon--right',
+              ]"
+            >
+              <p class="text-xs italic leading-relaxed">"{{ rumor }}"</p>
             </div>
           </div>
         </div>
