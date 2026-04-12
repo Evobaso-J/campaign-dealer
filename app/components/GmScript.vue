@@ -76,6 +76,7 @@ function goToNext() {
       v-model="activeTab"
       :items="tabItems"
       variant="link"
+      color="neutral"
       size="sm"
       class="flex-1 min-h-0 pixel-border pixel-shadow bg-primary"
       :ui="{
@@ -86,7 +87,7 @@ function goToNext() {
     >
       <!-- Introduction tab -->
       <template #introduction>
-        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
+        <div class="overflow-y-auto hide-scrollbar p-6 space-y-12 h-full">
           <p class="text-sm italic whitespace-pre-line leading-relaxed">
             {{ gmScript.introduction }}
           </p>
@@ -142,40 +143,69 @@ function goToNext() {
 
       <!-- Targets tab -->
       <template #targets>
-        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
-          <div>
-            <div v-for="(arch, idx) in targetArchetypes" :key="arch">
-              <USeparator v-if="idx > 0" />
-              <div class="py-3 space-y-2">
-                <div class="flex items-center gap-2">
-                  <UBadge
-                    color="neutral"
-                    variant="outline"
-                    class="capitalize shrink-0"
+        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
+          <div class="space-y-8">
+            <div
+              v-for="(arch, idx) in targetArchetypes"
+              :key="arch"
+              class="flex flex-col"
+            >
+              <USeparator v-if="idx > 0" :ui="{ root: 'border-t-4' }" />
+
+              <!-- Target: Square image + Info -->
+              <div class="py-3 space-y-6">
+                <!-- Row 1: Square image + Name & Description -->
+                <div
+                  :class="[
+                    'flex items-start gap-6',
+                    idx % 2 !== 0 && 'flex-row-reverse',
+                  ]"
+                >
+                  <div
+                    class="size-32 pixel-border-thick bg-primary-400 relative overflow-hidden shrink-0"
                   >
-                    {{ t(`ui.selector.archetype.${arch}`) }}
-                  </UBadge>
-                  <span class="font-bold text-sm">{{
-                    gmScript.targets[arch].name
-                  }}</span>
-                </div>
-                <p class="text-xs leading-relaxed whitespace-pre-line">
-                  {{ gmScript.targets[arch].description }}
-                </p>
-                <div class="pl-3 border-l-2 border-primary-800 space-y-2">
-                  <div>
-                    <p class="text-xs uppercase font-bold text-dimmed">
-                      {{ t("ui.gmScript.locations") }}
+                    <NuxtImg
+                      :src="`/cards/${arch}_diamonds.svg`"
+                      :alt="t(`ui.selector.archetype.${arch}`)"
+                      class="absolute top-0 left-0 w-full h-full object-cover object-top"
+                    />
+                  </div>
+
+                  <div class="flex-1 min-w-0 flex flex-col gap-3">
+                    <span class="text-sm uppercase font-bold truncate">
+                      {{ gmScript.targets[arch].name }}
+                    </span>
+                    <p class="text-sm italic leading-relaxed opacity-80">
+                      {{ gmScript.targets[arch].description }}
                     </p>
-                    <p class="text-xs leading-relaxed">
+                  </div>
+                </div>
+
+                <!-- Row 2: Location & Defenses (full width) -->
+                <div class="grid grid-cols-2 gap-6">
+                  <div>
+                    <div
+                      class="flex items-center gap-2 pb-3 border-b-2 border-primary-800"
+                    >
+                      <UIcon name="i-pixelarticons-map" class="shrink-0" />
+                      <span class="text-sm uppercase font-bold">
+                        {{ t("ui.gmScript.locations") }}
+                      </span>
+                    </div>
+                    <p class="pt-3 text-sm italic leading-relaxed">
                       {{ gmScript.targets[arch].locations }}
                     </p>
                   </div>
                   <div>
-                    <p class="text-xs uppercase font-bold text-dimmed">
-                      {{ t("ui.gmScript.defenses") }}
-                    </p>
-                    <p class="text-xs leading-relaxed">
+                    <div
+                      class="flex items-center gap-2 pb-3 border-b-2 border-primary-800"
+                    >
+                      <UIcon name="i-pixelarticons-shield" class="shrink-0" />
+                      <span class="text-sm uppercase font-bold">
+                        {{ t("ui.gmScript.defenses") }}
+                      </span>
+                    </div>
+                    <p class="pt-3 text-sm italic leading-relaxed">
                       {{ gmScript.targets[arch].defenses }}
                     </p>
                   </div>
@@ -202,7 +232,7 @@ function goToNext() {
 
       <!-- Rumors tab -->
       <template #rumors>
-        <div class="overflow-y-auto hide-scrollbar p-6 pb-10 space-y-4 h-full">
+        <div class="overflow-y-auto hide-scrollbar p-6 space-y-4 h-full">
           <div>
             <div v-for="(rumor, i) in gmScript.rumors" :key="i">
               <USeparator v-if="i > 0" />

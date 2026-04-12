@@ -90,7 +90,7 @@ function goBack() {
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
           v-if="store.characters.length"
-          class="flex flex-wrap justify-center gap-6"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           <CharacterSheet
             v-for="(char, idx) in store.characters"
