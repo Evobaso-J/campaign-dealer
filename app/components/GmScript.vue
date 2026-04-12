@@ -16,7 +16,7 @@ const TAB_ORDER = ["introduction", "targets", "rumors"] as const;
 const RUMOR_AVATARS = ["/guy.svg", "/bearded-guy.svg", "/girl.svg", "/hooded.svg", "/mohawk.svg"] as const;
 const rumorAvatars = computed(() =>
   gmScript.value.rumors.map(
-    () => RUMOR_AVATARS[Math.floor(Math.random() * RUMOR_AVATARS.length)],
+    (_, i) => RUMOR_AVATARS[i % RUMOR_AVATARS.length],
   ),
 );
 
