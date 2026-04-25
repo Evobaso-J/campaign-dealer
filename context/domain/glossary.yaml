@@ -1,0 +1,41 @@
+# Extended domain terminology for Campaign Dealer.
+
+entities:
+  CharacterSheet:
+    definition: "Playable character with mechanical stats and AI-generated narrative identity."
+    relationship: "CharacterTemplate + CharacterIdentity"
+  CharacterTemplate:
+    definition: "Deterministic skeleton: archetype + suit + skills, no identity."
+    relationship: "Produced by shared/utils/characterRandomizer.ts"
+  CharacterIdentity:
+    definition: "AI-generated wrapper: name, pronouns, concept, weapon, instrument."
+    notes: "Always GeneratedText; never sourced from fixed tables."
+  GameMasterScript:
+    definition: "Generated campaign content: introduction, weapons, instruments, targets, rumors."
+  TargetEnemy:
+    definition: "Antagonist generated per player archetype (king/queen/jack)."
+    notes: "Has fate ∈ {captured, converted, eliminated}."
+  Genre:
+    definition: "Setting flavor (e.g. cyberpunk, gothic horror, weird west)."
+    notes: "Defined as a union in shared/types/campaign.ts."
+  CharacterCombo:
+    definition: "An archetype × suit pair selected during party building."
+
+concepts:
+  archetype:
+    definition: "King | Queen | Jack — drives the archetype skill pool."
+  suit:
+    definition: "Hearts | Clubs | Spades — drives suit skill and characterization."
+    notes: "Diamonds is reserved for antagonist motifs and is not a player suit."
+  combo:
+    definition: "An archetype × suit pair; 9 total, party allows 1–4 with no duplicates."
+  randomizer:
+    definition: "Pure mechanical layer: archetype/suit/skills selection without AI."
+    notes: "Lives in shared/utils/characterRandomizer.ts; deterministic and side-effect-free."
+  identity-layer:
+    definition: "AI layer that takes a CharacterTemplate + setting and produces CharacterIdentity."
+    notes: "See server/services/ai/prompts/character.ts."
+  GeneratedText:
+    definition: "Branded string type marking AI output."
+  I18nKey:
+    definition: "Branded string type marking a translation key resolved on the frontend."
