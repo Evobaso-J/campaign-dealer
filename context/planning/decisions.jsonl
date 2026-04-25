@@ -1,0 +1,1 @@
+{"_schema": "adr", "_version": "1.0", "_description": "Planning-level decisions: roadmap shape, wizard structure, phase boundaries. Append only; supersede with a new entry instead of editing.", "_fields": ["id", "title", "status", "context", "decision", "rationale", "consequences_positive", "consequences_negative", "supersedes", "date"]}
