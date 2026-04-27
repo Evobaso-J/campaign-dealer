@@ -29,6 +29,7 @@ const mockCharacter: CharacterSheet = {
 };
 
 const mockScript: GameMasterScript = {
+  name: gt("The Shadow Campaign"),
   introduction: gt("A dark force rises in the land"),
   weapons: [gt("Sword"), gt("Bow")],
   instruments: [gt("Lockpick"), gt("Rope")],
