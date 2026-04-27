@@ -4,18 +4,18 @@
       class="flex flex-col flex-1 border-8 border-primary-900 rounded-3xl bg-primary h-full w-full"
     >
       <header
-        class="flex items-center justify-between pt-5 px-5 pb-2 border-b-3 border-primary-800 uppercase text-primary-950 shrink-0"
+        class="flex items-center justify-between pt-5 px-5 pb-2 border-b-3 border-primary-800 uppercase text-highlighted shrink-0"
       >
         <span>CAMPAIGN DEALER</span>
         <ThemePicker />
       </header>
 
-      <main class="h-full container mx-auto overflow-y-scroll">
+      <main class="flex-1 min-h-0 flex flex-col container mx-auto p-8">
         <slot />
       </main>
 
       <footer
-        class="flex items-center justify-between px-2 py-1 border-t-3 border-primary-800 text-xs uppercase text-primary-950 shrink-0"
+        class="flex items-center justify-between px-2 py-1 border-t-3 border-primary-800 text-xs uppercase text-highlighted shrink-0"
       >
         <span>MEM: OK</span>
       </footer>

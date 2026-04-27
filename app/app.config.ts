@@ -18,9 +18,23 @@ export default defineAppConfig({
         {
           variant: "outline" as const,
           class: {
-            leadingIcon: "text-primary-800",
-            label: "text-primary-800",
-            base: "hover:bg-primary-400/30",
+            base: "hover:bg-primary-400/30 text-default",
+            leadingIcon: "text-default",
+            trailingIcon: "text-default",
+          },
+        },
+        {
+          variant: "ghost" as const,
+          class: {
+            base: "text-default",
+            leadingIcon: "text-default",
+          },
+        },
+        {
+          variant: "link" as const,
+          class: {
+            base: "text-default",
+            leadingIcon: "text-default",
           },
         },
       ],
@@ -29,6 +43,17 @@ export default defineAppConfig({
       slots: {
         base: "rounded-none",
       },
+      variants: {
+        variant: {
+          outline: "pixel-border",
+        },
+      },
+      compoundVariants: [
+        {
+          variant: "outline" as const,
+          class: "text-default",
+        },
+      ],
     },
     card: {
       slots: {
@@ -85,6 +110,20 @@ export default defineAppConfig({
       slots: {
         base: "rounded-none",
       },
+    },
+    tabs: {
+      slots: {
+        trigger: "rounded-none uppercase",
+        indicator: "rounded-none",
+      },
+      compoundVariants: [
+        {
+          variant: "link" as const,
+          class: {
+            trigger: "text-default data-[state=active]:text-highlighted",
+          },
+        },
+      ],
     },
   },
 });

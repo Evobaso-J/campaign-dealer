@@ -71,7 +71,7 @@ const isInfoOpen = ref(false);
               />
             </div>
             <div class="space-y-1">
-              <p class="text-lg uppercase tracking-widest text-primary-800">
+              <p class="text-lg uppercase tracking-widest">
                 {{ t(`ui.setting.genres.${genre}`) }}
               </p>
               <span
@@ -88,14 +88,13 @@ const isInfoOpen = ref(false);
             size="xl"
             :ui="{
               base: 'p-0',
-              leadingIcon: 'text-primary-800',
             }"
             variant="ghost"
             @click="isInfoOpen = false"
           />
         </div>
 
-        <p class="text-xs leading-relaxed text-primary-800">
+        <p class="text-xs leading-relaxed">
           {{ t(`ui.setting.genreDescriptions.${genre}`) }}
         </p>
       </div>

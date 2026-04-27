@@ -66,6 +66,8 @@ export type GenreGroup = keyof typeof GenreGroups;
 export type Genre = (typeof GenreGroups)[GenreGroup][number];
 
 export type GameMasterScript = {
+  /** A short, evocative campaign title. */
+  name: GeneratedText;
   /** Multi-paragraph, in-world first-person narrative. The GM reads it aloud to set the scene. */
   introduction: GeneratedText;
   /** Setting-appropriate weapon names available to the characters. */

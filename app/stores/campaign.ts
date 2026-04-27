@@ -35,7 +35,7 @@ export const useCampaignStore = defineStore("campaign", () => {
       return undefined;
     }
     return {
-      name: "",
+      name: gmScript.value.name,
       setting: campaignSetting.value,
       compromised: false,
       gameMasterScript: gmScript.value,

@@ -9,13 +9,6 @@ const { openPdf } = useCharacterPdf();
 const stepKeys = ["setting", "party", "characters", "script"] as const;
 type StepKey = (typeof stepKeys)[number];
 
-const steps: Record<StepKey, { titleKey: string }> = {
-  setting: { titleKey: "ui.wizard.step1Title" },
-  party: { titleKey: "ui.wizard.step2Title" },
-  characters: { titleKey: "ui.wizard.step3Title" },
-  script: { titleKey: "ui.wizard.step4Title" },
-};
-
 const currentStep = ref<StepKey>("setting");
 
 const currentStepIndex = computed(() => stepKeys.indexOf(currentStep.value));
@@ -25,11 +18,8 @@ const isLastStep = computed(
 );
 
 const canGoNext = computed(() => {
-  if (store.isLoading) return false;
   if (currentStep.value === "setting") return store.campaignSetting.length > 0;
   if (currentStep.value === "party") return store.selectedTemplates.length > 0;
-  if (currentStep.value === "characters")
-    return store.characters.length > 0 && !store.isLoading;
   return !isLastStep.value;
 });
 
@@ -52,15 +42,15 @@ function prevStepKey(): StepKey {
   return stepKeys[currentStepIndex.value - 1]!;
 }
 
-async function goNext() {
+function goNext() {
   if (!canGoNext.value) return;
 
   if (currentStep.value === "party" && !hasCharacters.value) {
-    await generateCharacters(store.selectedTemplates, store.campaignSetting);
+    generateCharacters(store.selectedTemplates, store.campaignSetting);
   }
 
   if (currentStep.value === "characters" && !hasScript.value) {
-    await generateScript();
+    generateScript();
   }
 
   currentStep.value = nextStepKey();
@@ -71,48 +61,10 @@ function goBack() {
     currentStep.value = prevStepKey();
   }
 }
-
-function isCompleted(key: StepKey) {
-  if (key === "party") return store.selectedTemplates.length > 0;
-  if (key === "setting") return store.campaignSetting.length > 0;
-  if (key === "characters") return hasCharacters.value;
-  if (key === "script") return hasScript.value;
-  return stepKeys.indexOf(key) < currentStepIndex.value;
-}
-
-function isActive(key: StepKey) {
-  return key === currentStep.value;
-}
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- Step indicator -->
-    <div class="space-y-4">
-      <div class="flex items-center justify-center gap-2">
-        <button
-          v-for="key in stepKeys"
-          :key="key"
-          class="w-14 h-5 pixel-border"
-          :class="{
-            'bg-primary': isActive(key),
-            'bg-primary-600 cursor-pointer hover:bg-primary':
-              !isActive(key) && isCompleted(key),
-            'bg-neutral-800': !isActive(key) && !isCompleted(key),
-          }"
-          :aria-label="t(steps[key].titleKey)"
-          :aria-current="isActive(key) ? 'step' : undefined"
-          :disabled="!isCompleted(key) || isActive(key)"
-          @click="currentStep = key"
-        />
-      </div>
-      <h2 class="text-center">
-        <span class="text-xs tracking-widest">
-          {{ t(steps[currentStep].titleKey).toUpperCase() }}
-        </span>
-      </h2>
-    </div>
-
+  <div class="flex flex-col gap-6 flex-1 min-h-0">
     <!-- Error alert -->
     <UAlert
       v-if="store.errorMessage"
@@ -123,7 +75,7 @@ function isActive(key: StepKey) {
     />
 
     <!-- Step content -->
-    <div>
+    <div class="flex-1 min-h-0 flex flex-col">
       <!-- Setting -->
       <div v-if="currentStep === 'setting'">
         <SettingForm v-model="store.campaignSetting" />
@@ -137,20 +89,8 @@ function isActive(key: StepKey) {
       <!-- Characters (placeholder for CharacterGrid) -->
       <div v-else-if="currentStep === 'characters'" class="space-y-4">
         <div
-          v-if="store.generationStatus === 'generating-characters'"
-          role="status"
-          class="terminal-panel flex items-center gap-2 text-neutral-500"
-        >
-          <UIcon
-            aria-hidden="true"
-            name="i-pixelarticons-loader"
-            class="animate-spin"
-          />
-          <span>{{ t("ui.status.generating") }}</span>
-        </div>
-        <div
-          v-else-if="store.characters.length"
-          class="flex flex-wrap justify-center gap-6"
+          v-if="store.characters.length"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           <CharacterSheet
             v-for="(char, idx) in store.characters"
@@ -161,48 +101,26 @@ function isActive(key: StepKey) {
         </div>
       </div>
 
-      <!-- GM Script (placeholder for GmScript) -->
-      <div v-else-if="currentStep === 'script'" class="space-y-4">
-        <div
-          v-if="store.generationStatus === 'generating-script'"
-          role="status"
-          class="terminal-panel flex items-center gap-2 text-neutral-500"
-        >
-          <UIcon
-            aria-hidden="true"
-            name="i-pixelarticons-loader"
-            class="animate-spin"
-          />
-          <span>{{ t("ui.status.generating") }}</span>
-        </div>
-        <div v-else-if="store.gmScript" class="terminal-panel text-center">
-          <span class="crt-badge mb-2">SYS_LOG</span>
-          <p class="text-neutral-500 text-xs leading-relaxed mt-2">
-            [GmScript placeholder — campaign script generated]
-          </p>
-        </div>
-      </div>
+      <!-- GM Script -->
+      <ScriptStep
+        v-else-if="currentStep === 'script'"
+        class="flex flex-col flex-1 min-h-0"
+      />
     </div>
 
     <!-- Navigation buttons -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between shrink-0">
       <UButton
         v-if="!isFirstStep"
         variant="outline"
         color="neutral"
-        :disabled="store.isLoading"
         @click="goBack"
       >
         {{ t("ui.wizard.back") }}
       </UButton>
       <div v-else />
 
-      <UButton
-        v-if="!isLastStep"
-        :disabled="!canGoNext"
-        :loading="store.isLoading"
-        @click="goNext"
-      >
+      <UButton v-if="!isLastStep" :disabled="!canGoNext" @click="goNext">
         {{ nextButtonLabel }}
       </UButton>
     </div>

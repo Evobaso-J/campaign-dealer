@@ -52,7 +52,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
   <div
     role="article"
     :aria-label="`${identity.name}, ${t(`ui.selector.archetype.${character.archetype}`)} ${t(`ui.selector.suit.${character.suit}`)}`"
-    class="pixel-border pixel-shadow bg-primary flex flex-col max-w-5/12"
+    class="pixel-border pixel-shadow bg-primary flex flex-col min-w-0 overflow-hidden"
   >
     <!-- Row 1: Name -->
     <div class="p-3 border-b-2 border-primary-800 flex items-baseline gap-2">
@@ -68,10 +68,10 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
     </div>
 
     <!-- Row 2: Avatar + Concept/Items -->
-    <div class="p-3 flex gap-3 max-h-32">
+    <div class="p-3 flex gap-3 max-h-28 overflow-hidden">
       <!-- Left column: card avatar -->
       <div
-        class="aspect-square pixel-border-thick bg-primary-400 relative overflow-hidden shrink-0"
+        class="size-24 pixel-border-thick bg-primary-400 relative overflow-hidden shrink-0"
       >
         <div
           aria-hidden="true"
@@ -91,11 +91,11 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
 
       <!-- Right column: concept + items -->
       <div
-        class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] w-2/3 min-h-0"
+        class="mask-[linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)] flex-1 min-w-0 min-h-0"
       >
         <div
           tabindex="0"
-          class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll hide-scrollbar"
+          class="h-full flex flex-col gap-3 pb-6 overflow-y-scroll overflow-x-hidden hide-scrollbar break-words"
         >
           <p
             v-if="identity.concept"
@@ -133,18 +133,15 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
     </div>
 
     <!-- Row 3: Skill names + actions -->
-    <div
-      class="p-3 border-t-2 border-primary-800 flex flex-col sm:flex-row sm:items-center gap-2"
-    >
-      <div class="flex flex-wrap gap-1.5 flex-1">
+    <div class="p-3 border-t-2 border-primary-800 flex items-center gap-2">
+      <div class="flex flex-nowrap gap-1.5 flex-1">
         <UButton
           variant="outline"
           size="xs"
           trailing-icon="i-pixelarticons-info-box"
           :label="t(character.suitSkill.name).toUpperCase()"
           :ui="{
-            label: 'text-[0.5rem] truncate max-w-24',
-            trailingIcon: 'text-primary-800',
+            label: 'text-[0.5rem] truncate max-w-14',
           }"
           @click="openSkill(character.suitSkill, true)"
         />
@@ -156,8 +153,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
           trailing-icon="i-pixelarticons-info-box"
           :label="t(skill.name).toUpperCase()"
           :ui="{
-            label: 'text-[0.5rem] truncate max-w-24',
-            trailingIcon: 'text-primary-800',
+            label: 'text-[0.5rem] truncate max-w-14',
           }"
           @click="openSkill(skill)"
         />
@@ -186,7 +182,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
         <div class="flex items-start justify-between">
           <div class="space-y-1">
             <p
-              class="text-lg uppercase tracking-widest text-primary-800 inline-flex items-center gap-2"
+              class="text-lg uppercase tracking-widest inline-flex items-center gap-2"
             >
               <UIcon
                 v-if="selectedSkill.isSuit"
@@ -203,7 +199,7 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
                   maxUses: selectedSkill.skill.uses.maxUses,
                 })
               "
-              class="text-xs uppercase tracking-widest text-primary-800/70"
+              class="text-xs uppercase tracking-widest text-default/70"
             >
               [{{ selectedSkill.skill.uses.usesLeft }}/{{
                 selectedSkill.skill.uses.maxUses
@@ -217,14 +213,13 @@ function openSkill(skill: CharacterSkill, isSuit = false) {
             :aria-label="t('ui.modal.close')"
             :ui="{
               base: 'p-0',
-              leadingIcon: 'text-primary-800',
             }"
             variant="ghost"
             @click="isSkillModalOpen = false"
           />
         </div>
 
-        <p class="text-xs leading-relaxed text-primary-800">
+        <p class="text-xs leading-relaxed">
           {{ t(selectedSkill.skill.description) }}
         </p>
       </div>

@@ -19,6 +19,15 @@ export class OllamaProvider implements AIProvider {
     this.model = config.model || DEFAULT_MODEL;
   }
 
+  /** Unload the model from memory, clearing the KV cache. Dev-only — remove before deploying. */
+  async clearCache(): Promise<void> {
+    await this.client.generate({
+      model: this.model,
+      keep_alive: 0,
+      prompt: "",
+    });
+  }
+
   async complete(prompt: AIPrompt): Promise<AICompletionResult> {
     const response = await this.client.chat({
       model: this.model,
